@@ -84,6 +84,8 @@ export class ChatbotService {
   
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
       await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
+      await this.message.sendWhoCanApplyButton(from, localizedStrings.languageSelection);
+      
       return;
     }
   

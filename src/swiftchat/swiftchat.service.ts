@@ -21,6 +21,7 @@ export class SwiftchatMessageService extends MessageService {
       },
     };
   }
+  
   async sendWelcomeMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const requestData = this.prepareRequestData(
@@ -82,6 +83,26 @@ export class SwiftchatMessageService extends MessageService {
       },
     };
 
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+
+
+  async sendWhoCanApplyButton(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.whoCanApply,
+            reply: 'Who Can Apply',
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
 
