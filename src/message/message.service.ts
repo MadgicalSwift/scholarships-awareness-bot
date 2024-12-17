@@ -22,7 +22,8 @@ export abstract class MessageService {
       });
       return response.data;
     } catch (error) {
-      throw new CustomException(error);
+      //throw new CustomException(error);
+      console.log('Error sending message:', error.response?.data);
     }
   }
 
@@ -30,4 +31,5 @@ export abstract class MessageService {
   abstract sendLanguageSelectionMessage(from: string, language: string);
   abstract sendLanguageChangedMessage(from: string, language: string);
   abstract sendWhoCanApplyButton(from: string, language: string);
+  abstract sendWhoCanApplyMessage(from: string, language: string)
 }

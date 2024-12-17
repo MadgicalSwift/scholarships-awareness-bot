@@ -53,6 +53,34 @@ export class SwiftchatMessageService extends MessageService {
   }
 
   
+  async sendWhoCanApplyButton(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const message = localisedStrings.whoCanApplyPrompt;
+    
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.whoCanApply,
+            reply: 'Who Can Apply',
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+    
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+  
   async sendLanguageSelectionMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.languageSelection;
@@ -85,26 +113,25 @@ export class SwiftchatMessageService extends MessageService {
 
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
-
-
-  async sendWhoCanApplyButton(from: string, language: string) {
+   
+  async sendWhoCanApplyMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
-    const messageData = {
-      to: from,
-      type: 'button',
-      button: {
-        buttons: [
-          {
-            type: 'solid',
-            body: localisedStrings.whoCanApply,
-            reply: 'Who Can Apply',
-          },
-        ],
-        allow_custom_response: false,
-      },
-    };
-    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+    const requestData = this.prepareRequestData(
+      from,
+      localisedStrings.getWhoCanApplyStrings,
+    );
+
+    const response = await this.sendMessage(
+      this.baseUrl,
+      requestData,
+      this.apiKey,
+    );
+    return response;
   }
+
+
+
+
 
  
 

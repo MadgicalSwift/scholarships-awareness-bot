@@ -59,11 +59,18 @@ export class ChatbotService {
         await this.userService.saveUser(userData);
         console.log(`Language changed to: ${buttonResponse}`);
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
-        return;
+        await this.message.sendWhoCanApplyButton(from, buttonResponse);
+           return;
       }
+      console.log(buttonResponse);
+      if (buttonResponse == 'Who Can Apply') {
+        await this.message.sendWhoCanApplyMessage(from, buttonResponse)
+        console.log(buttonResponse);
+        return; 
+      }
+       
     }
-  
-    // Handle text message
+    
     const { text } = body;
     if (!text || !text.body) {
       console.error('Text or body is missing:', body);
@@ -84,8 +91,7 @@ export class ChatbotService {
   
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
       await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
-      await this.message.sendWhoCanApplyButton(from, localizedStrings.languageSelection);
-      
+       
       return;
     }
   
