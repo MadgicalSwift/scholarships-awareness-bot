@@ -27,5 +27,6 @@ export abstract class MessageService {
   }
 
   abstract sendWelcomeMessage(from: string, language: string);
+  abstract sendLanguageSelectionMessage(from: string, language: string);
   abstract sendLanguageChangedMessage(from: string, language: string);
 }

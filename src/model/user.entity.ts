@@ -1,15 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 
-@Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ unique: false })
+  @IsString()
   mobileNumber: string;
 
-  @Column()
+  @IsString()
   language: string;
-  @Column()
-  botID: string;
+
+  @IsString()
+  Botid: string;
+
+  
 }

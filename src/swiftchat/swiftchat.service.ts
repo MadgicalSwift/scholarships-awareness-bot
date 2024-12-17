@@ -40,7 +40,7 @@ export class SwiftchatMessageService extends MessageService {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const requestData = this.prepareRequestData(
       from,
-      localisedStrings.select_language,
+      localisedStrings.languageChangedMessage,
     );
 
     const response = await this.sendMessage(
@@ -50,4 +50,41 @@ export class SwiftchatMessageService extends MessageService {
     );
     return response;
   }
+
+  
+  async sendLanguageSelectionMessage(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const message = localisedStrings.languageSelection;
+
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.language_english,
+            reply: 'English',
+          },
+          {
+            type: 'solid',
+            body: localisedStrings.language_hindi,
+            reply: 'hindi',
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+
+ 
+
 }

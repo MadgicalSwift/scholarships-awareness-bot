@@ -4,20 +4,20 @@ import { Module } from '@nestjs/common';
 import ChatbotService from './chatbot.service';
 import { SwiftchatModule } from 'src/swiftchat/swiftchat.module'; // Correct the import path as necessary
 import IntentClassifier from '../intent/intent.classifier';
-import { UserService } from 'src/model/user.service';
+import { UserService } from 'src/model/user.service'; // Ensure the path is correct
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
 import { MessageService } from 'src/message/message.service';
-import { MockUserService } from 'src/model/mockuser.service';
+import { UserModule } from 'src/model/user.module'; // Import UserModule
 
 @Module({
-  imports: [SwiftchatModule], // Import SwiftchatModule
+  imports: [
+    SwiftchatModule, // Import SwiftchatModule
+    UserModule, // Import UserModule to access UserService
+  ],
   providers: [
     ChatbotService,
     IntentClassifier,
-    {
-      provide: UserService,
-      useClass: MockUserService,
-    },
+    UserService, // Add UserService here
     {
       provide: MessageService,
       useClass: SwiftchatMessageService,
