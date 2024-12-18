@@ -28,9 +28,7 @@ export class ChatbotService {
   }
   
   public async processMessage(body: any): Promise<any> {
-    console.log(body,"sangeeta");
-    
-    const { from, type } = body;
+     const { from, type } = body;
     const botID = process.env.BOT_ID;
   
     // Retrieve user data
@@ -62,23 +60,21 @@ export class ChatbotService {
         console.log(`Language changed to: ${buttonResponse}`);
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
         await this.message.sendWhoCanApplyButton(from, buttonResponse);
-        
-        return;
+        console.log(buttonResponse);
+       
+        return;  
       }
-      console.log(buttonResponse);
-      
-       if (buttonResponse == 'Who Can Apply') {
+        if (buttonResponse == 'Who Can Apply' || buttonResponse == "कौन आवेदन कर सकता है") {
         console.log(buttonResponse,"enter inside of who can apply  fn");
-        await this.message.sendWhoCanApplyMessage(from, buttonResponse)
-        // addd
         await this.message.sendHowCanSelectedButton(from, buttonResponse)
         return; 
-      }
-      // added
+      } 
       
-      if (buttonResponse == 'howCanSelected') {
+      if (buttonResponse == '📝 How can I get selected?'|| buttonResponse == '📝 मेरा चयन कैसे हो सकता है?') {
         console.log(buttonResponse,"enter inside of how can selected  fn");
         await this.message.sendHowCanSelectedMessage(from, buttonResponse)
+        await this.message.sendStateSelectionButton(from, buttonResponse)
+        await this.message.StateSelectedinfo(from, buttonResponse)
         console.log(buttonResponse);
         return; 
       } 

@@ -31,10 +31,13 @@ export abstract class MessageService {
   abstract sendLanguageSelectionMessage(from: string, language: string);
   abstract sendLanguageChangedMessage(from: string, language: string);
   abstract sendWhoCanApplyButton(from: string, language: string);
-  abstract sendWhoCanApplyMessage(from: string, language: string)
+  //abstract sendWhoCanApplyMessage(from: string, language: string)
 
   // added
   abstract sendHowCanSelectedButton(from: string, language: string);
-  abstract sendHowCanSelectedMessage(from: string, language: string)
+  abstract sendHowCanSelectedMessage(from: string, language: string);
+  abstract sendStateSelectionButton(from: string, language: string);
+  abstract StateSelectedinfo(from: string, language: string);
+  
 
 }
