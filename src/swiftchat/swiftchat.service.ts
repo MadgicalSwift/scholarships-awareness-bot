@@ -139,7 +139,7 @@ export class SwiftchatMessageService extends MessageService {
   
   async sendStateSelectionButton(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
-    const message = "For which state do you want to see the information available?";
+    const message = localisedStrings.StateSelectionMessage;
 
     let states = [];
     try {
@@ -184,7 +184,7 @@ export class SwiftchatMessageService extends MessageService {
 
 async StateSelectedinfo(from: string, language: string) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
-  const defaultMessage = "For which state do you want to see the information available?";
+  const defaultMessage = localisedStrings.like;
   
   let stateDetails = null;
   try {

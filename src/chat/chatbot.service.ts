@@ -53,31 +53,41 @@ export class ChatbotService {
   
     // Handle button response
     if (type === 'button_response') {
+      console.log(userData.language,'first');
+      
       const buttonResponse = body.button_response?.body;
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
-        userData.language = buttonResponse.toLowerCase(); // Save the language
+
+        // Save the selected language and update the user data
+        userData.language = buttonResponse.toLowerCase(); 
         await this.userService.saveUser(userData);
+        
         console.log(`Language changed to: ${buttonResponse}`);
+      
+        // Send confirmation messages
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
         await this.message.sendWhoCanApplyButton(from, buttonResponse);
-        console.log(buttonResponse);
-       
+      
+        // Define the message based on the user's language
+        
+      
         return;  
       }
-        if (buttonResponse == 'Who Can Apply' || buttonResponse == "कौन आवेदन कर सकता है") {
-        console.log(buttonResponse,"enter inside of who can apply  fn");
-        await this.message.sendHowCanSelectedButton(from, buttonResponse)
+
+      const languageMessage = userData.language     
+      if (['Who Can Apply', 'कौन आवेदन कर सकता है'].includes(buttonResponse)) {
+        await this.message.sendHowCanSelectedButton(from, languageMessage);
+        return;
+      }      
+      else if (['📝 How can I get selected?','📝 मेरा चयन कैसे हो सकता है?'].includes(buttonResponse)) {
+        await this.message.sendHowCanSelectedMessage(from, languageMessage)
+        await this.message.sendStateSelectionButton(from, languageMessage)
         return; 
       } 
-      
-      if (buttonResponse == '📝 How can I get selected?'|| buttonResponse == '📝 मेरा चयन कैसे हो सकता है?') {
-        console.log(buttonResponse,"enter inside of how can selected  fn");
-        await this.message.sendHowCanSelectedMessage(from, buttonResponse)
-        await this.message.sendStateSelectionButton(from, buttonResponse)
-        await this.message.StateSelectedinfo(from, buttonResponse)
-        console.log(buttonResponse);
+      else if (['Next','अगला'].includes(buttonResponse)) {
+        await this.message.StateSelectedinfo(from, languageMessage)
         return; 
-      } 
+      }
        
     }
     
