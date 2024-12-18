@@ -62,32 +62,26 @@ export class ChatbotService {
         console.log(`Language changed to: ${buttonResponse}`);
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
         await this.message.sendWhoCanApplyButton(from, buttonResponse);
-        if (buttonResponse == 'Who Can Apply') {
-          console.log(buttonResponse,"enter inside of who can apply  fn");
-          await this.message.sendWhoCanApplyMessage(from, buttonResponse)
-          await this.message.sendHowCanSelectedButton(from, buttonResponse)
-          return; 
-        }
+        
         return;
       }
       console.log(buttonResponse);
       
-     /*  if (buttonResponse == 'Who Can Apply') {
+       if (buttonResponse == 'Who Can Apply') {
         console.log(buttonResponse,"enter inside of who can apply  fn");
         await this.message.sendWhoCanApplyMessage(from, buttonResponse)
         // addd
         await this.message.sendHowCanSelectedButton(from, buttonResponse)
         return; 
       }
- */
       // added
       
-    /*   if (buttonResponse == 'howCanSelected') {
+      if (buttonResponse == 'howCanSelected') {
         console.log(buttonResponse,"enter inside of how can selected  fn");
         await this.message.sendHowCanSelectedMessage(from, buttonResponse)
         console.log(buttonResponse);
         return; 
-      } */
+      } 
        
     }
     
