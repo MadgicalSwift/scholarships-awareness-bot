@@ -32,4 +32,9 @@ export abstract class MessageService {
   abstract sendLanguageChangedMessage(from: string, language: string);
   abstract sendWhoCanApplyButton(from: string, language: string);
   abstract sendWhoCanApplyMessage(from: string, language: string)
+
+  // added
+  abstract sendHowCanSelectedButton(from: string, language: string);
+  abstract sendHowCanSelectedMessage(from: string, language: string)
+
 }

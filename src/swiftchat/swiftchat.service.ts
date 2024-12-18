@@ -81,6 +81,53 @@ export class SwiftchatMessageService extends MessageService {
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
   
+
+// added
+  async sendHowCanSelectedButton(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const message = localisedStrings.whoCanApplyPrompt;
+    
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.howCanSelected,
+            reply: 'howCanSelected',
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+    
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+
+
+// added
+  async sendHowCanSelectedMessage(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const requestData = this.prepareRequestData(
+      from,
+      localisedStrings.selectedMessage,
+    );
+
+    const response = await this.sendMessage(
+      this.baseUrl,
+      requestData,
+      this.apiKey,
+    );
+    return response;
+  }
+
   async sendLanguageSelectionMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.languageSelection;

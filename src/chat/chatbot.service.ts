@@ -28,6 +28,8 @@ export class ChatbotService {
   }
   
   public async processMessage(body: any): Promise<any> {
+    console.log(body,"sangeeta");
+    
     const { from, type } = body;
     const botID = process.env.BOT_ID;
   
@@ -40,14 +42,14 @@ export class ChatbotService {
       userData = {
         mobileNumber: from,
         Botid: botID,
-        language: 'english', // Default language
+        language: 'English', // Default language
       };
       await this.userService.saveUser(userData); // Save the new user
     }
   
     // Ensure language is set
     if (!userData.language) {
-      userData.language = 'english';
+      userData.language = 'English';
       await this.userService.saveUser(userData);
     }
   
@@ -60,11 +62,23 @@ export class ChatbotService {
         console.log(`Language changed to: ${buttonResponse}`);
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
         await this.message.sendWhoCanApplyButton(from, buttonResponse);
-           return;
+        return;
       }
       console.log(buttonResponse);
+      
       if (buttonResponse == 'Who Can Apply') {
+        console.log(buttonResponse,"enter inside of who can apply  fn");
         await this.message.sendWhoCanApplyMessage(from, buttonResponse)
+        // addd
+        await this.message.sendHowCanSelectedButton(from, buttonResponse)
+        return; 
+      }
+
+      // added
+      
+      if (buttonResponse == 'howCanSelected') {
+        console.log(buttonResponse,"enter inside of how can selected  fn");
+        await this.message.sendHowCanSelectedMessage(from, buttonResponse)
         console.log(buttonResponse);
         return; 
       }
