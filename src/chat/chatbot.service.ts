@@ -75,7 +75,7 @@ export class ChatbotService {
       }
 
       const languageMessage = userData.language     
-      if (['Who Can Apply', 'कौन आवेदन कर सकता है'].includes(buttonResponse)) {
+      if (['🎯Who Can Apply', '🎯कौन आवेदन कर सकता है'].includes(buttonResponse)) {
         await this.message.sendHowCanSelectedButton(from, languageMessage);
         return;
       }      
