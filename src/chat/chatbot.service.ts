@@ -34,70 +34,61 @@ export class ChatbotService {
     // Retrieve user data
     let userData = await this.userService.findUserByMobileNumber(from, botID);
   
-    // If userData is null, initialize a new user object
     if (!userData) {
       console.error(`User with mobile number ${from} not found.`);
       userData = {
         mobileNumber: from,
         Botid: botID,
-        language: 'English', // Default language
+        language: 'English', // Default languag  
       };
       await this.userService.saveUser(userData); // Save the new user
     }
   
-    // Ensure language is set
     if (!userData.language) {
       userData.language = 'English';
       await this.userService.saveUser(userData);
     }
   
-    // Handle button response
     if (type === 'button_response') {
-      console.log(userData.language,'first');
-      
       const buttonResponse = body.button_response?.body;
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
 
         // Save the selected language and update the user data
         userData.language = buttonResponse.toLowerCase(); 
         await this.userService.saveUser(userData);
-        
-        console.log(`Language changed to: ${buttonResponse}`);
-      
-        // Send confirmation messages
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
         await this.message.sendWhoCanApplyButton(from, buttonResponse);
-      
-        // Define the message based on the user's language
-        
-      
-        return;  
+     return;  
       }
 
-      const languageMessage = userData.language     
+      const languageMessage = userData.language
+       const statesfetch  = await localisedStrings.States()     
       if (['🎯Who Can Apply', '🎯कौन आवेदन कर सकता है'].includes(buttonResponse)) {
         await this.message.sendHowCanSelectedButton(from, languageMessage);
         return;
       }      
       else if (['📝 How can I get selected?','📝 मेरा चयन कैसे हो सकता है?'].includes(buttonResponse)) {
         await this.message.sendHowCanSelectedMessage(from, languageMessage)
-        await this.message.sendStateSelectionButton(from, languageMessage)
         return; 
       } 
-      else if (['Next','अगला'].includes(buttonResponse)) {
-        await this.message.StateSelectedinfo(from, languageMessage)
-        return; 
-      }
-       
+      else if (['Next', 'अगला'].includes(buttonResponse)) {
+        await this.message.sendStateSelectionButton(from, languageMessage)
+                   return;
     }
+
+    else if (statesfetch.includes(buttonResponse)) {
+      await this.message.StateSelectedinfo(from, languageMessage, buttonResponse)
+                 return;
+  }
+     
+       
+}
     
     const { text } = body;
     if (!text || !text.body) {
-      console.error('Text or body is missing:', body);
       return;
     }
-  
-    // Determine intent
+ 
     const { intent } = this.intentClassifier.getIntent(text.body);
   
     // Save updated user data

@@ -9,6 +9,8 @@ export class User {
 
   @IsString()
   Botid: string;
-
   
+
+  @IsString()
+  selectedState?: string;
 }
