@@ -78,12 +78,10 @@ export class ChatbotService {
 
     else if (statesfetch.includes(buttonResponse)) {
       await this.message.StateSelectedinfo(from, languageMessage, buttonResponse)
-                 return;
-  }
-     
-       
-}
-    
+         return;
+      
+  }      
+}   
     const { text } = body;
     if (!text || !text.body) {
       return;

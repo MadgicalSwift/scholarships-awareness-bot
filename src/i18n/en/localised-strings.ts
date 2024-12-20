@@ -14,6 +14,14 @@ export const localisedStrings = {
   selectedMessage:'You will need to take an exam. The exam has two sections:\n **1.Mental Ability Test(MAT):** To test problem-solving and logical thinking. \n **2.Scholastic Ability Test (SAT):** Questions based on your school subjects like Science, Maths and Social Studies.',
   StateSelectionMessage: 'For which state do you want to see the information available?',
   like:'What would you like to do next',
+  applyNow: 'Apply Now',
+  applynowMessage : "Click the button below to Apply Now",
+  seeMore: 'See More',
+  seeMoreMessage2: "Click the button below to See More",
+ SeeQuestionPapers: 'See Question Papers',
+ questionpaperMessage : "Click the button below for question Papers",
+ surenextbutton: "Sure, please click on 'Next' to continue",
+ Next: "Next⏭️",
   async States() {
   
         const response = await axios.get(
