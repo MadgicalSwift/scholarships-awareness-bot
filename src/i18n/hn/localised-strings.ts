@@ -12,11 +12,9 @@ export const localisedStrings = {
   StateSelectionMessage:'आप किस राज्य के लिए उपलब्ध जानकारी देखना चाहते हैं?',
   like:'अब आप क्या करना चाहेंगे',
   applyNow: 'अभी अप्लाई करें',
-  applynowMessage :  "अभी आवेदन करने के लिए नीचे दिए गए बटन पर क्लिक करें",
   seeMore: 'और देखें',
-  seeMoreMessage2 :  "अधिक देखने के लिए नीचे दिए गए बटन पर क्लिक करें",
   SeeQuestionPapers: 'प्रश्न पत्र देखें',
-  questionpaperMessage :  "अधिक देखने के लिए नीचे दिए गए बटन पर क्लिक करें",
+  buttonPrompt: "एक विकल्प चुनें",
   surenextbutton: "ज़रूर, जारी रखने के लिए कृपया 'अगला' पर क्लिक करें",
   Next: "अगला⏭️"
 };

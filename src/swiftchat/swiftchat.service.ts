@@ -187,7 +187,7 @@ export class SwiftchatMessageService extends MessageService {
       let stateDetails = null;
       try {
         const response = await axios.get(
-          "https://script.google.com/macros/s/AKfycbwOHTUl17ZPwIw-m90UHDNyrovPifw6fQrSjUkmSprkka4UtEpJhFIUIkRqsJkjsPzNxA/exec",
+          "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
           {
             params: { action: "getStateDetails", state: selectedState },
           }
@@ -268,24 +268,26 @@ export class SwiftchatMessageService extends MessageService {
         } catch (error) {
           console.error("Error sending state details message:", error);
         }
-         let responseMessage = "";  // Variable to store the response
-            if (stateDetails["Apply Link"] && stateDetails["Apply Link"] !== "NA") {
-                responseMessage = "Apply Now Button";  // Store the response message
-                await this.SendApplyNowButton(from, language);
-            } else if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
-                // If 'Weblink' is present, call SendSeeMore
-                responseMessage = "See More Button";  // Store the response message
-                await this.SendSeeMore(from, language);
-            } else if (stateDetails["question paper"] && stateDetails["question paper"] !== "NA") {
-                responseMessage = "Question Paper";  // Store the response message
-                await this.SendQuestionPaper(from, language);
-            } else {
-                responseMessage = "Nothing";  
-                console.log("nothing");
-            }
-              console.log(responseMessage);  
+         
+        let responseMessage = [];
+        if (stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"] !== "NA") {
+            responseMessage.push("Apply Now");
+        }
+        if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
+            responseMessage.push("See More");
+        }
+        if (stateDetails["question paper"] && stateDetails["question paper"] !== "NA") {
+            responseMessage.push("See Question Papers");
+        }
+        // Step 2: Call the function to send buttons
+        if (responseMessage.length > 0) {
+            await this.sendButtonsBasedOnResponse(from, language, responseMessage);
+        } else {
+            // Handle case where no buttons need to be sent
+            console.log("No options available at the moment.");
+        }
+
            
-       
       } else {
         messageContent += `\n\n${stateDetails.error}`;
         // Send error message to the user
@@ -305,81 +307,57 @@ export class SwiftchatMessageService extends MessageService {
       }
     }
      
-      async SendApplyNowButton(from: string, language: string) {
-        const localisedStrings = LocalizationService.getLocalisedString(language);
-        const message = localisedStrings.applynowMessage;
-        const messageData = {
+
+    async sendButtonsBasedOnResponse(from, language, responseMessage) {
+      const localisedStrings = LocalizationService.getLocalisedString(language);
+      const buttons = responseMessage.map((message) => {
+          switch (message) {
+              case "Apply Now":
+                  return {
+                      type: 'solid',
+                      body: localisedStrings.applyNow || "Apply Now", 
+                      reply: localisedStrings.applyNow || "Apply Now",
+                  };
+              case "See More":
+                  return {
+                      type: 'solid',
+                      body: localisedStrings.seeMore || "See More",
+                      reply: localisedStrings.seeMore || "See More",
+                  };
+              case "See Question Papers":
+                  return {
+                      type: 'solid',
+                      body: localisedStrings.seeQuestionPapers || "See Question Papers",
+                      reply: localisedStrings.seeQuestionPapers || "See Question Papers",
+                  };
+              default:
+                  return {
+                      type: 'solid',
+                      body: message,
+                      reply: message,
+                  };
+          }
+      });
+      const messageData = {
           to: from,
           type: 'button',
           button: {
-            body: {
-              type: 'text',
-              text: {
-                body: message,
+              body: {
+                  type: 'text',
+                  text: {
+                      body: localisedStrings.buttonPrompt, 
+                  },
               },
-            },
-            buttons: [
-              {
-                type: 'solid',
-                body: localisedStrings.applyNow,
-                reply: localisedStrings.applyNow,
-              },
-            ],
-            allow_custom_response: false,
+              buttons: buttons,
+              allow_custom_response: false, 
           },
-        };
-        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-      }
-      async SendSeeMore(from: string, language: string) {
-        const localisedStrings = LocalizationService.getLocalisedString(language);
-        const message = localisedStrings.seeMoreMessage2;
-        const messageData = {
-          to: from,
-          type: 'button',
-          button: {
-            body: {
-              type: 'text',
-              text: {
-                body: message,
-              },
-            },
-            buttons: [
-              {
-                type: 'solid',
-                body: localisedStrings.seeMore,
-                reply: localisedStrings.seeMore,
-              },
-            ],
-            allow_custom_response: false,
-          },
-        };
-        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-      }
-      async SendQuestionPaper(from: string, language: string) {
-        const localisedStrings = LocalizationService.getLocalisedString(language);
-        const message = localisedStrings.questionpaperMessage;
-        const messageData = {
-          to: from,
-          type: 'button',
-          button: {
-            body: {
-              type: 'text',
-              text: {
-                body: message,
-              },
-            },
-            buttons: [
-              {
-                type: 'solid',
-                body: localisedStrings.SeeQuestionPapers,
-                reply: localisedStrings.SeeQuestionPapers,
-              },
-            ],
-            allow_custom_response: false,
-          },
-        };
-        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-      }
+      };
+      // Send the message using your messaging method
+      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+
+
+
 
       async Surebutton(from: string, language: string) {
         const localisedStrings = LocalizationService.getLocalisedString(language);

@@ -15,12 +15,10 @@ export const localisedStrings = {
   StateSelectionMessage: 'For which state do you want to see the information available?',
   like:'What would you like to do next',
   applyNow: 'Apply Now',
-  applynowMessage : "Click the button below to Apply Now",
   seeMore: 'See More',
-  seeMoreMessage2: "Click the button below to See More",
  SeeQuestionPapers: 'See Question Papers',
- questionpaperMessage : "Click the button below for question Papers",
  surenextbutton: "Sure, please click on 'Next' to continue",
+ buttonPrompt:"Choose an option:",
  Next: "Next⏭️",
   async States() {
   
