@@ -184,6 +184,7 @@ export class SwiftchatMessageService extends MessageService {
         const localisedStrings = LocalizationService.getLocalisedString(language);
         let stateDetails = null;
         let questionPapers = null;
+        
     
         try {
             // Fetch state details
@@ -196,8 +197,6 @@ export class SwiftchatMessageService extends MessageService {
             if (stateResponse.data) {
                 stateDetails = stateResponse.data;
             }
-    
-            // Fetch question papers
             const questionPapersResponse = await axios.get(
                 "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
                 {
@@ -267,11 +266,6 @@ export class SwiftchatMessageService extends MessageService {
         }
     }
 
-    
-
-
-
-
     async sendButtonsBasedOnResponse(from, language, responseMessage) {
       const localisedStrings = LocalizationService.getLocalisedString(language);
       const buttons = responseMessage.map((message) => {
@@ -279,20 +273,20 @@ export class SwiftchatMessageService extends MessageService {
               case "Apply Now":
                   return {
                       type: 'solid',
-                      body: localisedStrings.applyNow || "Apply Now", 
-                      reply: localisedStrings.applyNow || "Apply Now",
+                      body: localisedStrings.applyNow, 
+                      reply: localisedStrings.applyNow,
                   };
               case "See More":
                   return {
                       type: 'solid',
-                      body: localisedStrings.seeMore || "See More",
-                      reply: localisedStrings.seeMore || "See More",
+                      body: localisedStrings.seeMore,
+                      reply: localisedStrings.seeMore,
                   };
               case "See Question Papers":
                   return {
                       type: 'solid',
-                      body: localisedStrings.seeQuestionPapers || "See Question Papers",
-                      reply: localisedStrings.seeQuestionPapers || "See Question Papers",
+                      body: localisedStrings.SeeQuestionPaper,
+                      reply: localisedStrings.SeeQuestionPaper,
                   };
               default:
                   return {
@@ -320,10 +314,7 @@ export class SwiftchatMessageService extends MessageService {
       return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
 
-
-
-
-      async Surebutton(from: string, language: string) {
+      async Surebuttonapply(from: string, language: string) {
         const localisedStrings = LocalizationService.getLocalisedString(language);
         const message = localisedStrings.surenextbutton;
         const messageData = {
@@ -348,31 +339,57 @@ export class SwiftchatMessageService extends MessageService {
         };
         return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
       }
-
+      async Surebuttonseemore(from: string, language: string) {
+        const localisedStrings = LocalizationService.getLocalisedString(language);
+        const message = localisedStrings.surenextbutton;
+        const messageData = {
+          to: from,
+          type: 'button',
+          button: {
+            body: {
+              type: 'text',
+              text: {
+                body: message,
+              },
+            },
+            buttons: [
+              {
+                type: 'solid',
+                body: localisedStrings.Next,
+                reply: localisedStrings.Next,
+              },
+            ],
+            allow_custom_response: false,
+          },
+        };
+        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+      }
+      async Surebuttonquestionpaper(from: string, language: string) {
+        const localisedStrings = LocalizationService.getLocalisedString(language);
+        const message = localisedStrings.surenextbutton;
+        const messageData = {
+          to: from,
+          type: 'button',
+          button: {
+            body: {
+              type: 'text',
+              text: {
+                body: message,
+              },
+            },
+            buttons: [
+              {
+                type: 'solid',
+                body: localisedStrings.Next,
+                reply: localisedStrings.Next,
+              },
+            ],
+            allow_custom_response: false,
+          },
+        };
+        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+      }
      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   async sendLanguageSelectionMessage(from: string, language: string) {
