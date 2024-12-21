@@ -81,21 +81,10 @@ export class ChatbotService {
          return;
       
   }    
-  else if ([localisedStrings.applyNow].includes(buttonResponse)) {
-     await this.message. Surebuttonapply(from, languageMessage)
-       return;
-    
-} 
-else if ([localisedStrings.seeMore].includes(buttonResponse)) {
-   await this.message. Surebuttonseemore(from, languageMessage)
-     return;
-  
-} 
-else if ([localisedStrings.SeeQuestionPaper].includes(buttonResponse)) {
-   await this.message. Surebuttonquestionpaper(from, languageMessage)
-     return;
-  
-}      
+  /* else if ([localisedStrings.SeeQuestionPaper || localisedStrings.seeMore || localisedStrings.applyNow].includes(buttonResponse)) {
+    await this.message.nextButton(from, languageMessage)
+               return;
+} */
 }   
     const { text } = body;
     if (!text || !text.body) {

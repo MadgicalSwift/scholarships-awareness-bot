@@ -180,7 +180,7 @@ export class SwiftchatMessageService extends MessageService {
         console.error('Error sending message:', error); // Handle any errors during message sending
     }
 }
-      async StateSelectedinfo(from, language, selectedState) {
+     /*  async StateSelectedinfo(from, language, selectedState) {
         const localisedStrings = LocalizationService.getLocalisedString(language);
         let stateDetails = null;
         let questionPapers = null;
@@ -265,7 +265,188 @@ export class SwiftchatMessageService extends MessageService {
             console.error("Error sending message:", error);
         }
     }
-
+ */
+    /* async StateSelectedinfo(from, language, selectedState) {
+      const localisedStrings = LocalizationService.getLocalisedString(language);
+      let stateDetails = null;
+      let questionPapers = null;
+  
+      try {
+          // Fetch state details
+          const stateResponse = await axios.get(
+              "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+              {
+                  params: { action: "getStateDetails", state: selectedState },
+              }
+          );
+          if (stateResponse.data) {
+              stateDetails = stateResponse.data;
+          }
+          const questionPapersResponse = await axios.get(
+              "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+              {
+                  params: { action: "getQuestionPaper", state: selectedState },
+              }
+          );
+          if (questionPapersResponse.data) {
+              questionPapers = questionPapersResponse.data;
+          }
+      } catch (error) {
+          console.error("Error fetching data:", error);
+      }
+  
+      let messageContent = "";
+      let responseMessage = [];
+  
+      if (stateDetails && !stateDetails.error) {
+          // Process state details
+          const eligibilityCriteria = [
+              stateDetails["State Name"] && stateDetails["State Name"] !== "NA" && `• State Name: ${stateDetails["State Name"]}`,
+              stateDetails["Minimum Percentage (Class 7)"] && stateDetails["Minimum Percentage (Class 7)"] !== "NA" && `• Minimum Percentage (Class 7): ${stateDetails["Minimum Percentage (Class 7)"]}`,
+              stateDetails["Family Income Limit"] && stateDetails["Family Income Limit"] !== "NA" && `• Family Income Limit: ${stateDetails["Family Income Limit"]}`,
+          ].filter(Boolean).join("\n");
+  
+          const applicationProcess = [
+              stateDetails["Application Mode"] && stateDetails["Application Mode"] !== "NA" && `• Application Mode: ${stateDetails["Application Mode"]}`,
+              stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA" && `• Portal/Website Link: ${stateDetails["Portal/Website Link"]}`,
+              stateDetails["Helpdesk Contact Number"] && stateDetails["Helpdesk Contact Number"] !== "NA" && `• Helpdesk Contact Number: ${stateDetails["Helpdesk Contact Number"]}`,
+          ].filter(Boolean).join("\n");
+  
+          const importantDates = [
+              stateDetails["Application Start Date"] && stateDetails["Application Start Date"] !== "NA" && `• Application Start Date: ${stateDetails["Application Start Date"]}`,
+              stateDetails["Application End Date"] && stateDetails["Application End Date"] !== "NA" && `• Application End Date: ${stateDetails["Application End Date"]}`,
+              stateDetails["Exam Date/Expected Month"] && stateDetails["Exam Date/Expected Month"] !== "NA" && `• Exam Date/Expected Month: ${stateDetails["Exam Date/Expected Month"]}`,
+          ].filter(Boolean).join("\n");
+  
+          messageContent += `📋 Eligibility Criteria:\n${eligibilityCriteria}\n\n📂 Application Process:\n${applicationProcess}\n\n📅 Important Dates:\n${importantDates}`;
+          responseMessage.push("Apply Now", "See More");
+      } else {
+          messageContent += `\n\nUnable to fetch state details. Please try again later.`;
+      }
+  
+      if (questionPapers && !questionPapers.error) {
+          let questionPaperDetails = "\n📚 Available Question Papers:\n";
+          questionPapers.forEach((paper, index) => {
+              questionPaperDetails += `• ${paper["State"]} (${paper["Year"]}) - [PDF](${paper["PDF Link"]})\n`;
+          });
+          messageContent += questionPaperDetails;
+          responseMessage.push("See Question Papers");
+      }
+   console.log(stateDetails);
+      const messageData = {
+          to: from,
+          type: "text",
+          text: {
+              body: messageContent,
+          },
+      };
+  
+      try {
+          await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+          if (responseMessage.length > 0) {
+              await this.sendButtonsBasedOnResponse(from, language, responseMessage);
+          }
+      } catch (error) {
+          console.error("Error sending message:", error);
+      }
+  } */
+      async StateSelectedinfo(from, language, selectedState) {
+        const localisedStrings = LocalizationService.getLocalisedString(language);
+        let stateDetails = null;
+        let questionPapers = null;
+    
+        try {
+            // Fetch state details
+            const stateResponse = await axios.get(
+                "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+                {
+                    params: { action: "getStateDetails", state: selectedState },
+                }
+            );
+            if (stateResponse.data) {
+                stateDetails = stateResponse.data;
+            }
+            const questionPapersResponse = await axios.get(
+                "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+                {
+                    params: { action: "getQuestionPaper", state: selectedState },
+                }
+            );
+            if (questionPapersResponse.data) {
+                questionPapers = questionPapersResponse.data;
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    
+        let messageContent = "";
+        let responseMessage = [];
+    
+        if (stateDetails && !stateDetails.error) {
+            // Process state details
+            const eligibilityCriteria = [
+                stateDetails["State Name"] && stateDetails["State Name"] !== "NA" && `• State Name: ${stateDetails["State Name"]}`,
+                stateDetails["Minimum Percentage (Class 7)"] && stateDetails["Minimum Percentage (Class 7)"] !== "NA" && `• Minimum Percentage (Class 7): ${stateDetails["Minimum Percentage (Class 7)"]}`,
+                stateDetails["Family Income Limit"] && stateDetails["Family Income Limit"] !== "NA" && `• Family Income Limit: ${stateDetails["Family Income Limit"]}`,
+            ].filter(Boolean).join("\n");
+    
+            const applicationProcess = [
+                stateDetails["Application Mode"] && stateDetails["Application Mode"] !== "NA" && `• Application Mode: ${stateDetails["Application Mode"]}`,
+                stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA" && `• Portal/Website Link: ${stateDetails["Portal/Website Link"]}`,
+                stateDetails["Helpdesk Contact Number"] && stateDetails["Helpdesk Contact Number"] !== "NA" && `• Helpdesk Contact Number: ${stateDetails["Helpdesk Contact Number"]}`,
+            ].filter(Boolean).join("\n");
+    
+            const importantDates = [
+                stateDetails["Application Start Date"] && stateDetails["Application Start Date"] !== "NA" && `• Application Start Date: ${stateDetails["Application Start Date"]}`,
+                stateDetails["Application End Date"] && stateDetails["Application End Date"] !== "NA" && `• Application End Date: ${stateDetails["Application End Date"]}`,
+                stateDetails["Exam Date/Expected Month"] && stateDetails["Exam Date/Expected Month"] !== "NA" && `• Exam Date/Expected Month: ${stateDetails["Exam Date/Expected Month"]}`,
+            ].filter(Boolean).join("\n");
+    
+            messageContent += `📋 Eligibility Criteria:\n${eligibilityCriteria}\n\n📂 Application Process:\n${applicationProcess}\n\n📅 Important Dates:\n${importantDates}`;
+    
+            // Check conditions for buttons
+            if (stateDetails["Portal/Website Link"] === "NA") {
+                responseMessage.push("Apply Now", "See Question Papers");
+            } else if (stateDetails["Apply Now Link"] !== "NA") {
+                responseMessage.push("See Question Papers", "see More");
+            } else if (stateDetails["questionPapers"] === "NA") {
+                responseMessage.push("Apply Now", "See More");
+            } else {
+                responseMessage.push("Apply Now", "See More", "See Question Papers");
+            }
+        } else {
+            messageContent += `\n\nUnable to fetch state details. Please try again later.`;
+        }
+    
+        if (questionPapers && !questionPapers.error) {
+            let questionPaperDetails = "\n📚 Available Question Papers:\n";
+            questionPapers.forEach((paper, index) => {
+                questionPaperDetails += `• ${paper["State"]} (${paper["Year"]}) - [PDF](${paper["PDF Link"]})\n`;
+            });
+            messageContent += questionPaperDetails;
+            if (!responseMessage.includes("See Question Papers")) {
+                responseMessage.push("See Question Papers");
+            }
+        }
+    
+        const messageData = {
+            to: from,
+            type: "text",
+            text: {
+                body: messageContent,
+            },
+        };
+    
+        try {
+            await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+            if (responseMessage.length > 0) {
+                await this.sendButtonsBasedOnResponse(from, language, responseMessage);
+            }
+        } catch (error) {
+            console.error("Error sending message:", error);
+        }
+    }
+    
     async sendButtonsBasedOnResponse(from, language, responseMessage) {
       const localisedStrings = LocalizationService.getLocalisedString(language);
       const buttons = responseMessage.map((message) => {
@@ -314,82 +495,54 @@ export class SwiftchatMessageService extends MessageService {
       return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
 
-      async Surebuttonapply(from: string, language: string) {
-        const localisedStrings = LocalizationService.getLocalisedString(language);
-        const message = localisedStrings.surenextbutton;
-        const messageData = {
-          to: from,
-          type: 'button',
-          button: {
-            body: {
-              type: 'text',
-              text: {
-                body: message,
-              },
-            },
-            buttons: [
-              {
-                type: 'solid',
-                body: localisedStrings.Next,
-                reply: localisedStrings.Next,
-              },
-            ],
-            allow_custom_response: false,
+
+
+  /* async nextButton(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+  
+    
+    const messageData = {
+      to: from,
+      type: 'action',
+      action: {
+        body: {
+          type: 'text',
+          text: {
+            body: localisedStrings.surenextbutton,
           },
-        };
-        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-      }
-      async Surebuttonseemore(from: string, language: string) {
-        const localisedStrings = LocalizationService.getLocalisedString(language);
-        const message = localisedStrings.surenextbutton;
-        const messageData = {
-          to: from,
-          type: 'button',
-          button: {
-            body: {
-              type: 'text',
-              text: {
-                body: message,
-              },
-            },
-            buttons: [
-              {
-                type: 'solid',
-                body: localisedStrings.Next,
-                reply: localisedStrings.Next,
-              },
-            ],
-            allow_custom_response: false,
+        },
+        actions: [
+          {
+            button_text: localisedStrings.Next,
+            type: "website",
+            website: {
+              title: "Welcome to Swiftchat",
+              payload: "qwerty",
+              url: "https://script.google.com/macros/s/AKfycbwOHTUl17ZPwIw-m90UHDNyrovPifw6fQrSjUkmSprkka4UtEpJhFIUIkRqsJkjsPzNxA/exec",
+              allow_website_downloads: true
+            }
           },
-        };
-        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+        ]
       }
-      async Surebuttonquestionpaper(from: string, language: string) {
-        const localisedStrings = LocalizationService.getLocalisedString(language);
-        const message = localisedStrings.surenextbutton;
-        const messageData = {
-          to: from,
-          type: 'button',
-          button: {
-            body: {
-              type: 'text',
-              text: {
-                body: message,
-              },
-            },
-            buttons: [
-              {
-                type: 'solid',
-                body: localisedStrings.Next,
-                reply: localisedStrings.Next,
-              },
-            ],
-            allow_custom_response: false,
-          },
-        };
-        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-      }
-     
+    }
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+
+
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   async sendLanguageSelectionMessage(from: string, language: string) {
