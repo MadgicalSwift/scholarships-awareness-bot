@@ -127,6 +127,7 @@ async createUser(mobileNumber: string, language: string, botID: string, selected
 
     if (user) {
       // Update the user with the selected state
+      //user.selectedState = selectedState;
       user.selectedState = selectedState;
       await this.saveUser(user); // Save the updated user
       return user; // Return updated user
@@ -138,6 +139,7 @@ async createUser(mobileNumber: string, language: string, botID: string, selected
         Botid: botID,
         id: uuidv4(), // Unique ID
         selectedState, // Save the selected state
+        
       };
 
       await this.saveUser(newUser); // Save new user
@@ -163,34 +165,38 @@ async saveUser(user: User): Promise<void> {
 }
 
 
-  async findUserByMobileNumber(mobileNumber: string, Botid: string): Promise<User | null> {
-    try {
-      const params = {
-        TableName: USERS_TABLE,
-        KeyConditionExpression: 'mobileNumber = :mobileNumber and Botid = :Botid',
-        ExpressionAttributeValues: {
-          ':mobileNumber': mobileNumber,
-          ':Botid': Botid,
-        },
-      };
-      const result = await dynamoDBClient().query(params).promise();
+async findUserByMobileNumber(
+  mobileNumber: string,
+  Botid: string,
+): Promise<User | null> {
+  try {
+    const params = {
+      TableName: USERS_TABLE,
+      KeyConditionExpression: 'mobileNumber = :mobileNumber and Botid = :Botid',
+      ExpressionAttributeValues: {
+        ':mobileNumber': mobileNumber,
+        ':Botid': Botid,
+      },
+    };
+    const result = await dynamoDBClient().query(params).promise();
 
-      if (result.Items && result.Items.length > 0) {
-        const user = result.Items[0];
-        return {
-          mobileNumber: user.mobileNumber,
-          language: user.language,
-          Botid: user.Botid,
-          id: user.id,
-          selectedState: user.selectedState,  // Include selectedState when returning user
-        } as User;
-      }
-      return null;
-    } catch (error) {
-      console.error('Error querying user from DynamoDB:', error);
-      return null;
+    if (result.Items && result.Items.length > 0) {
+      const user = result.Items[0];
+      return {
+        mobileNumber: user.mobileNumber,
+        language: user.language,
+        Botid: user.Botid,
+        id: user.id,
+        selectedState: user.selectedState, // Include selectedState
+      } as User;
     }
+    return null;
+  } catch (error) {
+    console.error('Error querying user from DynamoDB:', error);
+    return null;
   }
+}
+
 
   
 

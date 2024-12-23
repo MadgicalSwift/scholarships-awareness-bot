@@ -10,7 +10,8 @@ export class User {
   @IsString()
   Botid: string;
   
-
   @IsString()
-  selectedState?: string;
+  selectedState: string; 
+  @IsString()
+  lastResponse?: string;
 }

@@ -14,7 +14,7 @@ export class ChatbotService {
   private readonly message: MessageService;
   private readonly userService: UserService;
   private readonly swiftchatService: SwiftchatMessageService; 
- 
+  private selectedState: string | null = null;
   constructor(
     intentClassifier: IntentClassifier,
     message: MessageService,
@@ -39,7 +39,8 @@ export class ChatbotService {
       userData = {
         mobileNumber: from,
         Botid: botID,
-        language: 'English', // Default languag  
+        language: 'English', // Default languag 
+        selectedState: userData?.selectedState ||'default_state',
       };
       await this.userService.saveUser(userData); // Save the new user
     }
@@ -81,8 +82,12 @@ export class ChatbotService {
       
   }    
      else if (['Apply Now','See More','See Question Papers'].includes(buttonResponse)) {
-    console.log(buttonResponse);
-    await this.message.nextButton(from, languageMessage) 
+      let  previousButton = buttonResponse;
+      this.selectedState = userData.selectedState; // Store the selected state
+        
+      console.log(previousButton);  // Debugging previous button
+      console.log(this.selectedState); // Debugging selected state
+  await this.message.nextButton(from, languageMessage, this.selectedState, previousButton);
 }  
 }   
     const { text } = body;

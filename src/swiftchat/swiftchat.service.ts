@@ -11,6 +11,7 @@ export class SwiftchatMessageService extends MessageService {
   private apiKey = process.env.API_KEY;
   private apiUrl = process.env.API_URL;
   private baseUrl = `${this.apiUrl}/${this.botId}/messages`;
+  private selectedStateStore: Map<string, string> = new Map();
 
   private prepareRequestData(from: string, requestBody: string): any {
     return {
@@ -135,6 +136,31 @@ export class SwiftchatMessageService extends MessageService {
 
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  storeSelectedState(conversationId: string, selectedState: string) {
+    this.selectedStateStore.set(conversationId, selectedState);
+  }
+  getSelectedState(conversationId: string): string | undefined {
+    return this.selectedStateStore.get(conversationId);
+  }
+
+
+
+
 
   async sendStateSelectionButton(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
@@ -180,12 +206,12 @@ export class SwiftchatMessageService extends MessageService {
         console.error('Error sending message:', error); // Handle any errors during message sending
     }
 }
-
 async StateSelectedinfo(from, language, selectedState) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   let stateDetails = null;
   let questionPapers = null;
-
+  
+  this.storeSelectedState(from, selectedState);
   try {
       // Fetch state details
       const stateResponse = await axios.get(
@@ -240,10 +266,12 @@ async StateSelectedinfo(from, language, selectedState) {
       // Add conditional buttons
       if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
           responseButtons.push("See More");
+          
       }
 
       if (stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"] !== "NA") {
           responseButtons.push("Apply Now");
+         
       }
   } else {
       messageContent += `\n\nUnable to fetch state details. Please try again later.`;
@@ -258,6 +286,7 @@ async StateSelectedinfo(from, language, selectedState) {
 
       // Add "See Question Papers" button
       responseButtons.push("See Question Papers");
+      
   }
 
   const messageData = {
@@ -273,12 +302,63 @@ async StateSelectedinfo(from, language, selectedState) {
       if (responseButtons.length > 0) {
           await this.sendButtonsBasedOnResponse(from, language, responseButtons);
       }
-      //await this.nextButton(from, language);
+         
   } catch (error) {
       console.error("Error sending message:", error);
   }
 }
+async  getLinkForButton(from, language, selectedState, previousButton) {
+  // Initialize localised strings for the language
+  const localisedStrings = LocalizationService.getLocalisedString(language);
 
+  // Initialize variables to store state details and question papers
+  let stateDetails = null;
+  let questionPapers = null;
+
+  try {
+    // Fetch state details
+    const stateResponse = await axios.get(
+      "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+      {
+        params: { action: "getStateDetails", state: selectedState },
+      }
+    );
+    if (stateResponse.data) {
+      stateDetails = stateResponse.data;
+    }
+
+    // Fetch question papers
+    const questionPapersResponse = await axios.get(
+      "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+      {
+        params: { action: "getQuestionPaper", state: selectedState },
+      }
+    );
+    if (questionPapersResponse.data) {
+      questionPapers = questionPapersResponse.data;
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+
+  // Return the appropriate link based on the button action
+  let link = "";
+
+  // Check if the previous button is "Apply Now"
+  if (previousButton === "Apply Now" && stateDetails && stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"] !== "NA") {
+    link = stateDetails["Apply Now Link"];
+  } 
+  // Handle other button actions
+  else if (previousButton === "See More" && stateDetails && stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
+    link = stateDetails["Portal/Website Link"];
+  } 
+  else if (previousButton === "See Question Papers" && questionPapers && questionPapers.length > 0) {
+    // For "See Question Papers", we can return the first available question paper link as an example
+    link = questionPapers[0]["PDF Link"];
+  }
+
+  return link; // Return the appropriate link
+}
 
 async sendButtonsBasedOnResponse(from, language, responseButtons) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
@@ -328,8 +408,10 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
 
   return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
 }
-async nextButton(from: string, language: string) {
+  async nextButton(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
+  const link = await this.getLinkForButton(from, language, selectedState, previousButton);
+
   const messageData = {
       to: from,
       type: 'action',
@@ -347,7 +429,7 @@ async nextButton(from: string, language: string) {
                   website: {
                       title: "Welcome to Swiftchat",
                       payload: "qwerty",
-                      url: "https://script.google.com/macros/s/AKfycbwOHTUl17ZPwIw-m90UHDNyrovPifw6fQrSjUkmSprkka4UtEpJhFIUIkRqsJkjsPzNxA/exec"
+                      url: link
                   }
               },
           ]
@@ -358,29 +440,13 @@ async nextButton(from: string, language: string) {
   } catch (error) {
       console.error("Error sending message:", error);
   }
-}
-
-
+}  
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   async sendLanguageSelectionMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.languageSelection;
-
+  
     const messageData = {
       to: from,
       type: 'button',
