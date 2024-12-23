@@ -36,7 +36,7 @@ export abstract class MessageService {
   abstract sendStateSelectionButton(from: string, language: string);
   abstract StateSelectedinfo(from: string, language: string, selectedState: string);
   abstract  sendButtonsBasedOnResponse(from: string, language: string, responseMessage: string); 
-  //abstract nextButton(from: string, language: string);
+  abstract nextButton(from: string, language: string);
   
 
 }

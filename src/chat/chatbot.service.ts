@@ -53,7 +53,6 @@ export class ChatbotService {
       const buttonResponse = body.button_response?.body;
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
 
-        // Save the selected language and update the user data
         userData.language = buttonResponse.toLowerCase(); 
         await this.userService.saveUser(userData);
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
@@ -65,27 +64,26 @@ export class ChatbotService {
        const statesfetch  = await localisedStrings.States()     
       if (['🎯Who Can Apply', '🎯कौन आवेदन कर सकता है'].includes(buttonResponse)) {
         await this.message.sendHowCanSelectedButton(from, languageMessage);
-        return;
+        
       }      
       else if (['📝 How can I get selected?','📝 मेरा चयन कैसे हो सकता है?'].includes(buttonResponse)) {
         await this.message.sendHowCanSelectedMessage(from, languageMessage)
-        return; 
+         
       } 
       else if (['Next', 'अगला'].includes(buttonResponse)) {
         await this.message.sendStateSelectionButton(from, languageMessage)
-                   return;
+                  
     }
 
     else if (statesfetch.includes(buttonResponse)) {
       await this.message.StateSelectedinfo(from, languageMessage, buttonResponse)
-         return;
+
       
   }    
-   /* else if ([localisedStrings.SeeQuestionPaper || localisedStrings.seeMore || localisedStrings.applyNow].includes(buttonResponse)) {
+     else if (['Apply Now','See More','See Question Papers'].includes(buttonResponse)) {
     console.log(buttonResponse);
-    await this.message.nextButton(from, languageMessage)
-               return; */
-//} 
+    await this.message.nextButton(from, languageMessage) 
+}  
 }   
     const { text } = body;
     if (!text || !text.body) {

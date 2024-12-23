@@ -273,6 +273,7 @@ async StateSelectedinfo(from, language, selectedState) {
       if (responseButtons.length > 0) {
           await this.sendButtonsBasedOnResponse(from, language, responseButtons);
       }
+      //await this.nextButton(from, language);
   } catch (error) {
       console.error("Error sending message:", error);
   }
@@ -327,34 +328,37 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
 
   return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
 }
-  /*  async nextButton(from: string, language: string) {
-    const localisedStrings = LocalizationService.getLocalisedString(language);
-    const messageData = {
+async nextButton(from: string, language: string) {
+  const localisedStrings = LocalizationService.getLocalisedString(language);
+  const messageData = {
       to: from,
       type: 'action',
       action: {
-        body: {
-          type: 'text',
-          text: {
-            body: localisedStrings.surenextbutton,
+          body: {
+              type: 'text',
+              text: {
+                  body: localisedStrings.surenextbutton,
+              },
           },
-        },
-        actions: [
-          {
-            button_text: localisedStrings.Next,
-            type: "website",
-            website: {
-              title: "Welcome to Swiftchat",
-              payload: "qwerty",
-              url: "https://script.google.com/macros/s/AKfycbwOHTUl17ZPwIw-m90UHDNyrovPifw6fQrSjUkmSprkka4UtEpJhFIUIkRqsJkjsPzNxA/exec",
-              allow_website_downloads: true
-            }
-          },
-        ]
+          actions: [
+              {
+                  button_text: localisedStrings.Next,
+                  type: "website",
+                  website: {
+                      title: "Welcome to Swiftchat",
+                      payload: "qwerty",
+                      url: "https://script.google.com/macros/s/AKfycbwOHTUl17ZPwIw-m90UHDNyrovPifw6fQrSjUkmSprkka4UtEpJhFIUIkRqsJkjsPzNxA/exec"
+                  }
+              },
+          ]
       }
-    }
-    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-  } */
+  };
+  try {
+      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  } catch (error) {
+      console.error("Error sending message:", error);
+  }
+}
 
 
  
