@@ -81,10 +81,11 @@ export class ChatbotService {
          return;
       
   }    
-  /* else if ([localisedStrings.SeeQuestionPaper || localisedStrings.seeMore || localisedStrings.applyNow].includes(buttonResponse)) {
+   /* else if ([localisedStrings.SeeQuestionPaper || localisedStrings.seeMore || localisedStrings.applyNow].includes(buttonResponse)) {
+    console.log(buttonResponse);
     await this.message.nextButton(from, languageMessage)
-               return;
-} */
+               return; */
+//} 
 }   
     const { text } = body;
     if (!text || !text.body) {

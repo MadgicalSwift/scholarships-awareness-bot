@@ -16,7 +16,7 @@ export const localisedStrings = {
   like:'What would you like to do next',
   applyNow: 'Apply Now',
   seeMore: 'See More',
- SeeQuestionPaper: 'See Question Papers',
+ SeeQuestionPaper1: 'See Question Papers',
  surenextbutton: "Sure, please click on 'Next' to continue",
  buttonPrompt:"Choose an option:",
  Next: "Next⏭️",

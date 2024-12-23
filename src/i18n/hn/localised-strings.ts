@@ -13,7 +13,7 @@ export const localisedStrings = {
   like:'अब आप क्या करना चाहेंगे',
   applyNow: 'अभी अप्लाई करें',
   seeMore: 'और देखें',
-  SeeQuestionPaper:'प्रश्न पत्र देखें',
+  SeeQuestionPaper1:'प्रश्न पत्र देखें',
   buttonPrompt: "एक विकल्प चुनें",
   surenextbutton: "ज़रूर, जारी रखने के लिए कृपया 'अगला' पर क्लिक करें",
   Next: "अगला⏭️"
