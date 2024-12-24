@@ -39,5 +39,10 @@ export abstract class MessageService {
   abstract nextButton(from: string, language: string, selectedState,previousButton);
   abstract getLinkForButton(from, language, selectedState, previousButton);
   abstract handleSelectedState(from, selectedState, language);
+  abstract feedbackMessage(from, languageMessage);
+  abstract ulikenext(from, languageMessage);
+  abstract morebots(from, languageMessage);
+  abstract userfeedback(from, languageMessage);
+  abstract thankumessage(from, languageMessage);
 
 }

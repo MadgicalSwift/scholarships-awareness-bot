@@ -111,7 +111,7 @@ export class UserService {
   }
 } */
 
-  import { Injectable } from '@nestjs/common';
+ /*  import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';  // Ensure User entity includes selectedState
 import { dynamoDBClient } from 'src/config/database-config.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -139,7 +139,7 @@ async createUser(mobileNumber: string, language: string, botID: string, selected
         Botid: botID,
         id: uuidv4(), // Unique ID
         selectedState, // Save the selected state
-        
+        buttonClickCount,
       };
 
       await this.saveUser(newUser); // Save new user
@@ -188,6 +188,7 @@ async findUserByMobileNumber(
         Botid: user.Botid,
         id: user.id,
         selectedState: user.selectedState, // Include selectedState
+        buttonClickCount: user.buttonClickCount || 0,
       } as User;
     }
     return null;
@@ -199,6 +200,114 @@ async findUserByMobileNumber(
 
 
   
+
+  async deleteUser(mobileNumber: string, Botid: string): Promise<void> {
+    try {
+      const params = {
+        TableName: USERS_TABLE,
+        Key: {
+          mobileNumber: mobileNumber,
+          Botid: Botid,
+        },
+      };
+      await dynamoDBClient().delete(params).promise();
+      console.log(
+        `User with mobileNumber ${mobileNumber} and Botid ${Botid} deleted successfully.`,
+      );
+    } catch (error) {
+      console.error('Error deleting user from DynamoDB:', error);
+    }
+  }
+}
+ */
+import { Injectable } from '@nestjs/common';
+import { User } from './user.entity';  // Ensure User entity includes selectedState
+import { dynamoDBClient } from 'src/config/database-config.service';
+import { v4 as uuidv4 } from 'uuid';
+
+const { USERS_TABLE } = process.env;
+
+@Injectable()
+export class UserService {
+  // In UserService
+  async createUser(mobileNumber: string, language: string, botID: string, selectedState: string, buttonClickCount: number = 0, feedback: string = '',): Promise<User | null> {
+    try {
+      let user = await this.findUserByMobileNumber(mobileNumber, botID);
+
+      if (user) {
+        // Update the user with the selected state
+        user.feedback = feedback;
+        user.selectedState = selectedState;
+        user.buttonClickCount = buttonClickCount; // Make sure buttonClickCount is updated
+        await this.saveUser(user); // Save the updated user
+        return user; // Return updated user
+      } else {
+        // Create new user if not found
+        const newUser = {
+          mobileNumber,
+          language,
+          Botid: botID,
+          id: uuidv4(), // Unique ID
+          selectedState, // Save the selected state
+          buttonClickCount,
+          feedback,
+        };
+
+        await this.saveUser(newUser); // Save new user
+        return newUser;
+      }
+    } catch (error) {
+      console.error('Error in createUser:', error);
+      return null;
+    }
+  }
+
+  // Save user method
+  async saveUser(user: User): Promise<void> {
+    try {
+      const createUserParams = {
+        TableName: USERS_TABLE,
+        Item: user, // Save the user with the selected state
+      };
+      await dynamoDBClient().put(createUserParams).promise(); // Store in the DB
+    } catch (error) {
+      console.error('Error saving user:', error);
+    }
+  }
+
+  async findUserByMobileNumber(
+    mobileNumber: string,
+    Botid: string,
+  ): Promise<User | null> {
+    try {
+      const params = {
+        TableName: USERS_TABLE,
+        KeyConditionExpression: 'mobileNumber = :mobileNumber and Botid = :Botid',
+        ExpressionAttributeValues: {
+          ':mobileNumber': mobileNumber,
+          ':Botid': Botid,
+        },
+      };
+      const result = await dynamoDBClient().query(params).promise();
+
+      if (result.Items && result.Items.length > 0) {
+        const user = result.Items[0];
+        return {
+          mobileNumber: user.mobileNumber,
+          language: user.language,
+          Botid: user.Botid,
+          id: user.id,
+          selectedState: user.selectedState, // Include selectedState
+          buttonClickCount: user.buttonClickCount || 0,
+          feedback: user.feedback || '',
+        } as User;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error querying user from DynamoDB:', error);
+      return null;
+    }
+  }
 
   async deleteUser(mobileNumber: string, Botid: string): Promise<void> {
     try {

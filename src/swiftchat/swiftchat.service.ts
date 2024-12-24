@@ -136,21 +136,7 @@ export class SwiftchatMessageService extends MessageService {
 
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
-           
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          
   storeSelectedState(conversationId: string, selectedState: string) {
     this.selectedStateStore.set(conversationId, selectedState);
   }
@@ -436,7 +422,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   async nextButton(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const link = await this.getLinkForButton(from, language, selectedState, previousButton);
-
+ 
   const messageData = {
       to: from,
       type: 'action',
@@ -501,5 +487,150 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
  
+
+  async feedbackMessage(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const message = localisedStrings.feedback;
+  
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.sure,
+            reply: localisedStrings.sure,
+          },
+          {
+            type: 'solid',
+            body: localisedStrings.NMMS1,
+            reply: localisedStrings.NMMS1,
+          },
+          {
+            type: 'solid',
+            body: localisedStrings.checkstate,
+            reply: localisedStrings.checkstate,
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+ 
+  async ulikenext(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const message = localisedStrings.ulikenext;
+  
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.NMMS1,
+            reply: localisedStrings.NMMS1,
+          },
+          {
+            type: 'solid',
+            body: localisedStrings.checkstate,
+            reply: localisedStrings.checkstate,
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+ 
+  async morebots(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const requestData = this.prepareRequestData(
+      from,
+      localisedStrings.morebot,
+    );
+
+    const response = await this.sendMessage(
+      this.baseUrl,
+      requestData,
+      this.apiKey,
+    );
+    return response;
+  }
+
+  async userfeedback(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const requestData = this.prepareRequestData(
+      from,
+      localisedStrings.userfeedback,
+    );
+
+    const response = await this.sendMessage(
+      this.baseUrl,
+      requestData,
+      this.apiKey,
+    );
+    return response;
+  }
+
+  async thankumessage(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const message = localisedStrings.thankyou;
+  
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.NMMS1,
+            reply: localisedStrings.NMMS1,
+          },
+          {
+            type: 'solid',
+            body: localisedStrings.checkstate,
+            reply: localisedStrings.checkstate,
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+ 
+
+
+
+
+
+
+
+
+
+
 
 }

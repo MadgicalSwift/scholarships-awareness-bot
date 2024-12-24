@@ -20,6 +20,14 @@ export const localisedStrings = {
  surenextbutton: "Sure, please click on 'Next' to continue",
  buttonPrompt:"Choose an option:",
  Next: "Next⏭️",
+ feedback: "I'd love to hear any feedback you may have to make our this better🔎 \n\nDo you have any thoughts or comments you'd like to share?   is text k liye ek function bana doo💡🚀🎓",
+ ulikenext: "what would you like to do next?",
+ morebot: "Here are some more fun bots for you to explore! ",
+ sure:"Sure! I love to Share",
+ NMMS1: "What is NMMS?",
+ checkstate: " Check for another State",
+ userfeedback:"Kindly express your thoughts and opinions by typing them in the provided text box and pressing the 'send' button.📖",
+ thankyou:"🙏Thank you for taking the time to share your feedback with me😊",
   async States() {
   
         const response = await axios.get(
