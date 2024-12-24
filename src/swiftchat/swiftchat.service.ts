@@ -206,6 +206,36 @@ export class SwiftchatMessageService extends MessageService {
         console.error('Error sending message:', error); // Handle any errors during message sending
     }
 }
+async handleSelectedState(from, selectedState, language) {
+  const localisedStrings = LocalizationService.getLocalisedString(language);
+  const confirmationMessage = localisedStrings.StateSelectionConfirmationMessage.replace("{state}", selectedState);
+
+  try {
+      console.log(`User ${from} selected state: ${selectedState}`)
+      const messageData = {
+          to: from,
+          type: 'text',
+          text: {
+              body: confirmationMessage, 
+          },
+      };
+
+      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  } catch (error) {
+      console.error('Error handling selected state:', error);
+      const errorMessage = localisedStrings.StateSelectionErrorMessage;
+      const messageData = {
+          to: from,
+          type: 'text',
+          text: {
+              body: errorMessage, // Error message to the user
+          },
+      };
+
+      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
+}
+
 async StateSelectedinfo(from, language, selectedState) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   let stateDetails = null;
@@ -308,10 +338,7 @@ async StateSelectedinfo(from, language, selectedState) {
   }
 }
 async  getLinkForButton(from, language, selectedState, previousButton) {
-  // Initialize localised strings for the language
   const localisedStrings = LocalizationService.getLocalisedString(language);
-
-  // Initialize variables to store state details and question papers
   let stateDetails = null;
   let questionPapers = null;
 
@@ -341,10 +368,8 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
     console.error("Error fetching data:", error);
   }
 
-  // Return the appropriate link based on the button action
   let link = "";
 
-  // Check if the previous button is "Apply Now"
   if (previousButton === "Apply Now" && stateDetails && stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"] !== "NA") {
     link = stateDetails["Apply Now Link"];
   } 
@@ -357,7 +382,7 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
     link = questionPapers[0]["PDF Link"];
   }
 
-  return link; // Return the appropriate link
+  return link; 
 }
 
 async sendButtonsBasedOnResponse(from, language, responseButtons) {
