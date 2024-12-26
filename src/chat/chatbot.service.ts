@@ -25,9 +25,6 @@ export class ChatbotService {
     this.swiftchatService = swiftchatService;
   }
   
- 
-
-
   public async processMessage(body: any): Promise<any> {
     const { from, type , persistent_menu_response} = body;
     const botID = process.env.BOT_ID;
@@ -56,11 +53,9 @@ export class ChatbotService {
 
 
      if (persistent_menu_response) {
-      console.log('processMessage: Handling persistent menu response', persistent_menu_response);
-      const response = persistent_menu_response.body;
+       const response = persistent_menu_response.body;
       if (response === 'Try Something New') {
-        console.log('processMessage: Triggering topic selection menu');
-        await this.message.feedbackMessage(from, response);
+            await this.message.feedbackMessage(from, response);
            }
       else if (response === 'What is NMMS?') {
             await this.message.sendLanguageChangedMessage(from, response);
@@ -77,8 +72,6 @@ export class ChatbotService {
 
     if (type === 'button_response') {
       const buttonResponse = body.button_response?.body;
-
-      // Handle language selection
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
         userData.language = buttonResponse.toLowerCase();
         await this.userService.saveUser(userData);
@@ -109,39 +102,19 @@ export class ChatbotService {
         const selectedState = userData.selectedState;
        
           if (!selectedState) {
-          console.error('State not selected. Prompting user to select a state.');
-          
-          return;
+             return;
         }
-        console.log(`Button Clicked: ${previousButton}`);
-        console.log(`Selected State: ${selectedState}`);
-        await this.message.nextButton(from, languageMessage, selectedState, previousButton)
+             await this.message.nextButton(from, languageMessage, selectedState, previousButton)
         userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
-        console.log(`User ${from} has clicked Next Button ${userData.buttonClickCount} times.`,);
-      
-        // Save updated count to the database
-        await this.userService.saveUser(userData);
-      
-        // Call feedbackMessage on 1st and 5th clicks
-        if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5||userData.buttonClickCount === 3||userData.buttonClickCount === 2||userData.buttonClickCount === 4) {
-          console.log(`User ${from} hit the Next Button ${userData.buttonClickCount} times. Sending feedback message.`);
-          await this.message.feedbackMessage(from, languageMessage);
-        }
-      
-        /* if (userData.buttonClickCount === 3) {
-          console.log(`User ${from} hit the Next Button 3 times. Sending More Bots message.`);
-          await this.message.morebots(from, languageMessage);
-      }
-        // Call ulikenext on 2nd and 4th clicks
-        if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
-          console.log(`User ${from} hit the Next Button ${userData.buttonClickCount} times. Sending ulikenext message.`);
-          await this.message.ulikenext(from, languageMessage);
-        } */
-      
-        // Reset count if it reaches 5
-        if (userData.buttonClickCount >= 5) {
-          console.log(`User ${from} reached 5 clicks. Resetting count.`);
-          userData.buttonClickCount = 0; // Reset the count
+           await this.userService.saveUser(userData);
+        if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5) {
+               await this.message.feedbackMessage(from, languageMessage);}
+             if (userData.buttonClickCount === 3) {
+              await this.message.morebots(from, languageMessage);}
+            if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
+              await this.message.ulikenext(from, languageMessage);} 
+           if (userData.buttonClickCount >= 5) {
+               userData.buttonClickCount = 0; // Reset the count
           await this.userService.saveUser(userData); // Save reset count
         }  
       }else if ([localisedStrings.NMMS1].includes(buttonResponse)) {
@@ -153,98 +126,42 @@ export class ChatbotService {
       }
       else if ([localisedStrings.sure].includes(buttonResponse)) {
           await this.message.userfeedback(from, languageMessage);
-          const feedbackPromptEnglish ="Kindly express your thoughts and opinions by typing them in the provided text box and pressing the 'send' button.📖";
-          const feedbackPromptHindi = "कृपया अपने विचार और राय प्रदान किए गए टेक्स्ट बॉक्स में टाइप करें और 'भेजें' बटन दबाकर उन्हें भेजें।📖";
+           const feedbackPromptEnglish =localisedStrings.userfeedback;
+          const feedbackPromptHindi = localisedStrings.userfeedback;
           userData.previousButtonMessage = feedbackPromptEnglish||feedbackPromptHindi;
           await this.userService.saveUser(userData);
-          console.log(userData.previousButtonMessage);
-
-      }  
-    }
+              } 
+            }
 
 
 
-    
-    const { text } = body;
+  
+   
+ const { text } = body;
     if (!text || !text.body) {
       return;
     }
     const { intent } = this.intentClassifier.getIntent(text.body);
     await this.userService.saveUser(userData);
-    
+    console.log(userData)
     if(userData.previousButtonMessage){
-      const feedbackMessage = text.body; 
+      const feedbackMessage = text.body;
       userData.feedback = feedbackMessage;
       await this.userService.saveUser(userData);
-      console.log('User Feedback:', userData.feedback);
-      userData.previousButtonMessage==null
+      userData.previousButtonMessage=null
+      await this.userService.saveUser(userData);
       await this.message.thankumessage(from, userData.language)
     }
-
-
-      else if (intent === 'greeting') {
-        const localizedStrings = LocalizationService.getLocalisedString(userData.language);
-        await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
-        await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
-        if (text && text.body) {
-          const feedbackMessage = text.body; 
-          userData.feedback = feedbackMessage;
-          await this.userService.saveUser(userData);
-              }
-        
+    else if (intent === 'greeting') {
+      const localizedStrings = LocalizationService.getLocalisedString(userData.language);
+      await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
+      await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
+      if (text && text.body) {
+        const feedbackMessage = text.body;
+        userData.feedback = feedbackMessage;
+        await this.userService.saveUser(userData);
+}
     }
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     return 'ok';
   }
