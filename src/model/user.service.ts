@@ -230,12 +230,13 @@ const { USERS_TABLE } = process.env;
 @Injectable()
 export class UserService {
   // In UserService
-  async createUser(mobileNumber: string, language: string, botID: string, selectedState: string, buttonClickCount: number = 0, feedback: string = '',): Promise<User | null> {
+  async createUser(mobileNumber: string, language: string, botID: string, selectedState: string, buttonClickCount: number = 0, feedback: string = '', previousButtonMessage: string = ''): Promise<User | null> {
     try {
       let user = await this.findUserByMobileNumber(mobileNumber, botID);
 
       if (user) {
         // Update the user with the selected state
+        user.previousButtonMessage = previousButtonMessage;
         user.feedback = feedback;
         user.selectedState = selectedState;
         user.buttonClickCount = buttonClickCount; // Make sure buttonClickCount is updated
@@ -251,6 +252,7 @@ export class UserService {
           selectedState, // Save the selected state
           buttonClickCount,
           feedback,
+          previousButtonMessage,
         };
 
         await this.saveUser(newUser); // Save new user
@@ -300,6 +302,7 @@ export class UserService {
           selectedState: user.selectedState, // Include selectedState
           buttonClickCount: user.buttonClickCount || 0,
           feedback: user.feedback || '',
+          previousButtonMessage: user.previousButtonMessage || '',
         } as User;
       }
       return null;

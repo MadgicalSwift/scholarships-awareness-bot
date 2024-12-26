@@ -45,5 +45,8 @@ export class User {
   @IsOptional()
   @Column({ nullable: true }) // Column can be null
   feedback?: string; // Optional feedback field
+
+  @Column({ nullable: true }) // Make it nullable if optional
+    previousButtonMessage: string;
   }
   

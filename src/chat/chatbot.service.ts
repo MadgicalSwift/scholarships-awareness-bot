@@ -25,19 +25,11 @@ export class ChatbotService {
     this.swiftchatService = swiftchatService;
   }
   
-  // Add this method inside the ChatbotService class
-
-// A method to simulate capturing user input (adjust it to your logic)
-async collectUserInput(from: string): Promise<string> {
-   return new Promise((resolve) => {
-    // Simulating the captured message (replace this with actual logic)
-    resolve("User's feedback message here");
-  });
-}
+ 
 
 
   public async processMessage(body: any): Promise<any> {
-    const { from, type } = body;
+    const { from, type , persistent_menu_response} = body;
     const botID = process.env.BOT_ID;
 
     // Retrieve user data
@@ -52,6 +44,7 @@ async collectUserInput(from: string): Promise<string> {
         selectedState: 'default_state',
         buttonClickCount: 0,
         feedback : null,
+        previousButtonMessage:" ",
       };
       await this.userService.saveUser(userData);
     }
@@ -60,6 +53,26 @@ async collectUserInput(from: string): Promise<string> {
       userData.language = 'English';
       await this.userService.saveUser(userData);
     }
+
+
+     if (persistent_menu_response) {
+      console.log('processMessage: Handling persistent menu response', persistent_menu_response);
+      const response = persistent_menu_response.body;
+      if (response === 'Try Something New') {
+        console.log('processMessage: Triggering topic selection menu');
+           }
+      else if (response === 'What is NMMS?') {
+            await this.message.sendLanguageChangedMessage(from, response);
+        await this.message.sendWhoCanApplyButton(from, response) 
+      }
+      else if (response === 'Change State') {
+             await this.message.sendStateSelectionButton(from, response);
+      }
+      else if (response === 'Change Language') {
+                await this.message.sendLanguageSelectionMessage(from, response);
+      }
+    } 
+
 
     if (type === 'button_response') {
       const buttonResponse = body.button_response?.body;
@@ -90,7 +103,7 @@ async collectUserInput(from: string): Promise<string> {
         userData.selectedState = buttonResponse; // Save the selected state
         await this.userService.saveUser(userData);
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
-      } else if (['Apply Now', 'See More', 'See Question Papers', 'अभी अप्लाई करें', 'और देखें'].includes(buttonResponse)) {
+      } else if (['Apply Now', 'See More', 'अभी अप्लाई करें', 'और देखें'].includes(buttonResponse)) {
         const previousButton = buttonResponse;
         const selectedState = userData.selectedState;
        
@@ -135,44 +148,49 @@ async collectUserInput(from: string): Promise<string> {
         await this.message.sendWhoCanApplyButton(from, buttonResponse) 
       }
       else if ([localisedStrings.checkstate].includes(buttonResponse)) {
-        //await this.message.sendStateSelectionButton(from, languageMessage);
-        await this.message.sendStateSelectionButton(from, languageMessage);
+              await this.message.sendStateSelectionButton(from, languageMessage);
       }
       else if ([localisedStrings.sure].includes(buttonResponse)) {
           await this.message.userfeedback(from, languageMessage);
-      }
-      
-        
-      
-      
-    
+      }  
     }
 
+
+
+    
     const { text } = body;
     if (!text || !text.body) {
       return;
     }
-
     const { intent } = this.intentClassifier.getIntent(text.body);
     await this.userService.saveUser(userData);
-    if (intent === 'greeting') {
-      const localizedStrings = LocalizationService.getLocalisedString(userData.language,);
-      await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
-      await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
-      if (userData.feedback === "Kindly express your thoughts...") {
-          await this.message.thankumessage(from, languageMessage)
-      }
     
-      return;
-    }
+      if (intent === 'greeting') {
+        const localizedStrings = LocalizationService.getLocalisedString(userData.language);
+        await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
+        await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
+    
+        
+        const feedbackPromptEnglish ="Kindly express your thoughts and opinions by typing them in the provided text box and pressing the 'send' button.📖";
+        const feedbackPromptHindi = "कृपया अपने विचार और राय प्रदान किए गए टेक्स्ट बॉक्स में टाइप करें और 'भेजें' बटन दबाकर उन्हें भेजें।📖";
 
-    if (userData.feedback === "Kindly express your thoughts..." && intent === 'text') {
-      const feedbackMessage = text.body;
-      
-      // Save the feedback in the user data
+        if (userData.feedback === feedbackPromptEnglish || userData.feedback === feedbackPromptHindi) {
+       userData.previousButtonMessage = userData.feedback; // Save feedback message state
+        await this.userService.saveUser(userData);
+
+       if (text && text.body) {
+      const feedbackMessage = text.body; // Capture user feedback from the text body
       userData.feedback = feedbackMessage;
-      await this.userService.saveUser(userData);
+      console.log('User Feedback:', userData.feedback);
+
+      await this.userService.saveUser(userData); // Save updated user data
+      await this.message.thankumessage(from, userData.language); // Send thank-you message
     }
+          }
+        return;
+    }
+    
+    
     
     return 'ok';
   }
