@@ -9,9 +9,7 @@ class IntentClassifier {
   }
   private trainClassifier() {
     this.classifier.addDocument('Hi', 'greeting');
-    //this.classifier.addDocument('text', "Kindly express your thoughts and opinions by typing them in the provided text box and pressing the 'send' button.📖");
-    //this.classifier.addDocument('text', "कृपया अपने विचार और राय प्रदान किए गए टेक्स्ट बॉक्स में टाइप करें और 'भेजें' बटन दबाकर उन्हें भेजें।📖");
-    this.classifier.train();
+        this.classifier.train();
   }
 
   private getEntities(intent: string, message: string): string[] {
