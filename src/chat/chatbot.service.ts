@@ -107,12 +107,12 @@ export class ChatbotService {
              await this.message.nextButton(from, languageMessage, selectedState, previousButton)
         userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
            await this.userService.saveUser(userData);
-        if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5) {
+        if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5 ||userData.buttonClickCount === 2 || userData.buttonClickCount === 3 || userData.buttonClickCount === 4) {
                await this.message.feedbackMessage(from, languageMessage);}
-             if (userData.buttonClickCount === 3) {
-              await this.message.morebots(from, languageMessage);}
-            if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
-              await this.message.ulikenext(from, languageMessage);} 
+            //  if (userData.buttonClickCount === 3) {
+            //   await this.message.morebots(from, languageMessage);}
+            // if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
+            //   await this.message.ulikenext(from, languageMessage);} 
            if (userData.buttonClickCount >= 5) {
                userData.buttonClickCount = 0; // Reset the count
           await this.userService.saveUser(userData); // Save reset count
@@ -150,7 +150,10 @@ export class ChatbotService {
       await this.userService.saveUser(userData);
       userData.previousButtonMessage=null
       await this.userService.saveUser(userData);
-      await this.message.thankumessage(from, userData.language)
+      console.log(userData);
+      
+      await this.message.sangeeta(from, userData.language)
+      // await this.message.thankumessage(from, userData.language)
     }
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);

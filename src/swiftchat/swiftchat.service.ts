@@ -38,6 +38,21 @@ export class SwiftchatMessageService extends MessageService {
     return response;
   }
 
+  async sangeeta(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const requestData = this.prepareRequestData(
+      from,
+      localisedStrings.sangeeta,
+    );
+
+    const response = await this.sendMessage(
+      this.baseUrl,
+      requestData,
+      this.apiKey,
+    );
+    return response;
+  }
+
   async sendLanguageChangedMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const requestData = this.prepareRequestData(
