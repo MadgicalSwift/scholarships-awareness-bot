@@ -38,21 +38,6 @@ export class SwiftchatMessageService extends MessageService {
     return response;
   }
 
-  async sangeeta(from: string, language: string) {
-    const localisedStrings = LocalizationService.getLocalisedString(language);
-    const requestData = this.prepareRequestData(
-      from,
-      localisedStrings.sangeeta,
-    );
-
-    const response = await this.sendMessage(
-      this.baseUrl,
-      requestData,
-      this.apiKey,
-    );
-    return response;
-  }
-
   async sendLanguageChangedMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const requestData = this.prepareRequestData(
@@ -168,20 +153,27 @@ export class SwiftchatMessageService extends MessageService {
     const message = localisedStrings.StateSelectionMessage;
 
     let states = [];
+    
     try {
         const response = await axios.get(
-            'https://script.google.com/macros/s/AKfycbwOHTUl17ZPwIw-m90UHDNyrovPifw6fQrSjUkmSprkka4UtEpJhFIUIkRqsJkjsPzNxA/exec',
+            'https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec',
             { params: { action: 'getStates' } }
         );
+        
         if (response.data) {
-            states = response.data; 
-            localisedStrings.states = states; 
-        } 
+          states = response.data; 
+          console.log('state',states)
+          localisedStrings.states = states; 
+      }  
     } catch (error) {
         console.error('Error fetching states:', error);
         states = ['Unable to fetch states at the moment. Please try again later.'];
     }
    
+    if (states.length === 0) {
+      states = ['Default State']; // Provide a default state or fallback message
+    }
+
     const buttons = states.map((state) => ({
         type: 'solid',  // Button type
         body: state,    // Button text (state name)
@@ -246,18 +238,20 @@ async StateSelectedinfo(from, language, selectedState) {
   try {
       // Fetch state details
       const stateResponse = await axios.get(
-          "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+          "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
           {
               params: { action: "getStateDetails", state: selectedState },
           }
       );
+      console.log( " stateresponse data",stateResponse.data);
       if (stateResponse.data) {
           stateDetails = stateResponse.data;
+          console.log('stateDetails', stateDetails);
       }
 
       // Fetch question papers
       const questionPapersResponse = await axios.get(
-          "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+          "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
           {
               params: { action: "getQuestionPaper", state: selectedState },
           }
@@ -274,7 +268,8 @@ async StateSelectedinfo(from, language, selectedState) {
 
   if (stateDetails && !stateDetails.error) {
       // Prepare message content
-      const eligibilityCriteria = [
+      const eligibilityCriteria = [         
+          stateDetails["Serial No"] && stateDetails["Serial No"] !== "NA" && `• Serial No: ${stateDetails["Serial No"]}`,
           stateDetails["State Name"] && stateDetails["State Name"] !== "NA" && `• State Name: ${stateDetails["State Name"]}`,
           stateDetails["Minimum Percentage (Class 7)"] && stateDetails["Minimum Percentage (Class 7)"] !== "NA" && `• Minimum Percentage (Class 7): ${stateDetails["Minimum Percentage (Class 7)"]}`,
           stateDetails["Family Income Limit"] && stateDetails["Family Income Limit"] !== "NA" && `• Family Income Limit: ${stateDetails["Family Income Limit"]}`,
@@ -307,7 +302,7 @@ async StateSelectedinfo(from, language, selectedState) {
   } else {
       messageContent += `\n\nUnable to fetch state details. Please try again later.`;
   }
-
+  // console.log(stateDetails)
   if (questionPapers && !questionPapers.error) {
       let questionPaperDetails = "\n📚 Available Question Papers:\n";
       questionPapers.forEach((paper, index) => {
@@ -346,7 +341,7 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
   try {
     // Fetch state details
     const stateResponse = await axios.get(
-      "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+      "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
       {
         params: { action: "getStateDetails", state: selectedState },
       }
@@ -357,7 +352,7 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
 
     // Fetch question papers
     const questionPapersResponse = await axios.get(
-      "https://script.google.com/macros/s/AKfycbzWjR-Map-oXdmoDd77-y9ifpuu1Ji8k1T9BjVzNM3U5XQ-GZJpLKeVqL4ABCJJ9s4djA/exec",
+      "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
       {
         params: { action: "getQuestionPaper", state: selectedState },
       }
@@ -637,15 +632,83 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
  
+  
 
 
+  // add question papaer section
 
+  async sendST21Message(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const requestData = this.prepareRequestData(
+      from,
+      localisedStrings.ST21Message,
+    );
+    const response = await this.sendMessage(
+      this.baseUrl,
+      requestData,
+      this.apiKey,
+    );
+    return response;
+  }
+  
+  async sendAfterPdfMessage(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const requestData = this.prepareRequestData(
+      from,
+      localisedStrings.like,
+    );
+    const response = await this.sendMessage(
+      this.baseUrl,
+      requestData,
+      this.apiKey,
+    );
+    return response;
+  }
 
+  async sendDocumentByUrl(from: string, documentUrl: string, language: string) {
+    console.log('documentUrl',documentUrl);
+    
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const messageData = {
+      to: from,
+      type: 'document',
+      document: {
+        url: "https://dkofefwp84vv0.cloudfront.net/CG+Summer+Special+Bots/Exam+Prep+Bot/Previous+Year+Question+Papers/CBSE/Class+10/2019/Eng+Lang+%26+Lit/2-1-1+Eng.L.L..pdf", // The URL of the document to send
+        name: "Answer Key - Class 5 - Science - Week 25 - 8/1/2022",
+        body: "Answer Key - Class 5 - Science - Week 25 - 8/1/2022",
+        read_only: true
+      },
+    };
+  
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
 
-
-
-
-
-
+  async fetchAndSendQuestionPaper(from: string, language: string, selectedState: string) {
+    console.log('from:',from, 'language:',language,'selectState:',selectedState)
+    try {
+      // Fetch question paper data from API
+      const questionPapersResponse = await axios.get(
+        "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
+        {
+          params: { action: "getQuestionPaper", state: selectedState },
+        }
+      );
+  
+      console.log('data',questionPapersResponse.data[0]['PDF Link']);
+      
+      // Check if response has data
+      if (questionPapersResponse.data) {
+        const documentLink = questionPapersResponse.data[0]['PDF Link']; // Assume the response has a `documentLink` field
+  
+        // Call sendDocumentByUrl to send the fetched document link
+        let docu = await this.sendDocumentByUrl(from, documentLink, language);
+        console.log("Question paper sent successfully!",docu);
+      } else {
+        console.error("No question paper found for the selected state.");
+      }
+    } catch (error) {
+      console.error("Error fetching question paper data:", error);
+    }
+  }
 
 }

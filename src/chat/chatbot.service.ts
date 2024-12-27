@@ -81,7 +81,10 @@ export class ChatbotService {
       }
 
       const languageMessage = userData.language;
+      
       const statesFetch = await localisedStrings.States();
+      console.log(statesFetch);
+      
 
       if (['🎯Who Can Apply', '🎯कौन आवेदन कर सकता है'].includes(buttonResponse)) {
         await this.message.sendHowCanSelectedButton(from, languageMessage);
@@ -97,7 +100,8 @@ export class ChatbotService {
         userData.selectedState = buttonResponse; // Save the selected state
         await this.userService.saveUser(userData);
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
-      } else if (['Apply Now', 'See More', 'अभी अप्लाई करें', 'और देखें'].includes(buttonResponse)) {
+      } else if (['Apply Now', 'See More', 'अभी अप्लाई करें', 'और देखें'].includes(buttonResponse)) 
+        {
         const previousButton = buttonResponse;
         const selectedState = userData.selectedState;
        
@@ -130,7 +134,14 @@ export class ChatbotService {
           const feedbackPromptHindi = localisedStrings.userfeedback;
           userData.previousButtonMessage = feedbackPromptEnglish||feedbackPromptHindi;
           await this.userService.saveUser(userData);
-              } 
+      } 
+      else if (['See Question Papers', 'प्रश्न पत्र देखें'].includes(buttonResponse)){
+        await this.message.sendST21Message(from, languageMessage);
+        let selectedState = userData.selectedState
+        await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState);
+      }
+      
+        
             }
 
 
@@ -148,12 +159,10 @@ export class ChatbotService {
       const feedbackMessage = text.body;
       userData.feedback = feedbackMessage;
       await this.userService.saveUser(userData);
-      userData.previousButtonMessage=null
+      userData.previousButtonMessage='';
       await this.userService.saveUser(userData);
-      console.log(userData);
-      
-      await this.message.sangeeta(from, userData.language)
-      // await this.message.thankumessage(from, userData.language)
+      // console.log(userData);
+      await this.message.thankumessage(from, userData.language)
     }
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);
@@ -165,6 +174,7 @@ export class ChatbotService {
         await this.userService.saveUser(userData);
 }
     }
+    
 
     return 'ok';
   }

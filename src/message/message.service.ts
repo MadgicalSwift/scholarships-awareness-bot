@@ -44,5 +44,10 @@ export abstract class MessageService {
   abstract morebots(from, languageMessage);
   abstract userfeedback(from, languageMessage);
   abstract thankumessage(from, languageMessage);
-  abstract sangeeta(from, languageMessage);
+  abstract sendST21Message(from, languageMessage);
+
+  abstract sendDocumentByUrl(from,documentUrl, languageMessage,);
+  abstract fetchAndSendQuestionPaper(from, selectedState , language);
+  
+  
 }
