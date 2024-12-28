@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import { LocalizationService } from 'src/localization/localization.service';
 import { MessageService } from 'src/message/message.service';
 import axios from 'axios';
+import { CLIENT_RENEG_LIMIT } from 'tls';
 dotenv.config();
 
 @Injectable()
@@ -269,7 +270,6 @@ async StateSelectedinfo(from, language, selectedState) {
   if (stateDetails && !stateDetails.error) {
       // Prepare message content
       const eligibilityCriteria = [         
-          stateDetails["Serial No"] && stateDetails["Serial No"] !== "NA" && `• Serial No: ${stateDetails["Serial No"]}`,
           stateDetails["State Name"] && stateDetails["State Name"] !== "NA" && `• State Name: ${stateDetails["State Name"]}`,
           stateDetails["Minimum Percentage (Class 7)"] && stateDetails["Minimum Percentage (Class 7)"] !== "NA" && `• Minimum Percentage (Class 7): ${stateDetails["Minimum Percentage (Class 7)"]}`,
           stateDetails["Family Income Limit"] && stateDetails["Family Income Limit"] !== "NA" && `• Family Income Limit: ${stateDetails["Family Income Limit"]}`,
@@ -635,7 +635,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   
 
 
-  // add question papaer section
+  // **********        question paper section
 
   async sendST21Message(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
@@ -664,7 +664,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
     );
     return response;
   }
-
+/*
   async sendDocumentByUrl(from: string, documentUrl: string, language: string) {
     console.log('documentUrl',documentUrl);
     
@@ -700,6 +700,29 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
       if (questionPapersResponse.data) {
         const documentLink = questionPapersResponse.data[0]['PDF Link']; // Assume the response has a `documentLink` field
   
+        // Create buttons for each question paper
+      const buttons = documentLink.map((paper: any) => ({
+        type: "reply",
+        title: `${paper['Year']} - ${paper['State']}`,
+        payload: JSON.stringify({ url: paper['PDF Link'], name: paper['State'], year: paper['Year'] }),
+      }));
+
+      // Send message with buttons
+      const messageData = {
+        to: from,
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          body: {
+            text: "Please select a question paper:",
+          },
+          action: {
+            buttons: buttons,
+          },
+        },
+      };
+
+
         // Call sendDocumentByUrl to send the fetched document link
         let docu = await this.sendDocumentByUrl(from, documentLink, language);
         console.log("Question paper sent successfully!",docu);
@@ -710,5 +733,93 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
       console.error("Error fetching question paper data:", error);
     }
   }
+    */
+
+  async sendDocumentByUrl(from: string, documentUrl: string, language: string) {
+    console.log('Sending document with URL:', documentUrl);
+  
+    const messageData = {
+      to: from,
+      type: 'document',
+      document: {
+        url: documentUrl, // Dynamic document URL
+        name: "Selected Question Paper", // Dynamic or generic name
+        body: "Here is the selected question paper.", // Description
+        read_only: true,
+      },
+    };
+  
+    try {
+      const response = await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+      console.log("Document sent successfully!", response);
+      return response;
+    } catch (error) {
+      console.error("Error sending document:", error);
+      throw error;
+    }
+  }
+  
+  async fetchAndSendQuestionPaper(from: string, language: string, selectedState: string) {  
+    try {
+      // Fetch question papers data from API
+      const questionPapersResponse = await axios.get(
+        "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
+        {
+          params: { action: "getQuestionPaper", state: selectedState },
+        }
+      );
+  
+      const questionPapers = questionPapersResponse.data;
+  
+      // Validate the response data
+      if (questionPapers && questionPapers.length > 0) {
+        // Create buttons dynamically
+        const buttons = questionPapers.map((paper: any) => ({
+          type: "reply", // Ensure the type is "reply" for buttons
+          title: `${paper['Year']} - ${paper['State']}`, // Display year and state
+          payload: paper['PDF Link'], // Pass the PDF link directly as payload
+        }));
+  
+        // Send buttons to the user
+        const messageData = {
+          to: from,
+          type: 'button', // Use "interactive" type for buttons
+          interactive: {
+            type: "button", // Specify the interactive type as "button"
+            body: {
+              text: "Please select a question paper:",
+            },
+            action: {
+              buttons: buttons, // Assign the array of buttons
+            },
+          },
+        };
+  
+        await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+        console.log("Question paper buttons sent successfully!");
+      } else {
+        console.error("No question papers found for the selected state.");
+      }
+    } catch (error) {
+      console.error("Error fetching question paper data:", error);
+    }
+  }
+  
+  
+  async handleButtonClick(from: string, payload: string, language: string) {
+    console.log("Button clicked, payload:", payload);
+  
+    try {
+      // When a button is clicked, the payload contains the document URL
+      const documentUrl = payload;
+  
+      // Send the document to the user
+      await this.sendDocumentByUrl(from, documentUrl, language);
+    } catch (error) {
+      console.error("Error handling button click:", error);
+    }
+  }  
+  
+  
 
 }
