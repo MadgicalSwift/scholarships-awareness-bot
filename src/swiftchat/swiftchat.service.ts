@@ -163,7 +163,7 @@ export class SwiftchatMessageService extends MessageService {
         
         if (response.data) {
           states = response.data; 
-          console.log('state',states)
+          // console.log('state',states)
           localisedStrings.states = states; 
       }  
     } catch (error) {
@@ -205,7 +205,7 @@ async handleSelectedState(from, selectedState, language) {
   const confirmationMessage = localisedStrings.StateSelectionConfirmationMessage.replace("{state}", selectedState);
 
   try {
-      console.log(`User ${from} selected state: ${selectedState}`)
+      // console.log(`User ${from} selected state: ${selectedState}`)
       const messageData = {
           to: from,
           type: 'text',
@@ -244,10 +244,9 @@ async StateSelectedinfo(from, language, selectedState) {
               params: { action: "getStateDetails", state: selectedState },
           }
       );
-      console.log( " stateresponse data",stateResponse.data);
       if (stateResponse.data) {
           stateDetails = stateResponse.data;
-          console.log('stateDetails', stateDetails);
+          // console.log('stateDetails', stateDetails);
       }
 
       // Fetch question papers
@@ -664,162 +663,98 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
     );
     return response;
   }
-/*
-  async sendDocumentByUrl(from: string, documentUrl: string, language: string) {
-    console.log('documentUrl',documentUrl);
-    
-    const localisedStrings = LocalizationService.getLocalisedString(language);
-    const messageData = {
-      to: from,
-      type: 'document',
-      document: {
-        url: "https://dkofefwp84vv0.cloudfront.net/CG+Summer+Special+Bots/Exam+Prep+Bot/Previous+Year+Question+Papers/CBSE/Class+10/2019/Eng+Lang+%26+Lit/2-1-1+Eng.L.L..pdf", // The URL of the document to send
-        name: "Answer Key - Class 5 - Science - Week 25 - 8/1/2022",
-        body: "Answer Key - Class 5 - Science - Week 25 - 8/1/2022",
-        read_only: true
-      },
-    };
-  
-    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-  }
 
-  async fetchAndSendQuestionPaper(from: string, language: string, selectedState: string) {
-    console.log('from:',from, 'language:',language,'selectState:',selectedState)
+  async fetchAndSendYearButtons(from: string, language: string, selectedState: string) {
     try {
-      // Fetch question paper data from API
-      const questionPapersResponse = await axios.get(
-        "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
-        {
-          params: { action: "getQuestionPaper", state: selectedState },
-        }
-      );
-  
-      console.log('data',questionPapersResponse.data[0]['PDF Link']);
-      
-      // Check if response has data
-      if (questionPapersResponse.data) {
-        const documentLink = questionPapersResponse.data[0]['PDF Link']; // Assume the response has a `documentLink` field
-  
-        // Create buttons for each question paper
-      const buttons = documentLink.map((paper: any) => ({
-        type: "reply",
-        title: `${paper['Year']} - ${paper['State']}`,
-        payload: JSON.stringify({ url: paper['PDF Link'], name: paper['State'], year: paper['Year'] }),
-      }));
+        // console.log(`Fetching available years for state: ${selectedState}`);
+        
+        // Fetch available years
+        const response = await axios.get(
+            `https://script.google.com/macros/s/AKfycbw86coYv1DN5WUWHYW20XMlOBQ8CIt0-QzKEC1AkPyjM8L1CW8zYZX5AcjO50A5ymFFCg/exec?action=getAvailableYears&state=${selectedState}`
+        );
+        
+        // Extract years from the response data
+        const years: number[] = response.data.years;
 
-      // Send message with buttons
+        if (!years || years.length === 0) {
+            console.log(`No years available for the state: ${selectedState}`);
+            return;
+        }
+
+        // console.log("Available Years:", years);
+
+        // Map years to button objects
+        const localisedStrings = LocalizationService.getLocalisedString(language);
+        const buttons = years.map((year) => ({
+            type: "solid",
+            body: year.toString(), // Display year as button text
+            reply: year.toString(), // Send year as reply when clicked
+        }));
+
+        const messageData = {
+            to: from,
+            type: "button",
+            button: {
+                body: {
+                    type: "text",
+                    text: {
+                        body: localisedStrings.yearSelectionPrompt,
+                    },
+                },
+                buttons: buttons,
+                allow_custom_response: false,
+            },
+        };
+
+        // Send the year selection buttons
+        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+    } catch (error) {
+        console.error("Error fetching or sending year buttons:", error);
+    }
+}
+
+async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: string, selectedYear: number) {
+  try {
+      // Log selected year
+      console.log(`Fetching question paper for state: ${selectedState} and year: ${selectedYear}`);
+      
+      // Fetch the PDF link for the selected year and state
+      const response = await axios.get(
+          `https://script.google.com/macros/s/AKfycbw86coYv1DN5WUWHYW20XMlOBQ8CIt0-QzKEC1AkPyjM8L1CW8zYZX5AcjO50A5ymFFCg/exec?action=getPdfLink&state=${selectedState}&year=${selectedYear}`
+      );
+      
+      // Extract the PDF URL from the response
+      // console.log("pdflink",response);
+      
+      const pdfUrl = response.data.pdfLink;
+      console.log('pdfURL',pdfUrl);
+      
+      const pdfName = `Answer Key - ${selectedState} - ${selectedYear}`;  // Customize the name as needed
+      
+      if (!pdfUrl) {
+          console.log("No PDF found for the selected year and state.");
+          return;
+      }
+
+      // console.log("PDF URL:", pdfUrl);
+
+      // Send the PDF document to the user
       const messageData = {
-        to: from,
-        type: 'interactive',
-        interactive: {
-          type: 'button',
-          body: {
-            text: "Please select a question paper:",
-          },
-          action: {
-            buttons: buttons,
-          },
-        },
+          to: from, // Send to the recipient's mobile number
+          type: "document",
+          document: {
+              url: pdfUrl,
+              name: pdfName,
+              body: `Question Paper for ${selectedState} - ${selectedYear}`,
+              read_only: true
+          }
       };
 
+      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+    } catch (error) {
+        console.error("Error fetching or sending year buttons:",error);
+    }
+}
 
-        // Call sendDocumentByUrl to send the fetched document link
-        let docu = await this.sendDocumentByUrl(from, documentLink, language);
-        console.log("Question paper sent successfully!",docu);
-      } else {
-        console.error("No question paper found for the selected state.");
-      }
-    } catch (error) {
-      console.error("Error fetching question paper data:", error);
-    }
-  }
-    */
-
-  async sendDocumentByUrl(from: string, documentUrl: string, language: string) {
-    console.log('Sending document with URL:', documentUrl);
-  
-    const messageData = {
-      to: from,
-      type: 'document',
-      document: {
-        url: documentUrl, // Dynamic document URL
-        name: "Selected Question Paper", // Dynamic or generic name
-        body: "Here is the selected question paper.", // Description
-        read_only: true,
-      },
-    };
-  
-    try {
-      const response = await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-      console.log("Document sent successfully!", response);
-      return response;
-    } catch (error) {
-      console.error("Error sending document:", error);
-      throw error;
-    }
-  }
-  
-  async fetchAndSendQuestionPaper(from: string, language: string, selectedState: string) {  
-    try {
-      // Fetch question papers data from API
-      const questionPapersResponse = await axios.get(
-        "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
-        {
-          params: { action: "getQuestionPaper", state: selectedState },
-        }
-      );
-  
-      const questionPapers = questionPapersResponse.data;
-  
-      // Validate the response data
-      if (questionPapers && questionPapers.length > 0) {
-        // Create buttons dynamically
-        const buttons = questionPapers.map((paper: any) => ({
-          type: "reply", // Ensure the type is "reply" for buttons
-          title: `${paper['Year']} - ${paper['State']}`, // Display year and state
-          payload: paper['PDF Link'], // Pass the PDF link directly as payload
-        }));
-  
-        // Send buttons to the user
-        const messageData = {
-          to: from,
-          type: 'button', // Use "interactive" type for buttons
-          interactive: {
-            type: "button", // Specify the interactive type as "button"
-            body: {
-              text: "Please select a question paper:",
-            },
-            action: {
-              buttons: buttons, // Assign the array of buttons
-            },
-          },
-        };
-  
-        await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-        console.log("Question paper buttons sent successfully!");
-      } else {
-        console.error("No question papers found for the selected state.");
-      }
-    } catch (error) {
-      console.error("Error fetching question paper data:", error);
-    }
-  }
-  
-  
-  async handleButtonClick(from: string, payload: string, language: string) {
-    console.log("Button clicked, payload:", payload);
-  
-    try {
-      // When a button is clicked, the payload contains the document URL
-      const documentUrl = payload;
-  
-      // Send the document to the user
-      await this.sendDocumentByUrl(from, documentUrl, language);
-    } catch (error) {
-      console.error("Error handling button click:", error);
-    }
-  }  
-  
-  
 
 }

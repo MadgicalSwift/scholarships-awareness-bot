@@ -83,7 +83,7 @@ export class ChatbotService {
       const languageMessage = userData.language;
       
       const statesFetch = await localisedStrings.States();
-      console.log(statesFetch);
+      // console.log(statesFetch);
       
 
       if (['🎯Who Can Apply', '🎯कौन आवेदन कर सकता है'].includes(buttonResponse)) {
@@ -138,7 +138,10 @@ export class ChatbotService {
       else if (['See Question Papers', 'प्रश्न पत्र देखें'].includes(buttonResponse)){
         await this.message.sendST21Message(from, languageMessage);
         let selectedState = userData.selectedState
-        await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState);
+        await this.message.fetchAndSendYearButtons(from, languageMessage,selectedState);
+        console.log('year button done',buttonResponse);
+        let year = 2017
+        await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState,year);
       }
       
         

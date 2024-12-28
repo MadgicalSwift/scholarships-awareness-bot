@@ -41,6 +41,7 @@ export class User {
     @Column({ default: 0 }) // Column with a default value of 0
     buttonClickCount: number;
 
+
     @IsString() // Validation for feedback (optional string)
   @IsOptional()
   @Column({ nullable: true }) // Column can be null

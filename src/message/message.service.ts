@@ -46,8 +46,11 @@ export abstract class MessageService {
   abstract thankumessage(from, languageMessage);
   abstract sendST21Message(from, languageMessage);
 
-  abstract sendDocumentByUrl(from,documentUrl, languageMessage,);
-  abstract fetchAndSendQuestionPaper(from, selectedState , language);
+  // abstract sendDocumentByUrl(from,documentUrl, languageMessage,);
+  abstract fetchAndSendYearButtons(from, language,selectedState );
+  abstract fetchAndSendQuestionPaper(from, language,selectedState ,selectedYear);
+  
+  // abstract  sendYearButtons(from, language, years);
   
   
 }
