@@ -230,7 +230,7 @@ const { USERS_TABLE } = process.env;
 @Injectable()
 export class UserService {
   // In UserService
-  async createUser(mobileNumber: string, Status:string, language: string, botID: string, selectedState: string, selectedYear: number=0, buttonClickCount: number = 0, feedback: string = '', previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
+  async createUser(mobileNumber: string,YearButtonCount: number, language: string, botID: string, selectedState: string, selectedYear: number=0, buttonClickCount: number = 0, feedback: string = '', previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
     try {
       let user = await this.findUserByMobileNumber(mobileNumber, botID);
 
@@ -239,7 +239,7 @@ export class UserService {
         user.previousButtonMessage = previousButtonMessage;
         user.previousButtonMessage1 = previousButtonMessage1;
         user.feedback = feedback;
-        user.Status = Status;
+        user.YearButtonCount = YearButtonCount;
         user.selectedState = selectedState;
         user.selectedYear = selectedYear; // save the selectedYear
         user.buttonClickCount = buttonClickCount; // Make sure buttonClickCount is updated
@@ -255,7 +255,7 @@ export class UserService {
           selectedState, // Save the selected state
           selectedYear, //save selected year
           buttonClickCount,
-          Status,
+          YearButtonCount,
           feedback,
           previousButtonMessage,
           previousButtonMessage1,
@@ -305,7 +305,7 @@ export class UserService {
           language: user.language,
           Botid: user.Botid,
           id: user.id,
-          Status:user.Status,
+          YearButtonCount:user.YearButtonCount,
           selectedYear: user.selectedYear || 0, // include selectedYear
           selectedState: user.selectedState, // Include selectedState
           buttonClickCount: user.buttonClickCount || 0,

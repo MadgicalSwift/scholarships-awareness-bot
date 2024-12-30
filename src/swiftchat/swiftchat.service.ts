@@ -82,33 +82,33 @@ export class SwiftchatMessageService extends MessageService {
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
   
-    async sendHowCanSelectedButton(from: string, language: string) {
-      const localisedStrings = LocalizationService.getLocalisedString(language);
-      const message = localisedStrings.getWhoCanApplyStrings;
-      
-      const messageData = {
-        to: from,
-        type: 'button',
-        button: {
-          body: {
-            type: 'text',
-            text: {
-              body: message,
-            },
+  async sendHowCanSelectedButton(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const message = localisedStrings.getWhoCanApplyStrings;
+    
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
           },
-          buttons: [
-            {
-              type: 'solid',
-              body: localisedStrings.howCanSelected,
-              reply:localisedStrings.howCanSelected,
-            },
-          ],
-          allow_custom_response: false,
         },
-      };
-      
-      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-    }
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.howCanSelected,
+            reply:localisedStrings.howCanSelected,
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+    
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
     
   async sendHowCanSelectedMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
@@ -146,9 +146,6 @@ export class SwiftchatMessageService extends MessageService {
   }
 
 
-
-
-
   async sendStateSelectionButton(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.StateSelectionMessage;
@@ -163,7 +160,6 @@ export class SwiftchatMessageService extends MessageService {
         
         if (response.data) {
           states = response.data; 
-          // console.log('state',states)
           localisedStrings.states = states; 
       }  
     } catch (error) {
@@ -298,16 +294,17 @@ async StateSelectedinfo(from, language, selectedState) {
           responseButtons.push("Apply Now");
          
       }
+
   } else {
       messageContent += `\n\nUnable to fetch state details. Please try again later.`;
   }
   // console.log(stateDetails)
   if (questionPapers && !questionPapers.error) {
       let questionPaperDetails = "\n📚 Available Question Papers:\n";
-      questionPapers.forEach((paper, index) => {
-          questionPaperDetails += `• ${paper["State"]} (${paper["Year"]}) - [PDF](${paper["PDF Link"]})\n`;
-      });
-      messageContent += questionPaperDetails;
+      // questionPapers.forEach((paper, index) => {
+      //     questionPaperDetails += `• ${paper["State"]} (${paper["Year"]}) - [PDF](${paper["PDF Link"]})\n`;
+      // });
+      // messageContent += questionPaperDetails;
 
       // Add "See Question Papers" button
       responseButtons.push("See Question Papers");
@@ -326,6 +323,12 @@ async StateSelectedinfo(from, language, selectedState) {
       await this.sendMessage(this.baseUrl, messageData, this.apiKey);
       if (responseButtons.length > 0) {
           await this.sendButtonsBasedOnResponse(from, language, responseButtons);
+      }
+      else{
+        console.log('there is no apply link, question paper, web link');
+        // userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
+              await this.ulikenext(from, language);
+        
       }
          
   } catch (error) {
@@ -376,7 +379,8 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
     // For "See Question Papers", we can return the first available question paper link as an example
     link = questionPapers[0]["PDF Link"];
   }
-
+ console.log('link by fn', link);
+ 
   return link; 
 }
 
@@ -431,6 +435,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   async nextButton(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const link = await this.getLinkForButton(from, language, selectedState, previousButton);
+  console.log("my link",link);
+  
  
   const messageData = {
       to: from,

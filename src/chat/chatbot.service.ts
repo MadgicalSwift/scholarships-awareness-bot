@@ -42,7 +42,7 @@ export class ChatbotService {
         selectedState: 'default_state',
         buttonClickCount: 0,
         selectedYear: 0,
-        Status:'',
+        YearButtonCount:0,
         feedback : null,
         previousButtonMessage:"",
         previousButtonMessage1:"",
@@ -75,7 +75,7 @@ export class ChatbotService {
       }
     } 
    
-
+    const languageMessage = userData.language;
     if (type === 'button_response') {
       const buttonResponse = body.button_response?.body;
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
@@ -105,6 +105,7 @@ export class ChatbotService {
         await this.userService.saveUser(userData);
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
       } 
+      
       else if (['Apply Now', 'See More', 'अभी अप्लाई करें', 'और देखें'].includes(buttonResponse)) 
       {
           console.log('count before:', userData.buttonClickCount);
@@ -116,23 +117,28 @@ export class ChatbotService {
         }
         
         
-             await this.message.nextButton(from, languageMessage, selectedState, previousButton)
-        userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
+            await this.message.nextButton(from, languageMessage, selectedState, previousButton);
+            // userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
            await this.userService.saveUser(userData);
            console.log('count after:', userData.buttonClickCount);
         
 
         if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5) {
+          userData.buttonClickCount = (userData.buttonClickCount) + 1;
                await this.message.feedbackMessage(from, languageMessage);}
         else if (userData.buttonClickCount === 3) {
+          userData.buttonClickCount = (userData.buttonClickCount) + 1;
               await this.message.morebots(from, languageMessage);}
           
-        else if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
+        else if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4 ||userData.buttonClickCount === 0) {
+          userData.buttonClickCount = (userData.buttonClickCount) + 1;
               await this.message.ulikenext(from, languageMessage);} 
-           if (userData.buttonClickCount >= 5) {
+           if (userData.buttonClickCount > 5) 
+            {
                userData.buttonClickCount = 0; // Reset the count
-          await this.userService.saveUser(userData); // Save reset count
-        }  
+          
+        } 
+        await this.userService.saveUser(userData); // Save reset count 
       }else if ([localisedStrings.NMMS1].includes(buttonResponse)) {
         await this.message.sendLanguageChangedMessage(from, languageMessage);
         await this.message.sendWhoCanApplyButton(from, buttonResponse) 
@@ -150,12 +156,6 @@ export class ChatbotService {
 
 
       else if (['See Question Papers', 'प्रश्न पत्र देखें'].includes(buttonResponse)){
-        // add count
-          console.log('count before:', userData.buttonClickCount);
-          userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
-          await this.userService.saveUser(userData);
-          console.log('count after:', userData.buttonClickCount);
-
           await this.message.sendST21Message(from, languageMessage);
           const feedbackPromptEnglish =localisedStrings.ST21Message;
           const feedbackPromptHindi = localisedStrings.ST21Message;
@@ -166,56 +166,32 @@ export class ChatbotService {
         } 
 
       else if(userData.previousButtonMessage1 && buttonResponse){
-          console.log('after select year',userData.previousButtonMessage1 , buttonResponse);
           let selectedYear = buttonResponse;
           let selectedState = userData.selectedState;
           await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState,selectedYear);
           userData.previousButtonMessage1='';
-          await this.userService.saveUser(userData);
-          await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
-          userData.Status = 'done';
-          await this.userService.saveUser(userData);
-          console.log('after shown papar',userData.previousButtonMessage1 ,'paper shown',userData.Status);
           
-        }
-
-      else if(userData.Status){
-          console.log('userStatus',userData.Status);
-          console.log('count',userData.buttonClickCount);
-          userData.Status = ''
-          await this.userService.saveUser(userData);
-        
-          if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5) {
-            await this.message.feedbackMessage(from, languageMessage);}
-          if (userData.buttonClickCount === 3) {
-                await this.message.morebots(from, languageMessage);}
-          if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
-            userData.Status = ''
-          await this.userService.saveUser(userData);
-            await this.message.sendQuestionPaperButton(from, languageMessage);}
-          if (userData.buttonClickCount >= 5) {
-            userData.buttonClickCount = 0; // Reset the count
-            await this.userService.saveUser(userData);
-            userData.Status = ''
-          await this.userService.saveUser(userData);
+          if (userData.YearButtonCount==1 || userData.YearButtonCount==5){
+            userData.YearButtonCount = userData.YearButtonCount+1 ;
+            await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
+            await this.message.feedbackMessage(from, languageMessage);
+          }
+          else if (userData.YearButtonCount === 3) {
+            userData.YearButtonCount = userData.YearButtonCount+1 ;
+            await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
+                    await this.message.morebots(from, languageMessage);}
+          else if (userData.YearButtonCount === 2 || userData.YearButtonCount === 4 || userData.YearButtonCount == 0){
+            userData.YearButtonCount = userData.YearButtonCount+1 ;
             await this.message.sendQuestionPaperButton(from, languageMessage)
           }
-
-        }
-        if (userData.buttonClickCount >= 5) {
-          userData.buttonClickCount = 0; // Reset the count
-          await this.userService.saveUser(userData);}
-
-
-       
-        
-        
+          if (userData.YearButtonCount > 5) {
+            userData.YearButtonCount =0;
+          ;}
           
-
-
-
-
-        
+          await this.userService.saveUser(userData);
+          console.log('YearButtonCount',userData.YearButtonCount);
+          
+        }       
             }
 
 
@@ -246,6 +222,7 @@ export class ChatbotService {
         await this.userService.saveUser(userData);
 }
     }
+    
     
 
     return 'ok';

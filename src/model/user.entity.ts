@@ -34,9 +34,9 @@ export class User {
     Botid: string;
 
 
-    @IsString() // Validation for Botid (must be a string)
+    @IsNumber() // Validation for Botid (must be a string)
     @Column()  // Define the column in the database
-    Status: string;
+    YearButtonCount: number;
 
   
     @IsString() // Validation for selectedState (must be a string)
