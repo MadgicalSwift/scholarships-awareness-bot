@@ -32,6 +32,12 @@ export class User {
     @IsString() // Validation for Botid (must be a string)
     @Column()  // Define the column in the database
     Botid: string;
+
+
+    @IsString() // Validation for Botid (must be a string)
+    @Column()  // Define the column in the database
+    Status: string;
+
   
     @IsString() // Validation for selectedState (must be a string)
     @Column()  // Define the column in the database
@@ -41,6 +47,10 @@ export class User {
     @Column({ default: 0 }) // Column with a default value of 0
     buttonClickCount: number;
 
+    // add selected year 
+    @IsNumber()
+    @Column({ default: 0 }) 
+    selectedYear: number;
 
     @IsString() // Validation for feedback (optional string)
   @IsOptional()
@@ -49,5 +59,11 @@ export class User {
 
   @Column({ nullable: true }) // Make it nullable if optional
     previousButtonMessage: string;
+
+  @Column({ nullable: true }) // Make it nullable if optional
+  previousButtonMessage1: string;
+
   }
+
+  
   

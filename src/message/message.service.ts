@@ -45,12 +45,13 @@ export abstract class MessageService {
   abstract userfeedback(from, languageMessage);
   abstract thankumessage(from, languageMessage);
   abstract sendST21Message(from, languageMessage);
-
-  // abstract sendDocumentByUrl(from,documentUrl, languageMessage,);
   abstract fetchAndSendYearButtons(from, language,selectedState );
   abstract fetchAndSendQuestionPaper(from, language,selectedState ,selectedYear);
+  abstract sendAfterPdfMessage(from, languageMessage);
+  abstract sendQuestionPaperButton(from, languageMessage);
   
-  // abstract  sendYearButtons(from, language, years);
+  
+  abstract sendQuesPapaerNextMaessage(from, languageMessage);
   
   
 }

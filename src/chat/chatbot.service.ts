@@ -5,6 +5,7 @@ import { UserService } from 'src/model/user.service';
 import { LocalizationService } from 'src/localization/localization.service';
 import { localisedStrings } from 'src/i18n/en/localised-strings';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
+import { count, log } from 'console';
 
 @Injectable()
 export class ChatbotService {
@@ -40,8 +41,11 @@ export class ChatbotService {
         language: 'English', // Default language
         selectedState: 'default_state',
         buttonClickCount: 0,
+        selectedYear: 0,
+        Status:'',
         feedback : null,
-        previousButtonMessage:" ",
+        previousButtonMessage:"",
+        previousButtonMessage1:"",
       };
       await this.userService.saveUser(userData);
     }
@@ -51,7 +55,9 @@ export class ChatbotService {
       await this.userService.saveUser(userData);
     }
 
-
+    
+    console.log('UserData',userData);
+    
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
       if (response === 'Try Something New') {
@@ -68,7 +74,7 @@ export class ChatbotService {
                 await this.message.sendLanguageSelectionMessage(from, response);
       }
     } 
-
+   
 
     if (type === 'button_response') {
       const buttonResponse = body.button_response?.body;
@@ -83,9 +89,7 @@ export class ChatbotService {
       const languageMessage = userData.language;
       
       const statesFetch = await localisedStrings.States();
-      // console.log(statesFetch);
       
-
       if (['🎯Who Can Apply', '🎯कौन आवेदन कर सकता है'].includes(buttonResponse)) {
         await this.message.sendHowCanSelectedButton(from, languageMessage);
       } else if (
@@ -100,23 +104,31 @@ export class ChatbotService {
         userData.selectedState = buttonResponse; // Save the selected state
         await this.userService.saveUser(userData);
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
-      } else if (['Apply Now', 'See More', 'अभी अप्लाई करें', 'और देखें'].includes(buttonResponse)) 
-        {
+      } 
+      else if (['Apply Now', 'See More', 'अभी अप्लाई करें', 'और देखें'].includes(buttonResponse)) 
+      {
+          console.log('count before:', userData.buttonClickCount);
         const previousButton = buttonResponse;
         const selectedState = userData.selectedState;
        
           if (!selectedState) {
              return;
         }
+        
+        
              await this.message.nextButton(from, languageMessage, selectedState, previousButton)
         userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
            await this.userService.saveUser(userData);
-        if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5 ||userData.buttonClickCount === 2 || userData.buttonClickCount === 3 || userData.buttonClickCount === 4) {
+           console.log('count after:', userData.buttonClickCount);
+        
+
+        if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5) {
                await this.message.feedbackMessage(from, languageMessage);}
-            //  if (userData.buttonClickCount === 3) {
-            //   await this.message.morebots(from, languageMessage);}
-            // if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
-            //   await this.message.ulikenext(from, languageMessage);} 
+        else if (userData.buttonClickCount === 3) {
+              await this.message.morebots(from, languageMessage);}
+          
+        else if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
+              await this.message.ulikenext(from, languageMessage);} 
            if (userData.buttonClickCount >= 5) {
                userData.buttonClickCount = 0; // Reset the count
           await this.userService.saveUser(userData); // Save reset count
@@ -135,15 +147,74 @@ export class ChatbotService {
           userData.previousButtonMessage = feedbackPromptEnglish||feedbackPromptHindi;
           await this.userService.saveUser(userData);
       } 
+
+
       else if (['See Question Papers', 'प्रश्न पत्र देखें'].includes(buttonResponse)){
-        await this.message.sendST21Message(from, languageMessage);
-        let selectedState = userData.selectedState
-        await this.message.fetchAndSendYearButtons(from, languageMessage,selectedState);
-        console.log('year button done',buttonResponse);
-        let year = 2017
-        await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState,year);
-      }
-      
+        // add count
+          console.log('count before:', userData.buttonClickCount);
+          userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
+          await this.userService.saveUser(userData);
+          console.log('count after:', userData.buttonClickCount);
+
+          await this.message.sendST21Message(from, languageMessage);
+          const feedbackPromptEnglish =localisedStrings.ST21Message;
+          const feedbackPromptHindi = localisedStrings.ST21Message;
+          userData.previousButtonMessage1 = feedbackPromptEnglish||feedbackPromptHindi;
+          await this.userService.saveUser(userData);
+          let selectedState = userData.selectedState
+          await this.message.fetchAndSendYearButtons(from, languageMessage,selectedState)
+        } 
+
+      else if(userData.previousButtonMessage1 && buttonResponse){
+          console.log('after select year',userData.previousButtonMessage1 , buttonResponse);
+          let selectedYear = buttonResponse;
+          let selectedState = userData.selectedState;
+          await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState,selectedYear);
+          userData.previousButtonMessage1='';
+          await this.userService.saveUser(userData);
+          await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
+          userData.Status = 'done';
+          await this.userService.saveUser(userData);
+          console.log('after shown papar',userData.previousButtonMessage1 ,'paper shown',userData.Status);
+          
+        }
+
+      else if(userData.Status){
+          console.log('userStatus',userData.Status);
+          console.log('count',userData.buttonClickCount);
+          userData.Status = ''
+          await this.userService.saveUser(userData);
+        
+          if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5) {
+            await this.message.feedbackMessage(from, languageMessage);}
+          if (userData.buttonClickCount === 3) {
+                await this.message.morebots(from, languageMessage);}
+          if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4) {
+            userData.Status = ''
+          await this.userService.saveUser(userData);
+            await this.message.sendQuestionPaperButton(from, languageMessage);}
+          if (userData.buttonClickCount >= 5) {
+            userData.buttonClickCount = 0; // Reset the count
+            await this.userService.saveUser(userData);
+            userData.Status = ''
+          await this.userService.saveUser(userData);
+            await this.message.sendQuestionPaperButton(from, languageMessage)
+          }
+
+        }
+        if (userData.buttonClickCount >= 5) {
+          userData.buttonClickCount = 0; // Reset the count
+          await this.userService.saveUser(userData);}
+
+
+       
+        
+        
+          
+
+
+
+
         
             }
 
@@ -157,14 +228,12 @@ export class ChatbotService {
     }
     const { intent } = this.intentClassifier.getIntent(text.body);
     await this.userService.saveUser(userData);
-    console.log(userData)
     if(userData.previousButtonMessage){
       const feedbackMessage = text.body;
       userData.feedback = feedbackMessage;
       await this.userService.saveUser(userData);
       userData.previousButtonMessage='';
       await this.userService.saveUser(userData);
-      // console.log(userData);
       await this.message.thankumessage(from, userData.language)
     }
     else if (intent === 'greeting') {

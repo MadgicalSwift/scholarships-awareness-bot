@@ -230,15 +230,18 @@ const { USERS_TABLE } = process.env;
 @Injectable()
 export class UserService {
   // In UserService
-  async createUser(mobileNumber: string, language: string, botID: string, selectedState: string, buttonClickCount: number = 0, feedback: string = '', previousButtonMessage: string = ''): Promise<User | null> {
+  async createUser(mobileNumber: string, Status:string, language: string, botID: string, selectedState: string, selectedYear: number=0, buttonClickCount: number = 0, feedback: string = '', previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
     try {
       let user = await this.findUserByMobileNumber(mobileNumber, botID);
 
       if (user) {
         // Update the user with the selected state
         user.previousButtonMessage = previousButtonMessage;
+        user.previousButtonMessage1 = previousButtonMessage1;
         user.feedback = feedback;
+        user.Status = Status;
         user.selectedState = selectedState;
+        user.selectedYear = selectedYear; // save the selectedYear
         user.buttonClickCount = buttonClickCount; // Make sure buttonClickCount is updated
         await this.saveUser(user); // Save the updated user
         return user; // Return updated user
@@ -250,9 +253,12 @@ export class UserService {
           Botid: botID,
           id: uuidv4(), // Unique ID
           selectedState, // Save the selected state
+          selectedYear, //save selected year
           buttonClickCount,
+          Status,
           feedback,
           previousButtonMessage,
+          previousButtonMessage1,
         };
 
         await this.saveUser(newUser); // Save new user
@@ -299,10 +305,13 @@ export class UserService {
           language: user.language,
           Botid: user.Botid,
           id: user.id,
+          Status:user.Status,
+          selectedYear: user.selectedYear || 0, // include selectedYear
           selectedState: user.selectedState, // Include selectedState
           buttonClickCount: user.buttonClickCount || 0,
           feedback: user.feedback || '',
           previousButtonMessage: user.previousButtonMessage || '',
+          previousButtonMessage1: user.previousButtonMessage1 || '',
         } as User;
       }
       return null;

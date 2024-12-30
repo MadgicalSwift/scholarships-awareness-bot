@@ -109,7 +109,7 @@ export class SwiftchatMessageService extends MessageService {
       
       return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
     }
-
+    
   async sendHowCanSelectedMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.selectedMessage;
@@ -727,7 +727,7 @@ async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: 
       // console.log("pdflink",response);
       
       const pdfUrl = response.data.pdfLink;
-      console.log('pdfURL',pdfUrl);
+      // console.log('pdfURL',pdfUrl);
       
       const pdfName = `Answer Key - ${selectedState} - ${selectedYear}`;  // Customize the name as needed
       
@@ -756,5 +756,48 @@ async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: 
     }
 }
 
+async sendQuestionPaperButton(from: string, language: string) {
+  const localisedStrings = LocalizationService.getLocalisedString(language);
+  const message = localisedStrings.ulikenext;
 
+  const messageData = {
+    to: from,
+    type: 'button',
+    button: {
+      body: {
+        type: 'text',
+        text: {
+          body: message,
+        },
+      },
+      buttons: [
+        {
+          type: 'solid',
+          body: localisedStrings.SeeQuestionPaper1,
+          reply: localisedStrings.SeeQuestionPaper1,
+        },
+        
+      ],
+      allow_custom_response: false,
+    },
+  };
+
+  return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+}
+
+
+async sendQuesPapaerNextMaessage(from: string, language: string) {
+  const localisedStrings = LocalizationService.getLocalisedString(language);
+  const requestData = this.prepareRequestData(
+    from,
+    localisedStrings.ulikenext,
+  );
+
+  const response = await this.sendMessage(
+    this.baseUrl,
+    requestData,
+    this.apiKey,
+  );
+  return response;
+}
 }
