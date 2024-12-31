@@ -108,7 +108,7 @@ export class ChatbotService {
       
       else if (['Apply Now', 'See More', 'अभी अप्लाई करें', 'और देखें'].includes(buttonResponse)) 
       {
-          console.log('count before:', userData.buttonClickCount);
+          console.log('count:', userData.buttonClickCount);
         const previousButton = buttonResponse;
         const selectedState = userData.selectedState;
        
@@ -119,26 +119,30 @@ export class ChatbotService {
         
             await this.message.nextButton(from, languageMessage, selectedState, previousButton);
             // userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
-           await this.userService.saveUser(userData);
-           console.log('count after:', userData.buttonClickCount);
+          //  await this.userService.saveUser(userData);
+          //  console.log('count after:', userData.buttonClickCount);
         
 
         if (userData.buttonClickCount === 1 || userData.buttonClickCount === 5) {
           userData.buttonClickCount = (userData.buttonClickCount) + 1;
+          await this.userService.saveUser(userData);
                await this.message.feedbackMessage(from, languageMessage);}
         else if (userData.buttonClickCount === 3) {
           userData.buttonClickCount = (userData.buttonClickCount) + 1;
+          await this.userService.saveUser(userData);
               await this.message.morebots(from, languageMessage);}
           
         else if (userData.buttonClickCount === 2 || userData.buttonClickCount === 4 ||userData.buttonClickCount === 0) {
           userData.buttonClickCount = (userData.buttonClickCount) + 1;
+          await this.userService.saveUser(userData);
               await this.message.ulikenext(from, languageMessage);} 
            if (userData.buttonClickCount > 5) 
             {
                userData.buttonClickCount = 0; // Reset the count
+               await this.userService.saveUser(userData);
           
         } 
-        await this.userService.saveUser(userData); // Save reset count 
+        // await this.userService.saveUser(userData); // Save reset count 
       }else if ([localisedStrings.NMMS1].includes(buttonResponse)) {
         await this.message.sendLanguageChangedMessage(from, languageMessage);
         await this.message.sendWhoCanApplyButton(from, buttonResponse) 

@@ -435,7 +435,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   async nextButton(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const link = await this.getLinkForButton(from, language, selectedState, previousButton);
-  console.log("my link",link);
+  console.log("my link", typeof link);
   
  
   const messageData = {
