@@ -47,6 +47,14 @@ export class User {
     @Column({ default: 0 }) // Column with a default value of 0
     buttonClickCount: number;
 
+    @IsNumber() // Validation for buttonClickCount (must be a number)
+    @Column({ default: 0 }) // Column with a default value of 0
+    seeMoreCount: number;
+
+    @IsNumber() // Validation for buttonClickCount (must be a number)
+    @Column({ default: 0 }) // Column with a default value of 0
+    applyLinkCount: number;
+
     // add selected year 
     @IsNumber()
     @Column({ default: 0 }) 

@@ -230,7 +230,7 @@ const { USERS_TABLE } = process.env;
 @Injectable()
 export class UserService {
   // In UserService
-  async createUser(mobileNumber: string,YearButtonCount: number, language: string, botID: string, selectedState: string, selectedYear: number=0, buttonClickCount: number = 0, feedback: string = '', previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
+  async createUser(mobileNumber: string,YearButtonCount: number, language: string, botID: string, selectedState: string, selectedYear: number=0, buttonClickCount: number = 0,seeMoreCount : number=0, applyLinkCount: number = 0, feedback: string = '', previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
     try {
       let user = await this.findUserByMobileNumber(mobileNumber, botID);
 
@@ -242,7 +242,9 @@ export class UserService {
         user.YearButtonCount = YearButtonCount;
         user.selectedState = selectedState;
         user.selectedYear = selectedYear; // save the selectedYear
-        user.buttonClickCount = buttonClickCount; // Make sure buttonClickCount is updated
+        user.buttonClickCount = buttonClickCount; // Make sure buttonClickCount is 
+        user.seeMoreCount = seeMoreCount;
+        user.applyLinkCount = applyLinkCount;
         await this.saveUser(user); // Save the updated user
         return user; // Return updated user
       } else {
@@ -255,6 +257,8 @@ export class UserService {
           selectedState, // Save the selected state
           selectedYear, //save selected year
           buttonClickCount,
+          seeMoreCount,
+          applyLinkCount,
           YearButtonCount,
           feedback,
           previousButtonMessage,
@@ -305,10 +309,12 @@ export class UserService {
           language: user.language,
           Botid: user.Botid,
           id: user.id,
-          YearButtonCount:user.YearButtonCount,
+          YearButtonCount:user.YearButtonCount || 0,
           selectedYear: user.selectedYear || 0, // include selectedYear
           selectedState: user.selectedState, // Include selectedState
           buttonClickCount: user.buttonClickCount || 0,
+          seeMoreCount: user.seeMoreCount || 0,
+          applyLinkCount: user.applyLinkCount || 0,
           feedback: user.feedback || '',
           previousButtonMessage: user.previousButtonMessage || '',
           previousButtonMessage1: user.previousButtonMessage1 || '',

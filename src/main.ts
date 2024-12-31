@@ -4,7 +4,7 @@ import { LoggingService } from './common/middleware/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  app.setGlobalPrefix('/scholarship_bot/v1');
   await app.listen(3000);
 }
 bootstrap();
