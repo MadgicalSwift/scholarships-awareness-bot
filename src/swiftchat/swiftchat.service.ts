@@ -150,7 +150,7 @@ export class SwiftchatMessageService extends MessageService {
 
   async sendStateSelectionButton(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
-    const message = localisedStrings.StateSelectionMessage;
+    const message = localisedStrings.stateSelectionMessage;
 
     let states = [];
     

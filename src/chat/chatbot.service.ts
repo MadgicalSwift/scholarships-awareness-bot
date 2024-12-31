@@ -62,19 +62,20 @@ export class ChatbotService {
     
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
+       let userLanguage= userData.language
       if (response === 'Try Something New') {
-        await this.message.asyncFetchAndSendBotButtons(from, response);
-        await this.message.uLikeNextAfterMoreBot(from, response);
+        await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
+        await this.message.uLikeNextAfterMoreBot(from, userLanguage);
            }
       else if (response === 'What is NMMS?') {
-            await this.message.sendLanguageChangedMessage(from, response);
-        await this.message.sendWhoCanApplyButton(from, response) 
+            await this.message.sendLanguageChangedMessage(from, userLanguage);
+        await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
       else if (response === 'Change State') {
-             await this.message.sendStateSelectionButton(from, response);
+             await this.message.sendStateSelectionButton(from, userLanguage);
       }
       else if (response === 'Change Language') {
-                await this.message.sendLanguageSelectionMessage(from, response);
+                await this.message.sendLanguageSelectionMessage(from, userLanguage);
       }
     } 
    
