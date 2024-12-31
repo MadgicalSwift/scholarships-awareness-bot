@@ -16,7 +16,7 @@ class IntentClassifier {
 
   private getEntities(intent: string, message: string): string[] {
     if (intent === 'greeting') {
-      if (localisedStrings.language_hindi.indexOf(message)) {
+      if (localisedStrings.languageHindi.indexOf(message)) {
         return ['hindi'];
       } else {
         return ['english'];

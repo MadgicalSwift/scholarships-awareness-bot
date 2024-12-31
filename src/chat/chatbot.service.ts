@@ -38,7 +38,7 @@ export class ChatbotService {
       userData = {
         mobileNumber: from,
         Botid: botID,
-        language: 'English', // Default language
+        language: 'English', 
         selectedState: 'default_state',
         buttonClickCount: 0,
         selectedYear: 0,
@@ -63,7 +63,8 @@ export class ChatbotService {
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
       if (response === 'Try Something New') {
-            await this.message.feedbackMessage(from, response);
+        await this.message.asyncFetchAndSendBotButtons(from, response);
+        await this.message.uLikeNextAfterMoreBot(from, response);
            }
       else if (response === 'What is NMMS?') {
             await this.message.sendLanguageChangedMessage(from, response);
@@ -114,32 +115,31 @@ export class ChatbotService {
         const previousButton = buttonResponse;
         const selectedState = userData.selectedState;
        
-          if (!selectedState) {
+        if (!selectedState) {
              return;
         }
         await this.message.nextButton(from, languageMessage, selectedState, previousButton);
         if (userData.seeMoreCount === 1 || userData.seeMoreCount === 5) {
-         
-    
-               await this.message.feedbackMessage(from, languageMessage);}
+          await this.message.feedbackMessage(from, languageMessage);
+        }
         else if (userData.seeMoreCount === 3) {
-         
-         
-              await this.message.morebots(from, languageMessage);}
+          await this.message.morebots(from, languageMessage);
+          await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
+          await this.message.uLikeNextAfterMoreBot(from, languageMessage);
           
+          // 
+        }
         else if (userData.seeMoreCount === 2 || userData.seeMoreCount === 4 ||userData.seeMoreCount === 0) {
-          
-       
-              await this.message.ulikenext(from, languageMessage);} 
-           if (userData.seeMoreCount > 5) 
-            {
-               userData.seeMoreCount = 0; // Reset the count
-              
-              } 
-              else{
-                userData.seeMoreCount = (userData.seeMoreCount) + 1;
-              }
-          await this.userService.saveUser(userData); // Save reset count 
+          await this.message.uLikeNext(from, languageMessage);
+        } 
+        if (userData.seeMoreCount > 5) 
+        {
+          userData.seeMoreCount = 0; // Reset the count
+        } 
+        else{
+          userData.seeMoreCount = (userData.seeMoreCount) + 1;
+        }
+        await this.userService.saveUser(userData); // Save reset count 
       }
       else if (['Apply Now', 'अभी अप्लाई करें'].includes(buttonResponse)) 
         {
@@ -160,12 +160,15 @@ export class ChatbotService {
           else if (userData.applyLinkCount === 3) {
             
             
-                await this.message.morebots(from, languageMessage);}
+                await this.message.morebots(from, languageMessage);
+                await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
+                await this.message.uLikeNextAfterMoreBot(from, languageMessage);
+              }
             
           else if (userData.applyLinkCount === 2 || userData.applyLinkCount === 4 ||userData.applyLinkCount === 0) {
            
     
-                await this.message.ulikenext(from, languageMessage);} 
+                await this.message.uLikeNext(from, languageMessage);} 
                 if (userData.applyLinkCount > 5) 
                   {
                      userData.applyLinkCount = 0; // Reset the count
@@ -215,17 +218,19 @@ export class ChatbotService {
             await this.message.feedbackMessage(from, languageMessage);
           }
           else if (userData.YearButtonCount === 3) {
-           
             await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
-                    await this.message.morebots(from, languageMessage);}
+            await this.message.morebots(from, languageMessage);
+            await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
+            await this.message.uLikeNextAfterMoreBot(from, languageMessage);
+          }
           else if (userData.YearButtonCount === 2 || userData.YearButtonCount === 4 || userData.YearButtonCount == 0){
-           
             await this.message.sendQuestionPaperButton(from, languageMessage)
           }
           if (userData.YearButtonCount > 5) {
             userData.YearButtonCount =0;
           }
-          else{
+          else
+          {
             userData.YearButtonCount = userData.YearButtonCount+1 ;
           }
           

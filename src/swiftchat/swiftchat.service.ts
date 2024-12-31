@@ -11,6 +11,8 @@ export class SwiftchatMessageService extends MessageService {
   private botId = process.env.BOT_ID;
   private apiKey = process.env.API_KEY;
   private apiUrl = process.env.API_URL;
+  private sheetAPI = process.env.Sheet_API;
+  private moreBotAPI = process.env.moreBotAPI;
   private baseUrl = `${this.apiUrl}/${this.botId}/messages`;
   private selectedStateStore: Map<string, string> = new Map();
 
@@ -154,7 +156,7 @@ export class SwiftchatMessageService extends MessageService {
     
     try {
         const response = await axios.get(
-            'https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec',
+          this.sheetAPI,
             { params: { action: 'getStates' } }
         );
         
@@ -235,7 +237,7 @@ async StateSelectedinfo(from, language, selectedState) {
   try {
       // Fetch state details
       const stateResponse = await axios.get(
-          "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
+        this.sheetAPI,
           {
               params: { action: "getStateDetails", state: selectedState },
           }
@@ -247,7 +249,7 @@ async StateSelectedinfo(from, language, selectedState) {
 
       // Fetch question papers
       const questionPapersResponse = await axios.get(
-          "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
+        this.sheetAPI,
           {
               params: { action: "getQuestionPaper", state: selectedState },
           }
@@ -294,22 +296,24 @@ async StateSelectedinfo(from, language, selectedState) {
           responseButtons.push("Apply Now");
          
       }
+      
 
   } else {
       messageContent += `\n\nUnable to fetch state details. Please try again later.`;
   }
   // console.log(stateDetails)
   if (questionPapers && !questionPapers.error) {
-      let questionPaperDetails = "\n📚 Available Question Papers:\n";
-      // questionPapers.forEach((paper, index) => {
-      //     questionPaperDetails += `• ${paper["State"]} (${paper["Year"]}) - [PDF](${paper["PDF Link"]})\n`;
-      // });
-      // messageContent += questionPaperDetails;
+    let questionPaperDetails = "\n📚 Available Question Papers:\n";
+    // questionPapers.forEach((paper, index) => {
+    //     questionPaperDetails += `• ${paper["State"]} (${paper["Year"]}) - [PDF](${paper["PDF Link"]})\n`;
+    // });
+    
 
-      // Add "See Question Papers" button
-      responseButtons.push("See Question Papers");
-      
-  }
+    
+    responseButtons.push("See Question Papers");
+    
+}
+  
 
   const messageData = {
       to: from,
@@ -326,8 +330,7 @@ async StateSelectedinfo(from, language, selectedState) {
       }
       else{
         console.log('there is no apply link, question paper, web link');
-        // userData.buttonClickCount = (userData.buttonClickCount || 0) + 1;
-              await this.ulikenext(from, language);
+              await this.uLikeNext(from, language);
         
       }
          
@@ -343,7 +346,7 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
   try {
     // Fetch state details
     const stateResponse = await axios.get(
-      "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
+      this.sheetAPI,
       {
         params: { action: "getStateDetails", state: selectedState },
       }
@@ -354,7 +357,7 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
 
     // Fetch question papers
     const questionPapersResponse = await axios.get(
-      "https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec",
+      this.sheetAPI,
       {
         params: { action: "getQuestionPaper", state: selectedState },
       }
@@ -379,7 +382,7 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
     // For "See Question Papers", we can return the first available question paper link as an example
     link = questionPapers[0]["PDF Link"];
   }
- console.log('link by fn', link);
+
  
   return link; 
 }
@@ -403,8 +406,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           case "See Question Papers":
               return {
                   type: "solid",
-                  body: localisedStrings.seeQuestionPaper1||'See Question Papers',
-                  reply: localisedStrings.SeeQuestionPaper1||'See Question Papers',
+                  body: localisedStrings.seeQuestionPaper,
+                  reply: localisedStrings.seeQuestionPaper,
               };
           default:
               return {
@@ -435,7 +438,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   async nextButton(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const link = await this.getLinkForButton(from, language, selectedState, previousButton);
-  console.log("my link", typeof link);
+  
   
  
   const messageData = {
@@ -486,12 +489,12 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
         buttons: [
           {
             type: 'solid',
-            body: localisedStrings.language_english,
+            body: localisedStrings.languageEnglish,
             reply: 'English',
           },
           {
             type: 'solid',
-            body: localisedStrings.language_hindi,
+            body: localisedStrings.languageHindi,
             reply: 'hindi',
           },
         ],
@@ -541,9 +544,9 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
  
-  async ulikenext(from: string, language: string) {
+  async uLikeNext(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
-    const message = localisedStrings.ulikenext;
+    const message = localisedStrings.uLikeNext;
   
     const messageData = {
       to: from,
@@ -573,7 +576,38 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
 
     return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
+
+  async uLikeNextAfterMoreBot(from: string, language: string) {
+    const localisedStrings = LocalizationService.getLocalisedString(language);
+    const message = localisedStrings.uLikeNext;
+  
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
+          },
+        },
+        buttons: [
+          
+          {
+            type: 'solid',
+            body: localisedStrings.checkstate,
+            reply: localisedStrings.checkstate,
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  }
  
+  
+
   async morebots(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const requestData = this.prepareRequestData(
@@ -764,7 +798,7 @@ async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: 
 
 async sendQuestionPaperButton(from: string, language: string) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
-  const message = localisedStrings.ulikenext;
+  const message = localisedStrings.uLikeNext;
 
   const messageData = {
     to: from,
@@ -796,7 +830,7 @@ async sendQuesPapaerNextMaessage(from: string, language: string) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const requestData = this.prepareRequestData(
     from,
-    localisedStrings.ulikenext,
+    localisedStrings.uLikeNext,
   );
 
   const response = await this.sendMessage(
@@ -806,4 +840,80 @@ async sendQuesPapaerNextMaessage(from: string, language: string) {
   );
   return response;
 }
+
+// try new 
+async fetchAndStoreBots(from: string, language: string) {
+  try {
+      // API URL
+      const apiUrl = this.moreBotAPI;
+
+      // Fetch data using Axios
+      const response = await axios.get(apiUrl);
+
+      
+      // Store data in an array
+      const bots = response.data;
+      
+      if (bots.length === 0) {
+          console.log('No bots found in the API response.');
+          return;
+      }
+
+      
+
+      return bots;
+  } catch (error) {
+      console.error('Error fetching bots:', error);
+  }
+}
+async  asyncFetchAndSendBotButtons(from: string, language: string) {
+  try {
+      // Fetch bots
+      const bots = await this.fetchAndStoreBots(from,language);
+
+      if (!bots || bots.length === 0) {
+          console.log('No bots available to send as buttons.');
+          return;
+      }
+
+      // Map bots to article objects
+      const articles = bots.map((bot) => ({
+  
+          title: bot.botName, 
+          header: {
+              type: "image",
+              image: {
+                  url: bot.imageUrl,
+                  body: "Sample caption",
+              },
+          },
+          description: bot.description,
+          actions: [
+              {
+                  button_text: "Go To Website",
+                  type: "website",
+                  website: {
+                      title: "Welcome to Swiftchat",
+                     
+                      url: bot.botLink,
+                      
+                  },
+              },
+          ],
+      }));
+
+      const messageData = {
+          to: from,
+          type: "article",
+          article: articles,
+      };
+
+      // Send the bot articles
+      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+  } catch (error) {
+      console.error('Error fetching or sending bot articles:', error);
+  }
+}
+
+
 }

@@ -40,7 +40,7 @@ export abstract class MessageService {
   abstract getLinkForButton(from, language, selectedState, previousButton);
   abstract handleSelectedState(from, selectedState, language);
   abstract feedbackMessage(from, languageMessage);
-  abstract ulikenext(from, languageMessage);
+  abstract uLikeNext(from, languageMessage);
   abstract morebots(from, languageMessage);
   abstract userfeedback(from, languageMessage);
   abstract thankumessage(from, languageMessage);
@@ -52,6 +52,10 @@ export abstract class MessageService {
   
   
   abstract sendQuesPapaerNextMaessage(from, languageMessage);
+  abstract fetchAndStoreBots(from, languageMessage);
+  abstract asyncFetchAndSendBotButtons(from, languageMessage);
+  abstract uLikeNextAfterMoreBot(from, languageMessage);
+  
   
   
 }
