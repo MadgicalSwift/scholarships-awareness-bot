@@ -207,6 +207,9 @@ export class ChatbotService {
           await this.message.fetchAndSendYearButtons(from, languageMessage,selectedState)
         } 
 
+        
+
+
       else if(userData.previousButtonMessage1 && buttonResponse){
           let selectedYear = buttonResponse;
           let selectedState = userData.selectedState;
