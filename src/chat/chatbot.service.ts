@@ -75,7 +75,7 @@ export class ChatbotService {
              await this.message.sendStateSelectionButton(from, userLanguage);
       }
       else if (response === 'Change Language') {
-                await this.message.sendLanguageSelectionMessage(from, userLanguage);
+                await this.message.sendLanguageSelectionMessage(from, response);
       }
     } 
    
