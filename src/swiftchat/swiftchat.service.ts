@@ -568,7 +568,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           },
           {
             type: 'solid',
-            body: localisedStrings.checkState || "Check for another State",
+            body: localisedStrings.checkState,
             reply: localisedStrings.checkState,
           },
         ],

@@ -60,6 +60,7 @@ export class ChatbotService {
       await this.userService.saveUser(userData);
     }
     const localisedStrings = LocalizationService.getLocalisedString(userData.language);
+    // for hindi and english language
     console.log('UserData',userData);
     
      if (persistent_menu_response) {
@@ -95,17 +96,16 @@ export class ChatbotService {
       const languageMessage = userData.language;
       
       const statesFetch = await localisedStrings.States();
-      console.log('button1' ,buttonResponse);
-      // localisedStrings.whoCanApply
-      if (["🎯Who Can Apply","🎯कौन आवेदन कर सकता है"].includes(buttonResponse)) {
-        console.log('button2' ,buttonResponse);
+      
+      if ([localisedStrings.whoCanApply].includes(buttonResponse)) {
+       
         await this.message.sendHowCanSelectedButton(from, languageMessage);
       } else if (
         [localisedStrings.howCanSelected].includes(buttonResponse,)) {
-          console.log('button2' ,buttonResponse);
+         
         await this.message.sendHowCanSelectedMessage(from, languageMessage);
       } else if ([localisedStrings.next].includes(buttonResponse)) {
-        console.log('button2' ,buttonResponse);
+      
         await this.message.sendStateSelectionButton(from, languageMessage);
       } else if (statesFetch.includes(buttonResponse)) {
         userData.selectedState = buttonResponse; // Save the selected state
@@ -124,7 +124,7 @@ export class ChatbotService {
         }
         await this.message.nextButton(from, languageMessage, selectedState, previousButton);
 
-        console.log('See More count:', userData.seeMoreCount);
+        // console.log('See More count:', userData.seeMoreCount);
 
         if (userData.seeMoreCount > 5) 
           {
@@ -163,7 +163,7 @@ export class ChatbotService {
                return;
           }
           
-          console.log('Apply Now count:', userData.applyLinkCount);
+          // console.log('Apply Now count:', userData.applyLinkCount);
 
           
               await this.message.nextButton(from, languageMessage, selectedState, previousButton);
@@ -231,7 +231,7 @@ export class ChatbotService {
           userData.previousButtonMessage1='';
 
 
-          console.log('YearButtonCount',userData.YearButtonCount);
+          // console.log('YearButtonCount',userData.YearButtonCount);
           if (userData.YearButtonCount > 5) {
             userData.YearButtonCount =0;
           }
