@@ -12,4 +12,5 @@ export class LocalizationService {
       return english; // Default to English if language is invalid
     }
   }
+
 }

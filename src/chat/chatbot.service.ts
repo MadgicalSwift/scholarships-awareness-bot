@@ -3,9 +3,8 @@ import IntentClassifier from '../intent/intent.classifier';
 import { MessageService } from 'src/message/message.service';
 import { UserService } from 'src/model/user.service';
 import { LocalizationService } from 'src/localization/localization.service';
-import { localisedStrings } from 'src/i18n/en/localised-strings';
+// import { localisedStrings } from 'src/i18n/hn/localised-strings';
 
-// import { localisedStrings } from 'src/localization';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
 import { count, log } from 'console';
 
@@ -34,6 +33,8 @@ export class ChatbotService {
 
     // Retrieve user data
     let userData = await this.userService.findUserByMobileNumber(from, botID);
+    
+
 
     if (!userData) {
       console.error(`User with mobile number ${from} not found.`);
@@ -58,8 +59,7 @@ export class ChatbotService {
       userData.language = 'English';
       await this.userService.saveUser(userData);
     }
-
-    
+    const localisedStrings = LocalizationService.getLocalisedString(userData.language);
     console.log('UserData',userData);
     
      if (persistent_menu_response) {
@@ -80,11 +80,11 @@ export class ChatbotService {
                 await this.message.sendLanguageSelectionMessage(from, response);
       }
     } 
-  //  'english', 'hindi'
+  //  
     const languageMessage = userData.language;
     if (type === 'button_response') {
       const buttonResponse = body.button_response?.body;
-      if ([localisedStrings.userLanguage].includes(buttonResponse?.toLowerCase())) {
+      if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
         userData.language = buttonResponse.toLowerCase();
         await this.userService.saveUser(userData);
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
@@ -96,8 +96,8 @@ export class ChatbotService {
       
       const statesFetch = await localisedStrings.States();
       console.log('button1' ,buttonResponse);
-      
-      if ([localisedStrings.whoCanApply].includes(buttonResponse)) {
+      // localisedStrings.whoCanApply
+      if (["🎯Who Can Apply","🎯कौन आवेदन कर सकता है"].includes(buttonResponse)) {
         console.log('button2' ,buttonResponse);
         await this.message.sendHowCanSelectedButton(from, languageMessage);
       } else if (
