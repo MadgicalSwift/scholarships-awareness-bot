@@ -4,6 +4,8 @@ import { MessageService } from 'src/message/message.service';
 import { UserService } from 'src/model/user.service';
 import { LocalizationService } from 'src/localization/localization.service';
 import { localisedStrings } from 'src/i18n/en/localised-strings';
+
+// import { localisedStrings } from 'src/localization';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
 import { count, log } from 'console';
 
@@ -95,7 +97,7 @@ export class ChatbotService {
       const statesFetch = await localisedStrings.States();
       console.log('button1' ,buttonResponse);
       
-      if (["🎯Who Can Apply","🎯कौन आवेदन कर सकता है"].includes(buttonResponse)) {
+      if ([localisedStrings.whoCanApply].includes(buttonResponse)) {
         console.log('button2' ,buttonResponse);
         await this.message.sendHowCanSelectedButton(from, languageMessage);
       } else if (
@@ -138,7 +140,7 @@ export class ChatbotService {
         else if (userData.seeMoreCount === 3) {
           userData.seeMoreCount = (userData.seeMoreCount) + 1;
             await this.userService.saveUser(userData); // Save reset count 
-          await this.message.morebots(from, languageMessage);
+          await this.message.moreBots(from, languageMessage);
           await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
           await this.message.uLikeNextAfterMoreBot(from, languageMessage);
           
@@ -179,7 +181,7 @@ export class ChatbotService {
             userData.applyLinkCount = (userData.applyLinkCount) + 1;
             await this.userService.saveUser(userData); // Save reset count 
             
-                await this.message.morebots(from, languageMessage);
+                await this.message.moreBots(from, languageMessage);
                 await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
                 await this.message.uLikeNextAfterMoreBot(from, languageMessage);
               }
@@ -245,7 +247,7 @@ export class ChatbotService {
             userData.YearButtonCount = (userData.YearButtonCount) + 1;
             await this.userService.saveUser(userData); // Save reset count 
             await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
-            await this.message.morebots(from, languageMessage);
+            await this.message.moreBots(from, languageMessage);
             await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
             await this.message.uLikeNextAfterMoreBot(from, languageMessage);
           }
