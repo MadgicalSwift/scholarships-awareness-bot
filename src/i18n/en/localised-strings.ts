@@ -26,7 +26,7 @@ export const localisedStrings = {
  morebot: "Here are some more fun bots for you to explore! ",
  sure:"Sure! I love to Share",
  NMMS1: "What is NMMS?",
- checkstate: " Check for another State",
+ checkState: " Check for another State",
  userfeedback:"Kindly express your thoughts and opinions by typing them in the provided text box and pressing the 'send' button.📖",
  yearSelectionPrompt:"Please select a year to get the question paper",
  ST21Message:"📅 Great! Which year's question papers are you interested in? Let me know and I'll provide you with the relevant papers for that year!📝  🔍",

@@ -533,8 +533,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           },
           {
             type: 'solid',
-            body: localisedStrings.checkstate,
-            reply: localisedStrings.checkstate,
+            body: localisedStrings.checkState,
+            reply: localisedStrings.checkState,
           },
         ],
         allow_custom_response: false,
@@ -566,8 +566,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           },
           {
             type: 'solid',
-            body: localisedStrings.checkstate,
-            reply: localisedStrings.checkstate,
+            body: localisedStrings.checkState,
+            reply: localisedStrings.checkState,
           },
         ],
         allow_custom_response: false,
@@ -595,8 +595,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           
           {
             type: 'solid',
-            body: localisedStrings.checkstate,
-            reply: localisedStrings.checkstate,
+            body: localisedStrings.checkState,
+            reply: localisedStrings.checkState,
           },
         ],
         allow_custom_response: false,
@@ -660,8 +660,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           },
           {
             type: 'solid',
-            body: localisedStrings.checkstate,
-            reply: localisedStrings.checkstate,
+            body: localisedStrings.checkState,
+            reply: localisedStrings.checkState,
           },
         ],
         allow_custom_response: false,
