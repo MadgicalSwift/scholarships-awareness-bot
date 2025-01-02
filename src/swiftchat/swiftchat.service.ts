@@ -303,15 +303,9 @@ async StateSelectedinfo(from, language, selectedState) {
   } else {
       messageContent += `\n\nUnable to fetch state details. Please try again later.`;
   }
-  // console.log(stateDetails)
+
   if (questionPapers && !questionPapers.error) {
     let questionPaperDetails = "\n📚 Available Question Papers:\n";
-    // questionPapers.forEach((paper, index) => {
-    //     questionPaperDetails += `• ${paper["State"]} (${paper["Year"]}) - [PDF](${paper["PDF Link"]})\n`;
-    // });
-    
-
-    
     responseButtons.push("See Question Papers");
     
 }
@@ -331,9 +325,9 @@ async StateSelectedinfo(from, language, selectedState) {
           await this.sendButtonsBasedOnResponse(from, language, responseButtons);
       }
       else{
-        console.log('there is no apply link, question paper, web link');
+        
         let userData = await this.userService.findUserByMobileNumber(from, this.botId);
-        console.log('there is no apply link, question paper, web link',userData,userData.seeMoreCount);
+        
         if(userData.seeMoreCount==3){
           await this.moreBots(from, language);
         }

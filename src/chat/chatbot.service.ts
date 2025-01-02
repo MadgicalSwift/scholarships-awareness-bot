@@ -80,11 +80,11 @@ export class ChatbotService {
                 await this.message.sendLanguageSelectionMessage(from, response);
       }
     } 
-   
+  //  'english', 'hindi'
     const languageMessage = userData.language;
     if (type === 'button_response') {
       const buttonResponse = body.button_response?.body;
-      if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
+      if ([localisedStrings.userLanguage].includes(buttonResponse?.toLowerCase())) {
         userData.language = buttonResponse.toLowerCase();
         await this.userService.saveUser(userData);
         await this.message.sendLanguageChangedMessage(from, buttonResponse);

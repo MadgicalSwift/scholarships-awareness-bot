@@ -4,6 +4,7 @@ export const localisedStrings = {
   seeMoreMessage: 'See More Data',
   languageHindi: 'हिन्दी',
   languageEnglish: 'English',
+  userLanguage:'english',
   languageChangedMessage: "**🎉Great! You’ve selected English. Let's get started!** \n\nHere's everything you need to know about the **National Means-cum-Merit Scholarship (NMMS):🌟What is NMMS?** The NMMS Scholarship is a program for Class 8 students to support their education. \n\nIf you qualify, you’ll receive **₹ 12,000 per year** ( ₹ 1000 per month ) until Class 12!",
   languageSelection: '**🔍Please select your 🗺️language.**',
   whoCanApplyPrompt:"Please click the button below to learn more:",
