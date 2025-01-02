@@ -4,9 +4,11 @@ import { MessageService } from 'src/message/message.service';
 import { UserService } from 'src/model/user.service';
 import { LocalizationService } from 'src/localization/localization.service';
 // import { localisedStrings } from 'src/i18n/hn/localised-strings';
-
+import { MixpanelService } from 'src/mixpanel/mixpanel.service';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
 import { count, log } from 'console';
+import { distinct } from 'rxjs';
+import { response } from 'express';
 
 @Injectable()
 export class ChatbotService {
@@ -14,17 +16,20 @@ export class ChatbotService {
   private readonly message: MessageService;
   private readonly userService: UserService;
   private readonly swiftchatService: SwiftchatMessageService;
+  private readonly mixpanel: MixpanelService;
 
   constructor(
     intentClassifier: IntentClassifier,
     message: MessageService,
     userService: UserService,
     swiftchatService: SwiftchatMessageService,
+    mixpanel: MixpanelService,
   ) {
     this.intentClassifier = intentClassifier;
     this.message = message;
     this.userService = userService;
     this.swiftchatService = swiftchatService;
+    this.mixpanel = mixpanel;
   }
   
   public async processMessage(body: any): Promise<any> {
@@ -53,6 +58,7 @@ export class ChatbotService {
         previousButtonMessage1:"",
       };
       await this.userService.saveUser(userData);
+      // this.mixpanel.track('Button_Click')
     }
 
     if (!userData.language) {
@@ -80,6 +86,11 @@ export class ChatbotService {
       else if (response === 'Change Language') {
                 await this.message.sendLanguageSelectionMessage(from, response);
       }
+      this.mixpanel.track('trackPersistenceButton',{
+        distinctId :from,
+        userYearButtonCount : response,
+        language : userData.language,
+      })
     } 
   //  
     const languageMessage = userData.language;
@@ -151,6 +162,11 @@ export class ChatbotService {
             await this.userService.saveUser(userData); // Save reset count 
           await this.message.uLikeNext(from, languageMessage);
         } 
+        this.mixpanel.track('trackUserSeeMoreCount',{
+          distinctId :from,
+          userUserSeeMoreCount : buttonResponse,
+          language : userData.language,
+        })
          
       }
       else if ([localisedStrings.applyNow].includes(buttonResponse)) 
@@ -190,7 +206,13 @@ export class ChatbotService {
             userData.applyLinkCount = (userData.applyLinkCount) + 1;
             await this.userService.saveUser(userData); // Save reset count 
                 await this.message.uLikeNext(from, languageMessage);} 
+          
                 
+                this.mixpanel.track('trackUserApplyLinkCount',{
+                  distinctId :from,
+                  userApplyLinkCount : buttonResponse,
+                  language : userData.language,
+                })
                 
         }
       else if ([localisedStrings.NMMS1].includes(buttonResponse)) {
@@ -224,7 +246,8 @@ export class ChatbotService {
         
         
 
-      else if(userData.previousButtonMessage1 && buttonResponse){
+      else if(userData.previousButtonMessage1 && buttonResponse)
+        {
           let selectedYear = buttonResponse;
           let selectedState = userData.selectedState;
           await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState,selectedYear);
@@ -256,10 +279,23 @@ export class ChatbotService {
             await this.userService.saveUser(userData); // Save reset count 
             await this.message.sendQuestionPaperButton(from, languageMessage)
           }
+          this.mixpanel.track('userYearButtonCount',{
+            distinctId :from,
+            userYearButtonCount : buttonResponse,
+            language : userData.language,
+          })
           
           
           
-        }       
+        } 
+        
+        this.mixpanel.track('userButtonClick',{
+          distinctId :from,
+          buttonClick : buttonResponse,
+          language : userData.language,
+        })
+
+        
             }
 
 
@@ -279,6 +315,11 @@ export class ChatbotService {
       userData.previousButtonMessage='';
       await this.userService.saveUser(userData);
       await this.message.thankumessage(from, userData.language)
+      this.mixpanel.track('user feedback',{
+        distinctId :from,
+        userFeedback : text.body,
+        language : userData.language,
+      })
     }
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);
@@ -288,6 +329,11 @@ export class ChatbotService {
         const feedbackMessage = text.body;
         userData.feedback = feedbackMessage;
         await this.userService.saveUser(userData);
+        this.mixpanel.track('welcomeMessage',{
+          distinctId :from,
+          userFeedback : text.body,
+          language : userData.language,
+        })
 }
     }
     

@@ -3,11 +3,13 @@ import axios from 'axios';
 import { CustomException } from 'src/common/exception/custom.exception';
 import { localisedStrings } from 'src/i18n/en/localised-strings';
 import { UserService } from 'src/model/user.service';
+import { MixpanelService } from 'src/mixpanel/mixpanel.service';
 
 @Injectable()
 export abstract class MessageService {
   constructor(
     public readonly userService: UserService,
+    public readonly mixpanel: MixpanelService
   ) {}
   async prepareWelcomeMessage() {
     return localisedStrings.welcomeMessage;
