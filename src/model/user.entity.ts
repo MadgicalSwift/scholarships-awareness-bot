@@ -1,21 +1,4 @@
-/* import { IsString, IsNumber, column, IsOptional } from 'class-validator';
 
-export class User {
-  @IsString()
-  mobileNumber: string;
-
-  @IsString()
-  language: string;
-
-  @IsString()
-  Botid: string;
-  
-  @IsString()
-  selectedState: string;
-
-  @Column({ default: 0 }) // Default count is 0
-  buttonClickCount: number;
-} */
   import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';  // Import from TypeORM
   import { IsString, IsNumber, IsOptional } from 'class-validator';   // Import from class-validator
   
@@ -43,9 +26,7 @@ export class User {
     @Column()  // Define the column in the database
     selectedState: string;
   
-    @IsNumber() // Validation for buttonClickCount (must be a number)
-    @Column({ default: 0 }) // Column with a default value of 0
-    buttonClickCount: number;
+  
 
     @IsNumber() // Validation for buttonClickCount (must be a number)
     @Column({ default: 0 }) // Column with a default value of 0

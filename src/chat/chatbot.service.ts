@@ -40,7 +40,7 @@ export class ChatbotService {
         Botid: botID,
         language: 'English', 
         selectedState: 'default_state',
-        buttonClickCount: 0,
+        
         selectedYear: 0,
         YearButtonCount:0,
         seeMoreCount:0,
@@ -93,16 +93,17 @@ export class ChatbotService {
       const languageMessage = userData.language;
       
       const statesFetch = await localisedStrings.States();
+      console.log('button1' ,buttonResponse);
       
-      if (['🎯Who Can Apply', '🎯कौन आवेदन कर सकता है'].includes(buttonResponse)) {
+      if (["🎯Who Can Apply","🎯कौन आवेदन कर सकता है"].includes(buttonResponse)) {
+        console.log('button2' ,buttonResponse);
         await this.message.sendHowCanSelectedButton(from, languageMessage);
       } else if (
-        ['📝 How can I get selected?', '📝 मेरा चयन कैसे हो सकता है?'].includes(
-          buttonResponse,
-        )
-      ) {
+        [localisedStrings.howCanSelected].includes(buttonResponse,)) {
+          console.log('button2' ,buttonResponse);
         await this.message.sendHowCanSelectedMessage(from, languageMessage);
-      } else if (['Next', 'अगला'].includes(buttonResponse)) {
+      } else if ([localisedStrings.next].includes(buttonResponse)) {
+        console.log('button2' ,buttonResponse);
         await this.message.sendStateSelectionButton(from, languageMessage);
       } else if (statesFetch.includes(buttonResponse)) {
         userData.selectedState = buttonResponse; // Save the selected state
@@ -110,7 +111,7 @@ export class ChatbotService {
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
       } 
       
-      else if (['See More', 'और देखें'].includes(buttonResponse)) 
+      else if ([localisedStrings.seeMore].includes(buttonResponse)) 
       {
           
         const previousButton = buttonResponse;
@@ -149,12 +150,8 @@ export class ChatbotService {
           await this.message.uLikeNext(from, languageMessage);
         } 
          
-        // else{
-        //   userData.seeMoreCount = (userData.seeMoreCount) + 1;
-        // }
-        // await this.userService.saveUser(userData); // Save reset count 
       }
-      else if (['Apply Now', 'अभी अप्लाई करें'].includes(buttonResponse)) 
+      else if ([localisedStrings.applyNow].includes(buttonResponse)) 
         {
             
           const previousButton = buttonResponse;
@@ -192,18 +189,13 @@ export class ChatbotService {
             await this.userService.saveUser(userData); // Save reset count 
                 await this.message.uLikeNext(from, languageMessage);} 
                 
-                //     else{
-                //       userData.applyLinkCount = (userData.applyLinkCount) + 1;
-                //     }
-                // await this.userService.saveUser(userData); // Save reset count 
-         
+                
         }
       else if ([localisedStrings.NMMS1].includes(buttonResponse)) {
         await this.message.sendLanguageChangedMessage(from, languageMessage);
         await this.message.sendWhoCanApplyButton(from, buttonResponse) 
       }
       else if ([localisedStrings.checkState].includes(buttonResponse)) {
-        console.log( 'check state s',buttonResponse);
         
               await this.message.sendStateSelectionButton(from, languageMessage);
       }
@@ -216,7 +208,7 @@ export class ChatbotService {
       } 
 
 
-      else if (['See Question Papers', 'प्रश्न पत्र देखें'].includes(buttonResponse)){
+      else if ([localisedStrings.seeQuestionPaper].includes(buttonResponse)){
           await this.message.sendST21Message(from, languageMessage);
           const feedbackPromptEnglish =localisedStrings.ST21Message;
           const feedbackPromptHindi = localisedStrings.ST21Message;
@@ -263,12 +255,6 @@ export class ChatbotService {
             await this.message.sendQuestionPaperButton(from, languageMessage)
           }
           
-          // else
-          // {
-          //   userData.YearButtonCount = userData.YearButtonCount+1 ;
-          // }
-          
-          // await this.userService.saveUser(userData);
           
           
         }       

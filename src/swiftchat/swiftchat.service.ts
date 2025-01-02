@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import { LocalizationService } from 'src/localization/localization.service';
+import { UserService } from 'src/model/user.service';
 import { MessageService } from 'src/message/message.service';
 import axios from 'axios';
 import { CLIENT_RENEG_LIMIT } from 'tls';
@@ -15,6 +16,7 @@ export class SwiftchatMessageService extends MessageService {
   private moreBotAPI = process.env.moreBotAPI;
   private baseUrl = `${this.apiUrl}/${this.botId}/messages`;
   private selectedStateStore: Map<string, string> = new Map();
+  private readonly userService: UserService;
 
   private prepareRequestData(from: string, requestBody: string): any {
     return {
@@ -330,8 +332,14 @@ async StateSelectedinfo(from, language, selectedState) {
       }
       else{
         console.log('there is no apply link, question paper, web link');
-              await this.uLikeNext(from, language);
-        
+        let userData = await this.userService.findUserByMobileNumber(from, this.botId);
+        console.log('there is no apply link, question paper, web link',userData,userData.seeMoreCount);
+        if(userData.seeMoreCount==3){
+          await this.morebots(from, language);
+        }
+        else{
+          await this.uLikeNext(from, language);
+        }
       }
          
   } catch (error) {
@@ -533,8 +541,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           },
           {
             type: 'solid',
-            body: localisedStrings.checkState,
-            reply: localisedStrings.checkState,
+            body: localisedStrings.checkstate,
+            reply: localisedStrings.checkstate,
           },
         ],
         allow_custom_response: false,
@@ -566,8 +574,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           },
           {
             type: 'solid',
-            body: localisedStrings.checkState,
-            reply: localisedStrings.checkState,
+            body: localisedStrings.checkstate,
+            reply: localisedStrings.checkstate,
           },
         ],
         allow_custom_response: false,
@@ -595,8 +603,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           
           {
             type: 'solid',
-            body: localisedStrings.checkState,
-            reply: localisedStrings.checkState,
+            body: localisedStrings.checkstate,
+            reply: localisedStrings.checkstate,
           },
         ],
         allow_custom_response: false,
@@ -660,8 +668,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           },
           {
             type: 'solid',
-            body: localisedStrings.checkState,
-            reply: localisedStrings.checkState,
+            body: localisedStrings.checkstate,
+            reply: localisedStrings.checkstate,
           },
         ],
         allow_custom_response: false,
