@@ -33,14 +33,33 @@ export const localisedStrings = {
  thankyou:"🙏आपने अपना सुझाव साझा करने के लिए समय निकाला, इसके लिए धन्यवाद।😊",
 
  async States() {
-  let sheetAPI = process.env.Sheet_API
-        const response = await axios.get(
-            sheetAPI,
-            { params: { action: 'getStates' } }
-        );
-       
-        if (response.data) {
-            return response.data;}
-          }
+  const cacheKey = 'states_cache'; // Unique key for caching states
+  let sheetAPI = process.env.Sheet_API;
+
+  try {
+    // Check Redis cache for states data
+    const cachedStates = await this.redisService.get(cacheKey);
+    if (cachedStates) {
+      console.log('Fetching states from cache.');
+      return JSON.parse(cachedStates);
+    } else {
+      // Fetch states from the API only if not in cache
+      console.log('Fetching states from API.');
+      const response = await axios.get(sheetAPI, {
+        params: { action: 'getStates' },
+      });
+
+      if (response.data) {
+        // Cache the states data in Redis with a TTL (e.g., 1 hour)
+        await this.redisService.set(cacheKey, JSON.stringify(response.data), 'EX', 3600); // TTL = 1 hour
+        return response.data;
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching states:', error);
+    throw error; // Optionally rethrow to handle upstream
+  }
+}
+
 
 };
