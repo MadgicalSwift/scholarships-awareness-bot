@@ -67,7 +67,6 @@ export class ChatbotService {
     }
     const localisedStrings = LocalizationService.getLocalisedString(userData.language);
     // for hindi and english language
-    console.log('UserData',userData);
     
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;

@@ -300,7 +300,6 @@ async StateSelectedinfo(from, language, selectedState) {
       ].filter(Boolean).join("\n");
 
       messageContent += `📋 Eligibility Criteria:\n${eligibilityCriteria}\n\n📂 Application Process:\n${applicationProcess}\n\n📅 Important Dates:\n${importantDates}`;
-     console.log(questionPapers)
       // Add buttons
       if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"]!= "NA" ) responseButtons.push("See More");
       if (stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"]!= "NA") responseButtons.push("Apply Now");
@@ -353,8 +352,6 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
       const stateResponse = await axios.get(this.sheetAPI, {
         params: { action: "getStateDetails", state: selectedState },
       });
-
-      console.log("Fetching state details from API:", stateResponse);
       if (stateResponse.data) {
         stateDetails = stateResponse.data;
 
@@ -373,7 +370,6 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
   } else if (previousButton === "See More" && stateDetails && stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
     link = stateDetails["Portal/Website Link"];
   }
-  console.log("setsdfsdfsdf ",stateDetails)
   return link;
 }
 
@@ -395,8 +391,6 @@ async getQuestionPaperLink(from, language, selectedState) {
       const questionPapersResponse = await axios.get(this.sheetAPI, {
         params: { action: "getQuestionPaper", state: selectedState },
       });
-
-      console.log("Fetching question papers from API:", questionPapersResponse);
       if (questionPapersResponse.data) {
         questionPapers = questionPapersResponse.data;
 
@@ -755,15 +749,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
         params: { action: "getAvailableYears", state: selectedState }
       });
 
-      console.log("Fetching available years from API:", response);
       if (response.data && response.data.years) {
         years = response.data.years;
-
-        // Check if years array is empty
-        if (!years || years.length === 0) {
-          console.log(`No years available for the state: ${selectedState}`);
-          return;
-        }
 
         // Cache the fetched years in Redis with a TTL (time-to-live)
         await this.redisService.set(cacheKey, JSON.stringify(years)); 
@@ -818,7 +805,6 @@ async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: 
         params: { action: "getPdfLink", state: selectedState, year: selectedYear },
       });
 
-      console.log("Fetching PDF link from API:", response);
       if (response.data && response.data.pdfLink) {
         pdfUrl = response.data.pdfLink;
 
@@ -829,10 +815,6 @@ async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: 
       
       const pdfName = `Answer Key - ${selectedState} - ${selectedYear}`;  // Customize the name as needed
       
-      if (!pdfUrl) {
-          console.log("No PDF found for the selected year and state.");
-          return;
-      }
 
      
 
@@ -914,7 +896,6 @@ async fetchAndStoreBots(from: string, language: string) {
       bots = JSON.parse(cachedBots);
     } else {
       // If not cached, fetch data from the API
-      console.log("Fetching bots from API.");
       const response = await axios.get(this.sheetAPI, {
         params: { action: 'getBots' },
       });
@@ -923,7 +904,6 @@ async fetchAndStoreBots(from: string, language: string) {
       bots = response.data;
 
       if (bots.length === 0) {
-        console.log('No bots found in the API response.');
         return bots;
       }
 
@@ -949,17 +929,13 @@ async asyncFetchAndSendBotButtons(from: string, language: string) {
       console.log("Fetching bots from cache.");
       bots = JSON.parse(cachedBots);
     } else {
-      console.log("Fetching bots from API.");
       // Fetch bots from the API
       const response = await axios.get(this.sheetAPI, {
         params: { action: 'getBots' },
       });
       bots = response.data;
 
-      if (!bots || bots.length === 0) {
-        console.log('No bots available to send as buttons.');
-        return;
-      }
+     
 
       // Cache the bots data in Redis with a TTL (e.g., 1 hour)
       await this.redisService.set(cacheKey, JSON.stringify(bots), 'EX', 3600); // TTL = 1 hour
