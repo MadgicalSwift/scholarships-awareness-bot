@@ -73,6 +73,7 @@ export class ChatbotService {
        const response = persistent_menu_response.body;
        let userLanguage= userData.language
       if (response === 'Try Something New') {
+        await this.message.moreBots(from, userLanguage);
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);
            }
@@ -96,6 +97,9 @@ export class ChatbotService {
     const languageMessage = userData.language;
     if (type === 'button_response') {
       const buttonResponse = body.button_response?.body;
+      const languageMessage = userData.language;
+      
+      const statesFetch = await localisedStrings.States();
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
         userData.language = buttonResponse.toLowerCase();
         await this.userService.saveUser(userData);
@@ -103,12 +107,7 @@ export class ChatbotService {
         await this.message.sendWhoCanApplyButton(from, buttonResponse);
         return;
       }
-
-      const languageMessage = userData.language;
-      
-      const statesFetch = await localisedStrings.States();
-      
-      if ([localisedStrings.whoCanApply].includes(buttonResponse)) {
+      else if ([localisedStrings.whoCanApply].includes(buttonResponse)) {
        
         await this.message.sendHowCanSelectedButton(from, languageMessage);
       } else if (
@@ -120,37 +119,26 @@ export class ChatbotService {
         await this.message.sendStateSelectionButton(from, languageMessage);
       } else if (statesFetch.includes(buttonResponse)) {
         userData.selectedState = buttonResponse; // Save the selected state
-        await this.userService.saveUser(userData);
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
+        await this.userService.saveUser(userData);
       } 
       
       else if ([localisedStrings.seeMore].includes(buttonResponse)) 
-      {
-          
+      {  
         const previousButton = buttonResponse;
         const selectedState = userData.selectedState;
-       
-        if (!selectedState) {
-             return;
-        }
         await this.message.nextButton(from, languageMessage, selectedState, previousButton);
 
-        // console.log('See More count:', userData.seeMoreCount);
-
-        if (userData.seeMoreCount > 5) 
-          {
-            userData.seeMoreCount = 0; // Reset the count
-          }
-
+       
 
         if (userData.seeMoreCount === 1 || userData.seeMoreCount === 5) {
-          userData.seeMoreCount = (userData.seeMoreCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
+        
+          
           await this.message.feedbackMessage(from, languageMessage);
         }
         else if (userData.seeMoreCount === 3) {
-          userData.seeMoreCount = (userData.seeMoreCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
+         
+         
           await this.message.moreBots(from, languageMessage);
           await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
           await this.message.uLikeNextAfterMoreBot(from, languageMessage);
@@ -158,10 +146,16 @@ export class ChatbotService {
           // 
         }
         else if (userData.seeMoreCount === 2 || userData.seeMoreCount === 4 ||userData.seeMoreCount === 0) {
-          userData.seeMoreCount = (userData.seeMoreCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
           await this.message.uLikeNext(from, languageMessage);
         } 
+        if (userData.seeMoreCount >= 5) 
+          {
+            userData.seeMoreCount = 0; // Reset the count
+          }
+          else{
+            userData.seeMoreCount = (userData.seeMoreCount) + 1;
+          }
+          await this.userService.saveUser(userData); // Save reset count 
         this.mixpanel.track('trackUserSeeMoreCount',{
           distinctId :from,
           userUserSeeMoreCount : buttonResponse,
@@ -175,27 +169,15 @@ export class ChatbotService {
           const previousButton = buttonResponse;
           const selectedState = userData.selectedState;
          
-            if (!selectedState) {
-               return;
-          }
-          
-          // console.log('Apply Now count:', userData.applyLinkCount);
+          await this.message.nextButton(from, languageMessage, selectedState, previousButton);
 
-          
-              await this.message.nextButton(from, languageMessage, selectedState, previousButton);
-          
-          if (userData.applyLinkCount > 5) {
-              userData.applyLinkCount = 0; // Reset the count
-              } 
-          
           if (userData.applyLinkCount === 1 || userData.applyLinkCount === 5) {
-            userData.applyLinkCount = (userData.applyLinkCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
+            
+          
         
                  await this.message.feedbackMessage(from, languageMessage);}
           else if (userData.applyLinkCount === 3) {
-            userData.applyLinkCount = (userData.applyLinkCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
+          
             
                 await this.message.moreBots(from, languageMessage);
                 await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
@@ -203,11 +185,16 @@ export class ChatbotService {
               }
             
           else if (userData.applyLinkCount === 2 || userData.applyLinkCount === 4 ||userData.applyLinkCount === 0) {
-            userData.applyLinkCount = (userData.applyLinkCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
+            
                 await this.message.uLikeNext(from, languageMessage);} 
           
-                
+                if (userData.applyLinkCount >= 5) {
+                  userData.applyLinkCount = 0; // Reset the count
+                  } 
+                  else{
+                    userData.applyLinkCount = (userData.applyLinkCount) + 1;
+                  }
+                  await this.userService.saveUser(userData);
                 this.mixpanel.track('trackUserApplyLinkCount',{
                   distinctId :from,
                   userApplyLinkCount : buttonResponse,
@@ -234,51 +221,38 @@ export class ChatbotService {
 
       else if ([localisedStrings.seeQuestionPaper].includes(buttonResponse)){
           await this.message.sendST21Message(from, languageMessage);
-          const feedbackPromptEnglish =localisedStrings.ST21Message;
-          const feedbackPromptHindi = localisedStrings.ST21Message;
-          userData.previousButtonMessage1 = feedbackPromptEnglish||feedbackPromptHindi;
+          userData.previousButtonMessage1 = buttonResponse;
+          await this.message.fetchAndSendYearButtons(from, languageMessage,userData.selectedState)
           await this.userService.saveUser(userData);
-          let selectedState = userData.selectedState
-          await this.message.fetchAndSendYearButtons(from, languageMessage,selectedState)
         } 
 
-        
-        
-        
-
-      else if(userData.previousButtonMessage1 && buttonResponse)
+      else if(userData.previousButtonMessage1==localisedStrings.seeQuestionPaper && buttonResponse)
         {
           let selectedYear = buttonResponse;
           let selectedState = userData.selectedState;
           await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState,selectedYear);
           userData.previousButtonMessage1='';
 
-
-          // console.log('YearButtonCount',userData.YearButtonCount);
-          if (userData.YearButtonCount > 5) {
-            userData.YearButtonCount =0;
-          }
-
           if (userData.YearButtonCount==1 || userData.YearButtonCount==5){
-            userData.YearButtonCount = (userData.YearButtonCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
-            
             await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
             await this.message.feedbackMessage(from, languageMessage);
           }
           else if (userData.YearButtonCount === 3) {
-            userData.YearButtonCount = (userData.YearButtonCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
             await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
             await this.message.moreBots(from, languageMessage);
             await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
             await this.message.uLikeNextAfterMoreBot(from, languageMessage);
           }
-          else if (userData.YearButtonCount === 2 || userData.YearButtonCount === 4 || userData.YearButtonCount == 0){
-            userData.YearButtonCount = (userData.YearButtonCount) + 1;
-            await this.userService.saveUser(userData); // Save reset count 
+          else if (userData.YearButtonCount === 2 || userData.YearButtonCount === 4 || userData.YearButtonCount == 0){ 
             await this.message.sendQuestionPaperButton(from, languageMessage)
           }
+          if (userData.YearButtonCount >= 5) {
+            userData.YearButtonCount =0;
+          }
+          else{
+            userData.YearButtonCount = (userData.YearButtonCount) + 1;
+          }
+          await this.userService.saveUser(userData);
           this.mixpanel.track('userYearButtonCount',{
             distinctId :from,
             userYearButtonCount : buttonResponse,
@@ -294,14 +268,9 @@ export class ChatbotService {
           buttonClick : buttonResponse,
           language : userData.language,
         })
-
-        
+     
             }
 
-
-
-  
-   
  const { text } = body;
     if (!text || !text.body) {
       return;

@@ -9,6 +9,7 @@ import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
 import { MessageService } from 'src/message/message.service';
 import { UserModule } from 'src/model/user.module'; // Import UserModule
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { MixpanelService } from 'src/mixpanel/mixpanel.service';
       provide: MessageService,
       useClass: SwiftchatMessageService,
     },
-    MixpanelService
+    MixpanelService,
+    RedisService
   ],
   exports: [ChatbotService, IntentClassifier],
 })

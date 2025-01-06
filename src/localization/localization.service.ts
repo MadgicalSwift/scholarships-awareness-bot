@@ -5,7 +5,6 @@ import { localisedStrings as hindi } from 'src/i18n/hn/localised-strings';
 @Injectable()
 export class LocalizationService {
   static getLocalisedString(language: string): any {
-    // console.log('Requested language:', language);
     if (language === 'हिन्दी' || language === 'hindi') {
       return hindi;
     } else {

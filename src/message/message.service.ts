@@ -4,12 +4,14 @@ import { CustomException } from 'src/common/exception/custom.exception';
 import { localisedStrings } from 'src/i18n/en/localised-strings';
 import { UserService } from 'src/model/user.service';
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export abstract class MessageService {
   constructor(
     public readonly userService: UserService,
-    public readonly mixpanel: MixpanelService
+    public readonly mixpanel: MixpanelService,
+    public readonly redisService: RedisService
   ) {}
   async prepareWelcomeMessage() {
     return localisedStrings.welcomeMessage;
@@ -43,7 +45,8 @@ export abstract class MessageService {
   abstract StateSelectedinfo(from: string, language: string, selectedState: string);
   abstract sendButtonsBasedOnResponse(from: string, language: string, responseMessage: string); 
   abstract nextButton(from: string, language: string, selectedState,previousButton);
-  abstract getLinkForButton(from, language, selectedState, previousButton);
+  abstract getApplyOrSeeMoreLink(from, language, selectedState, previousButton)
+  abstract getQuestionPaperLink(from, language, selectedState)
   abstract handleSelectedState(from, selectedState, language);
   abstract feedbackMessage(from, languageMessage);
   abstract uLikeNext(from, languageMessage);

@@ -5,6 +5,7 @@ import { CustomException } from 'src/common/exception/custom.exception';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
 import { UserService } from 'src/model/user.service';
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Module({
   providers: [
@@ -14,7 +15,8 @@ import { MixpanelService } from 'src/mixpanel/mixpanel.service';
     },
     CustomException,
     UserService,
-    MixpanelService
+    MixpanelService,
+    RedisService
   ],
   exports: [MessageService, CustomException],
 })
