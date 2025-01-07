@@ -365,9 +365,9 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
 
   let link = "";
 
-  if (previousButton === "Apply Now" && stateDetails && stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"] !== "NA") {
+  if (previousButton === localisedStrings.applyNow && stateDetails && stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"] !== "NA") {
     link = stateDetails["Apply Now Link"];
-  } else if (previousButton === "See More" && stateDetails && stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
+  } else if (previousButton === localisedStrings.seeMore && stateDetails && stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
     link = stateDetails["Portal/Website Link"];
   }
   return link;
