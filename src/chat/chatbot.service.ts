@@ -105,8 +105,7 @@ export class ChatbotService {
       const statesFetch = await localisedStrings.States(this.redisService);
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
         userData.language = buttonResponse.toLowerCase();
-        await this.userService.saveUser(userData);
-        // await this.message.sendLanguageChangedMessage(from, buttonResponse);
+
         await this.message.sendWhoCanApplyButton(from, buttonResponse);
         return;
       }
@@ -279,14 +278,15 @@ export class ChatbotService {
       return;
     }
     const { intent } = this.intentClassifier.getIntent(text.body);
-    await this.userService.saveUser(userData);
+    
     if(userData.previousButtonMessage){
       const feedbackMessage = text.body;
       userData.feedback = feedbackMessage;
-      await this.userService.saveUser(userData);
+      
       userData.previousButtonMessage='';
-      await this.userService.saveUser(userData);
+      
       await this.message.thankumessage(from, userData.language)
+      await this.userService.saveUser(userData);
       this.mixpanel.track('user feedback',{
         distinctId :from,
         userFeedback : text.body,
