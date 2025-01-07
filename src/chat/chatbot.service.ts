@@ -88,7 +88,7 @@ export class ChatbotService {
              await this.message.sendStateSelectionButton(from, userLanguage);
       }
       else if (response === 'Change Language') {
-                await this.message.sendLanguageSelectionMessage(from, response);
+                await this.message.sendLanguageSelectionMessage(from, userLanguage);
       }
       this.mixpanel.track('trackPersistenceButton',{
         distinctId :from,
