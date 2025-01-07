@@ -104,10 +104,9 @@ export class ChatbotService {
       
       const statesFetch = await localisedStrings.States(this.redisService);
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
-        userData.language = buttonResponse.toLowerCase();
 
-        await this.message.sendWhoCanApplyButton(from, buttonResponse);
-        return;
+        await this.message.sendWhoCanApplyButton(from, languageMessage);
+        
       }
       else if ([localisedStrings.whoCanApply].includes(buttonResponse)) {
        
