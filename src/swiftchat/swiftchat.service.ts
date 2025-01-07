@@ -58,7 +58,7 @@ export class SwiftchatMessageService extends MessageService {
 
   async sendWhoCanApplyButton(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
-    const message = localisedStrings.whoCanApplyPrompt;
+    const message = localisedStrings.languageChangedMessage;
     
     const messageData = {
       to: from,

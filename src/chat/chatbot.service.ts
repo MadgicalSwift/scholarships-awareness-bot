@@ -81,7 +81,7 @@ export class ChatbotService {
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);
            }
       else if (response === 'What is NMMS?') {
-            await this.message.sendLanguageChangedMessage(from, userLanguage);
+            // await this.message.sendLanguageChangedMessage(from, userLanguage);
         await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
       else if (response === 'Change State') {
@@ -106,7 +106,7 @@ export class ChatbotService {
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
         userData.language = buttonResponse.toLowerCase();
         await this.userService.saveUser(userData);
-        await this.message.sendLanguageChangedMessage(from, buttonResponse);
+        // await this.message.sendLanguageChangedMessage(from, buttonResponse);
         await this.message.sendWhoCanApplyButton(from, buttonResponse);
         return;
       }
