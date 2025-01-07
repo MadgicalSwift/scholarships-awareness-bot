@@ -336,12 +336,14 @@ export class ChatbotService {
     userService: UserService,
     swiftchatService: SwiftchatMessageService,
     mixpanel: MixpanelService,
+    redisService: RedisService
   ) {
     this.intentClassifier = intentClassifier;
     this.message = message;
     this.userService = userService;
     this.swiftchatService = swiftchatService;
     this.mixpanel = mixpanel;
+    this.redisService = redisService
   }
 
   public async processMessage(body: any): Promise<any> {
