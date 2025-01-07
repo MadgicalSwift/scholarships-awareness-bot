@@ -56,7 +56,7 @@ async States(redisService) {
     const cachedStates = await redisService.get(cacheKey);
     if (cachedStates) {
       console.log('Fetching states from cache.');
-      return JSON.parse(cachedStates);
+      return JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
     } else {
       // Fetch states from the API only if not in cache
       console.log('Fetching states from API.');
@@ -66,8 +66,9 @@ async States(redisService) {
 
       if (response.data) {
         // Cache the states data in Redis with a TTL (e.g., 1 hour)
-        await redisService.set(cacheKey, JSON.stringify(response.data), 'EX', 3600); // TTL = 1 hour
-        return response.data;
+        const sortedStates = response.data.sort((a, b) => a.localeCompare(b));
+        await redisService.set(cacheKey, JSON.stringify(sortedStates)); // TTL = 1 hour
+        return sortedStates;
       }
     }
   } catch (error) {
