@@ -161,7 +161,7 @@ export class SwiftchatMessageService extends MessageService {
 
     if (cachedStates) {
       // If cached, use the data from Redis
-      states = JSON.parse(cachedStates);
+      states = JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
       localisedStrings.states = states;
     } else {
       // If not cached, fetch from API
@@ -170,7 +170,7 @@ export class SwiftchatMessageService extends MessageService {
       });
 
       if (response.data) {
-        states = response.data;
+        states = response.data.sort((a, b) => a.localeCompare(b));
         localisedStrings.states = states;
 
         // Cache the fetched states in Redis with a TTL (time-to-live)
