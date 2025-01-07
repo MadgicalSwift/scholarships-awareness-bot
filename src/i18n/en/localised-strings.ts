@@ -56,6 +56,7 @@ async States(redisService) {
     const cachedStates = await redisService.get(cacheKey);
     if (cachedStates) {
       console.log('Fetching states from cache.');
+      console.log(JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b)))
       return JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
     } else {
       // Fetch states from the API only if not in cache
