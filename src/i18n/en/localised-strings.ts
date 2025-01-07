@@ -33,15 +33,48 @@ export const localisedStrings = {
  yearSelectionPrompt:"Please select a year to get the question paper",
  ST21Message:"📅 Great! Which year's question papers are you interested in? Let me know and I'll provide you with the relevant papers for that year!📝  🔍",
  thankyou:"🙏Thank you for taking the time to share your feedback with me😊",
-async States() {
-  let sheetAPI = process.env.Sheet_API
-        const response = await axios.get(
-            sheetAPI,
-            { params: { action: 'getStates' } }
-        );
+ 
+// async States() {
+//   let sheetAPI = process.env.Sheet_API
+//         const response = await axios.get(
+//             sheetAPI,
+//             { params: { action: 'getStates' } }
+//         );
        
-        if (response.data) {
-            return response.data;}
-          }
+//         if (response.data) {
+//             return response.data;}
+//           }
 
-};
+// };
+
+async States(redisService) {
+  const cacheKey = 'states_cache'; // Unique key for caching states
+  let sheetAPI = process.env.Sheet_API;
+
+  try {
+    // Check Redis cache for states data
+    const cachedStates = await redisService.get(cacheKey);
+    if (cachedStates) {
+      console.log('Fetching states from cache.');
+      return JSON.parse(cachedStates);
+    } else {
+      // Fetch states from the API only if not in cache
+      console.log('Fetching states from API.');
+      const response = await axios.get(sheetAPI, {
+        params: { action: 'getStates' },
+      });
+
+      if (response.data) {
+        // Cache the states data in Redis with a TTL (e.g., 1 hour)
+        await redisService.set(cacheKey, JSON.stringify(response.data), 'EX', 3600); // TTL = 1 hour
+        return response.data;
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching states:', error);
+    throw error; // Optionally rethrow to handle upstream
+  }
+}
+
+}
+

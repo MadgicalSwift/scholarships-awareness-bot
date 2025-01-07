@@ -319,6 +319,7 @@ import { UserService } from 'src/model/user.service';
 import { LocalizationService } from 'src/localization/localization.service';
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class ChatbotService {
@@ -327,6 +328,7 @@ export class ChatbotService {
   private readonly userService: UserService;
   private readonly swiftchatService: SwiftchatMessageService;
   private readonly mixpanel: MixpanelService;
+  public readonly redisService: RedisService
 
   constructor(
     intentClassifier: IntentClassifier,
@@ -402,7 +404,7 @@ export class ChatbotService {
     if (type === 'button_response') {
       const buttonResponse = body.button_response?.body;
 
-      const statesFetch = await localisedStrings.States();
+      const statesFetch = await localisedStrings.States(this.redisService);
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
         userData.language = buttonResponse.toLowerCase();
         await this.message.sendLanguageChangedMessage(from, buttonResponse);
