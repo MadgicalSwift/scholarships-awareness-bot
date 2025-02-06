@@ -269,24 +269,24 @@ async StateSelectedinfo(from, language, selectedState) {
   if (stateDetails && !stateDetails.error) {
       // Prepare message content
       const eligibilityCriteria = [         
-          stateDetails["State Name"] && stateDetails["State Name"] !== "NA" && `• State Name: ${stateDetails["State Name"]}`,
+          stateDetails["State Name"] && stateDetails["State Name"] !== "NA" && `*• State Name: ${stateDetails["State Name"]}*`,
           stateDetails["Minimum Percentage (Class 7)"] && stateDetails["Minimum Percentage (Class 7)"] !== "NA" && `• Minimum Percentage (Class 7): ${stateDetails["Minimum Percentage (Class 7)"]}`,
           stateDetails["Family Income Limit"] && stateDetails["Family Income Limit"] !== "NA" && `• Family Income Limit: ${stateDetails["Family Income Limit"]}`,
       ].filter(Boolean).join("\n");
 
       const applicationProcess = [
-          stateDetails["Application Mode"] && stateDetails["Application Mode"] !== "NA" && `• Application Mode: ${stateDetails["Application Mode"]}`,
-          stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA" && `• Portal/Website Link: ${stateDetails["Portal/Website Link"]}`,
-          stateDetails["Helpdesk Contact Number"] && stateDetails["Helpdesk Contact Number"] !== "NA" && `• Helpdesk Contact Number: ${stateDetails["Helpdesk Contact Number"]}`,
+          stateDetails["Application Mode"] && stateDetails["Application Mode"] !== "NA" && `*• Application Mode:* ${stateDetails["Application Mode"]}`,
+          stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA" && `*• Portal/Website Link:* ${stateDetails["Portal/Website Link"]}`,
+          stateDetails["Helpdesk Contact Number"] && stateDetails["Helpdesk Contact Number"] !== "NA" && `*• Helpdesk Contact Number:* ${stateDetails["Helpdesk Contact Number"]}`,
       ].filter(Boolean).join("\n");
 
       const importantDates = [
-          stateDetails["Application Start Date"] && stateDetails["Application Start Date"] !== "NA" && `• Application Start Date: ${stateDetails["Application Start Date"]}`,
-          stateDetails["Application End Date"] && stateDetails["Application End Date"] !== "NA" && `• Application End Date: ${stateDetails["Application End Date"]}`,
-          stateDetails["Exam Date/Expected Month"] && stateDetails["Exam Date/Expected Month"] !== "NA" && `• Exam Date/Expected Month: ${stateDetails["Exam Date/Expected Month"]}`,
+          stateDetails["Application Start Date"] && stateDetails["Application Start Date"] !== "NA" && `• Application Start Date: *${stateDetails["Application Start Date"]}*`,
+          stateDetails["Application End Date"] && stateDetails["Application End Date"] !== "NA" && `• Application End Date: *${stateDetails["Application End Date"]}*`,
+          stateDetails["Exam Date/Expected Month"] && stateDetails["Exam Date/Expected Month"] !== "NA" && `• Exam Date: *${stateDetails["Exam Date/Expected Month"]}*`,
       ].filter(Boolean).join("\n");
 
-      messageContent += `📋 Eligibility Criteria:\n${eligibilityCriteria}\n\n📂 Application Process:\n${applicationProcess}\n\n📅 Important Dates:\n${importantDates}`;
+      messageContent += ` 1️⃣ *Eligibility Criteria:*\n${eligibilityCriteria}\n\n 2️⃣ *Application Process:*\n${applicationProcess}\n\n 3️⃣ *Important Dates:*\n${importantDates}\n\n What would you like to do next?`;
 
       // Add conditional buttons
       if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
