@@ -71,6 +71,7 @@ export class ChatbotService {
     
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
+       console.log('persistent',response)
        let userLanguage= userData.language
       if (response === 'Try Something New') {
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
@@ -80,7 +81,7 @@ export class ChatbotService {
             await this.message.sendLanguageChangedMessage(from, userLanguage);
         await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
-      else if (response === 'Change State') {
+      else if (response === 'Change State' || response === 'Change Topic') {
              await this.message.sendStateSelectionButton(from, userLanguage);
       }
       else if (response === 'Change Language') {
@@ -124,7 +125,7 @@ export class ChatbotService {
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
       } 
       
-      else if ([localisedStrings.seeMore].includes(buttonResponse)) 
+      else if ([localisedStrings.viewWebsite].includes(buttonResponse)) 
       {
           
         const previousButton = buttonResponse;
@@ -135,7 +136,7 @@ export class ChatbotService {
         }
         await this.message.nextButton(from, languageMessage, selectedState, previousButton);
 
-        // console.log('See More count:', userData.seeMoreCount);
+        console.log('View Website count:', userData.seeMoreCount);
 
         if (userData.seeMoreCount > 5) 
           {
@@ -179,11 +180,12 @@ export class ChatbotService {
                return;
           }
           
-          // console.log('Apply Now count:', userData.applyLinkCount);
+          
 
           
-              await this.message.nextButton(from, languageMessage, selectedState, previousButton);
+          await this.message.nextButton(from, languageMessage, selectedState, previousButton);
           
+          console.log('Apply Now count:', userData.applyLinkCount);
           if (userData.applyLinkCount > 5) {
               userData.applyLinkCount = 0; // Reset the count
               } 
@@ -225,26 +227,23 @@ export class ChatbotService {
       }
       else if ([localisedStrings.sure].includes(buttonResponse)) {
           await this.message.userfeedback(from, languageMessage);
-           const feedbackPromptEnglish =localisedStrings.userfeedback;
+          const feedbackPromptEnglish =localisedStrings.userfeedback;
           const feedbackPromptHindi = localisedStrings.userfeedback;
           userData.previousButtonMessage = feedbackPromptEnglish||feedbackPromptHindi;
           await this.userService.saveUser(userData);
       } 
 
-
       else if ([localisedStrings.seeQuestionPaper].includes(buttonResponse)){
+
           await this.message.sendST21Message(from, languageMessage);
           const feedbackPromptEnglish =localisedStrings.ST21Message;
           const feedbackPromptHindi = localisedStrings.ST21Message;
           userData.previousButtonMessage1 = feedbackPromptEnglish||feedbackPromptHindi;
           await this.userService.saveUser(userData);
+
           let selectedState = userData.selectedState
           await this.message.fetchAndSendYearButtons(from, languageMessage,selectedState)
         } 
-
-        
-        
-        
 
       else if(userData.previousButtonMessage1 && buttonResponse)
         {
@@ -308,19 +307,62 @@ export class ChatbotService {
     }
     const { intent } = this.intentClassifier.getIntent(text.body);
     await this.userService.saveUser(userData);
+
+
+
+    // if(userData.previousButtonMessage){
+    //   const feedbackMessage = text.body;
+    //   userData.feedback = feedbackMessage;
+    //   await this.userService.saveUser(userData);
+    //   console.log('user main feedback', userData.feedback)
+    //   userData.previousButtonMessage='';
+    //   await this.userService.saveUser(userData);
+    //   await this.message.thankumessage(from, userData.language)
+    //   this.mixpanel.track('user feedback',{
+    //     distinctId :from,
+    //     userFeedback : text.body,
+    //     language : userData.language,
+    //   })
+    // }
+
+
+
     if(userData.previousButtonMessage){
-      const feedbackMessage = text.body;
-      userData.feedback = feedbackMessage;
-      await this.userService.saveUser(userData);
-      userData.previousButtonMessage='';
-      await this.userService.saveUser(userData);
-      await this.message.thankumessage(from, userData.language)
-      this.mixpanel.track('user feedback',{
-        distinctId :from,
-        userFeedback : text.body,
-        language : userData.language,
-      })
-    }
+        const feedbackMessage = text.body;
+        // 
+
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString(); 
+        if (!Array.isArray(userData.feedback)) {
+          userData.feedback = [];
+      }
+  
+      // Push new feedback with date
+          userData.feedback.push({
+            date: formattedDate,  
+            feedback: feedbackMessage
+        });
+      // Filter out feedback older than 2 months
+        userData.feedback = userData.feedback.filter(entry => {
+          const feedbackDate = new Date(entry.date);
+          const twoMonthsAgo = new Date();
+          twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+          return feedbackDate >= twoMonthsAgo;
+      });
+
+        // userData.feedback = feedbackMessage;
+        await this.userService.saveUser(userData);
+        console.log('user main feedback', userData.feedback)
+        userData.previousButtonMessage='';
+        await this.userService.saveUser(userData);
+        await this.message.thankumessage(from, userData.language)
+        this.mixpanel.track('user feedback',{
+          distinctId :from,
+          userFeedback : text.body,
+          language : userData.language,
+        })
+      }
+
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);

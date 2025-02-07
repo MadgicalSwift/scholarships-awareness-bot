@@ -290,12 +290,13 @@ async StateSelectedinfo(from, language, selectedState) {
 
       // Add conditional buttons
       if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
-          responseButtons.push("See More");
+          responseButtons.push("View Website");
           
       }
 
       if (stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"] !== "NA") {
           responseButtons.push("Apply Now");
+          // responseButtons.push("See Question Papers");
          
       }
       
@@ -311,6 +312,7 @@ async StateSelectedinfo(from, language, selectedState) {
 }
   
 
+
   const messageData = {
       to: from,
       type: "text",
@@ -320,6 +322,7 @@ async StateSelectedinfo(from, language, selectedState) {
   };
 
   try {
+    console.log('3 buttons',responseButtons )
       await this.sendMessage(this.baseUrl, messageData, this.apiKey);
       if (responseButtons.length > 0) {
           await this.sendButtonsBasedOnResponse(from, language, responseButtons);
@@ -377,7 +380,7 @@ async  getLinkForButton(from, language, selectedState, previousButton) {
     link = stateDetails["Apply Now Link"];
   } 
   // Handle other button actions
-  else if (previousButton === "See More" && stateDetails && stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
+  else if (previousButton === "View Website" && stateDetails && stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
     link = stateDetails["Portal/Website Link"];
   } 
   else if (previousButton === "See Question Papers" && questionPapers && questionPapers.length > 0) {
@@ -393,11 +396,11 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const buttons = responseButtons.map((button) => {
       switch (button) {
-          case "See More":
+          case "View Website":
               return {
                   type: "solid",
-                  body: localisedStrings.seeMore,
-                  reply: localisedStrings.seeMore,
+                  body: localisedStrings.viewWebsite,
+                  reply: localisedStrings.viewWebsite,
               };
           case "Apply Now":
               return {
@@ -441,7 +444,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const link = await this.getLinkForButton(from, language, selectedState, previousButton);
   
-  
+  console.log('link',link)
  
   const messageData = {
       to: from,
@@ -815,8 +818,8 @@ async sendQuestionPaperButton(from: string, language: string) {
       buttons: [
         {
           type: 'solid',
-          body: localisedStrings.SeeQuestionPaper1,
-          reply: localisedStrings.SeeQuestionPaper1,
+          body: localisedStrings.seeQuestionPaper,
+          reply: localisedStrings.seeQuestionPaper,
         },
         
       ],
