@@ -85,15 +85,16 @@ export class ChatbotService {
             // await this.message.sendLanguageChangedMessage(from, userLanguage);
         await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
-      else if (response === 'Change State' || response === 'Change Topic') {
+      else if (response === 'Change State') {
              await this.message.sendStateSelectionButton(from, userLanguage);
       }
       else if (response === 'Change Language') {
                 await this.message.sendLanguageSelectionMessage(from, userLanguage);
       }
-      // else if( response === 'Change Topic'){
+      else if( response === 'Change Topic'){
       //   await this.message.sendWelcomeMessage(from,userLanguage)
-      // }
+      await this.message.feedbackMessage(from, userLanguage);
+      }
       this.mixpanel.track('trackPersistenceButton',{
         distinctId :from,
         userYearButtonCount : response,
@@ -184,15 +185,15 @@ export class ChatbotService {
                  await this.message.feedbackMessage(from, languageMessage);}
           else if (userData.applyLinkCount === 3) {
           
-            
                 await this.message.moreBots(from, languageMessage);
                 await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
                 await this.message.uLikeNextAfterMoreBot(from, languageMessage);
               }
             
           else if (userData.applyLinkCount === 2 || userData.applyLinkCount === 4 ||userData.applyLinkCount === 0) {
-            
-                await this.message.uLikeNext(from, languageMessage);} 
+              
+                await this.message.uLikeNext(from, languageMessage);
+                } 
           
                 if (userData.applyLinkCount >= 5) {
                   userData.applyLinkCount = 0; // Reset the count
@@ -284,31 +285,8 @@ export class ChatbotService {
     const { intent } = this.intentClassifier.getIntent(text.body);
     
 
-
-
-    // if(userData.previousButtonMessage){
-    //   const feedbackMessage = text.body;
-    //   userData.feedback = feedbackMessage;
-    //   userData.previousButtonMessage='';
-    //   await this.message.thankumessage(from, userData.language)
-    //   await this.userService.saveUser(userData);
-    //   this.mixpanel.track('user feedback',{
-    //     distinctId :from,
-    //     userFeedback : text.body,
-    //     language : userData.language,
-    //   })
-    // }
-
-
-
-
-
-
-
     if(userData.previousButtonMessage){
       const feedbackMessage = text.body;
-      // 
-
       const currentDate = new Date();
       const formattedDate = currentDate.toLocaleDateString(); 
       if (!Array.isArray(userData.feedback)) {
@@ -321,12 +299,23 @@ export class ChatbotService {
           feedback: feedbackMessage
       });
     // Filter out feedback older than 2 months
-      userData.feedback = userData.feedback.filter(entry => {
-        const feedbackDate = new Date(entry.date);
-        const twoMonthsAgo = new Date();
-        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-        return feedbackDate >= twoMonthsAgo;
-    });
+
+  //     userData.feedback = userData.feedback.filter(entry => {
+  //       const feedbackDate = new Date(entry.date);
+  //       const twoMonthsAgo = new Date();
+  //       twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+  //       return feedbackDate >= twoMonthsAgo;
+  //   }
+  // );
+
+        // Filter out feedback older than 1 hr
+        userData.feedback = userData.feedback.filter(entry => {
+          const feedbackDate = new Date(entry.date);  // Convert stored date to Date object
+          const oneHourAgo = new Date();
+          oneHourAgo.setHours(oneHourAgo.getHours() - 1); // Subtract 1 hour from current time
+          return feedbackDate >= oneHourAgo;  // Keep feedback that is newer than 1 hour
+      });
+
 
       // userData.feedback = feedbackMessage;
       await this.userService.saveUser(userData);
@@ -345,7 +334,7 @@ export class ChatbotService {
 
 
 
-    
+
 
 
 
@@ -354,9 +343,9 @@ export class ChatbotService {
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
       await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
       if (text && text.body) {
-        const feedbackMessage = text.body;
-        userData.feedback = feedbackMessage;
-        await this.userService.saveUser(userData);
+        // const feedbackMessage = text.body;
+        // userData.feedback = feedbackMessage;
+        // await this.userService.saveUser(userData);
         this.mixpanel.track('welcomeMessage',{
           distinctId :from,
           userFeedback : text.body,
