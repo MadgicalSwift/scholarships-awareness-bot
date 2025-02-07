@@ -71,7 +71,7 @@ export class ChatbotService {
     }
     const localisedStrings = LocalizationService.getLocalisedString(userData.language);
     // for hindi and english language
-    console.log("userData",userData);
+    // console.log("userData",userData);
     
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
@@ -91,10 +91,7 @@ export class ChatbotService {
       else if (response === 'Change Language') {
                 await this.message.sendLanguageSelectionMessage(from, userLanguage);
       }
-      else if( response === 'Change Topic'){
-      //   await this.message.sendWelcomeMessage(from,userLanguage)
-      await this.message.feedbackMessage(from, userLanguage);
-      }
+      
       this.mixpanel.track('trackPersistenceButton',{
         distinctId :from,
         userYearButtonCount : response,
@@ -288,7 +285,8 @@ export class ChatbotService {
     if(userData.previousButtonMessage){
       const feedbackMessage = text.body;
       const currentDate = new Date();
-      const formattedDate = currentDate.toLocaleDateString(); 
+      const formattedDate = currentDate.toLocaleString(); 
+      // const formattedDate = currentDate.toLocaleDateString(); 
       if (!Array.isArray(userData.feedback)) {
         userData.feedback = [];
     }
@@ -300,26 +298,20 @@ export class ChatbotService {
       });
     // Filter out feedback older than 2 months
 
-  //     userData.feedback = userData.feedback.filter(entry => {
-  //       const feedbackDate = new Date(entry.date);
-  //       const twoMonthsAgo = new Date();
-  //       twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-  //       return feedbackDate >= twoMonthsAgo;
-  //   }
-  // );
+          userData.feedback = userData.feedback.filter(entry => {
+            const feedbackDate = new Date(entry.date);
+            const twoMonthsAgo = new Date();
+            twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+            return feedbackDate >= twoMonthsAgo;
+        }
+      );
 
-        // Filter out feedback older than 1 hr
-        userData.feedback = userData.feedback.filter(entry => {
-          const feedbackDate = new Date(entry.date);  // Convert stored date to Date object
-          const oneHourAgo = new Date();
-          oneHourAgo.setHours(oneHourAgo.getHours() - 1); // Subtract 1 hour from current time
-          return feedbackDate >= oneHourAgo;  // Keep feedback that is newer than 1 hour
-      });
+       
 
 
       // userData.feedback = feedbackMessage;
       await this.userService.saveUser(userData);
-      console.log('user main feedback', userData.feedback)
+      // console.log('user main feedback', userData.feedback)
       userData.previousButtonMessage='';
       await this.userService.saveUser(userData);
       await this.message.thankumessage(from, userData.language)
