@@ -2,16 +2,16 @@ import axios from 'axios';
 import * as dotenv from 'dotenv';
 dotenv.config();
 export const localisedStrings = {
-  welcomeMessage: '👋 Hi there! Let me tell you about the NMMS Scholarship! \n\n🌟🎓The National Means-cam-Merit Scholarship (NMMS) is for students in Class 8 who are bright but need some help to continue their education.\n\n\n 📚 If you qualify, you can get  12,000  a year for studies until Class 12.\n\n Please choose your language to get started!',
+  welcomeMessage: '👋 Hi there! Let me tell you about the NMMS Scholarship! \n🌟🎓The National Means-cam-Merit Scholarship (NMMS) is for students in Class 8 who are bright but need some help to continue their education.\n\n 📚 If you qualify, you can get 12,000 a year for studies until Class 12.\n Please choose your language to get started!',
   seeMoreMessage: 'See More Data',
   languageHindi: 'हिन्दी',
   languageEnglish: 'English',
   userLanguage:'english',
-  languageChangedMessage: "*🎉Great! You’ve selected English. Let's get started!* \n\nHere's everything you need to know about the *National Means-cum-Merit Scholarship (NMMS):🌟What is NMMS?* The NMMS Scholarship is a program for Class 8 students to support their education. \n\nIf you qualify, you’ll receive *₹ 12,000 per year* ( ₹ 1000 per month ) until Class 12!",
+  languageChangedMessage: "*🎉Great! You’ve selected English. Let's get started!* \nHere's everything you need to know about the *National Means-cum-Merit Scholarship (NMMS):🌟What is NMMS?* The NMMS Scholarship is a program for Class 8 students to support their education. \nIf you qualify, you’ll receive *₹ 12,000 per year* ( ₹ 1000 per month ) until Class 12!",
   languageSelection: '🔍Please select your 🗺️language.',
   whoCanApplyPrompt:"Please click the button below to learn more:",
   whoCanApply:"🎯Who Can Apply",
-  getWhoCanApplyStrings: "1️⃣ You must be in *Class 8* at a government, government-aided or local body school.\n\n 2️⃣You should have scored at least *55% marks in Class 7* ( 50% for SC/ST students ).\n\n 3️⃣ Your family’s total income should be *less than ₹3.5 Lakhs per year.*",
+  getWhoCanApplyStrings: "1️⃣ You must be in *Class 8* at a government, government-aided or local body school.\n 2️⃣You should have scored at least *55% marks in Class 7* ( 50% for SC/ST students ).\n 3️⃣ Your family’s total income should be *less than ₹3.5 Lakhs per year.*",
   next: "Next",
   howCanSelected:'📝 How can I get selected?',
   selectedMessage:'You will need to take an exam. The exam has two sections:\n *• Mental Ability Test(MAT):* To test problem-solving and logical thinking. \n *• Scholastic Ability Test (SAT):* Questions based on your school subjects like Science, Maths and Social Studies.',
@@ -24,7 +24,7 @@ export const localisedStrings = {
  buttonPrompt:"Choose an option:",
 //  Next: "View Website",
  Next : (previousButton) =>   `${previousButton}`,
- feedback: "I'd love to hear any feedback you may have to make our this better🔎 \n\nDo you have any thoughts or comments you'd like to share?💡🚀🎓",
+ feedback: "I'd love to hear any feedback you may have to make our this better🔎 \nDo you have any thoughts or comments you'd like to share?💡🚀🎓",
  uLikeNext: "what would you like to do next?",
  moreBot: "Here are some more fun bots for you to explore! ",
  sure:"Sure! I love to Share",
@@ -32,7 +32,7 @@ export const localisedStrings = {
  checkState: "Check for another State",
  userfeedback:"Kindly express your thoughts and opinions by typing them in the provided text box and pressing the 'send' button.📖",
  yearSelectionPrompt:"Please select a year to get the question paper",
- ST21Message:"📅 Great! Which year's question papers are you interested in? Let me know and I'll provide you with the relevant papers for that year!📝  🔍",
+ ST21Message:"📅 Great! Which year's question papers are you interested in? Let me know and I'll provide you with the relevant papers for that year!📝 🔍",
  thankyou:"🙏Thank you for taking the time to share your feedback with me😊",
  
     async States() {

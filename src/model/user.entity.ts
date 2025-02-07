@@ -41,10 +41,22 @@
     @Column({ default: 0 }) 
     selectedYear: number;
 
-    @IsString() // Validation for feedback (optional string)
+
+
+    
+  //   @IsString() // Validation for feedback (optional string)
+  // @IsOptional()
+  // @Column({ nullable: true }) // Column can be null
+  // feedback?: string; // Optional feedback field
+
+
   @IsOptional()
-  @Column({ nullable: true }) // Column can be null
-  feedback?: string; // Optional feedback field
+  @Column({ type: 'json', nullable: true, default: [] }) // Store feedback as JSON array
+  feedback?: { date: any; feedback: string }[];
+
+
+
+
 
   @Column({ nullable: true }) // Make it nullable if optional
     previousButtonMessage: string;

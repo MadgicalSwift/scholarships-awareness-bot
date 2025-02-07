@@ -9,7 +9,7 @@ const { USERS_TABLE } = process.env;
 @Injectable()
 export class UserService {
   // In UserService
-  async createUser(mobileNumber: string,YearButtonCount: number, language: string, botID: string, selectedState: string, selectedYear: number=0,seeMoreCount : number=0, applyLinkCount: number = 0, feedback: string = '', previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
+  async createUser(mobileNumber: string,YearButtonCount: number, language: string, botID: string, selectedState: string, selectedYear: number=0,seeMoreCount : number=0, applyLinkCount: number = 0, feedback: { date: any; feedback: string }[] = [], previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
     try {
       let user = await this.findUserByMobileNumber(mobileNumber, botID);
 
@@ -94,7 +94,7 @@ export class UserService {
          
           seeMoreCount: user.seeMoreCount || 0,
           applyLinkCount: user.applyLinkCount || 0,
-          feedback: user.feedback || '',
+          feedback: user.feedback || [],
           previousButtonMessage: user.previousButtonMessage || '',
           previousButtonMessage1: user.previousButtonMessage1 || '',
         } as User;

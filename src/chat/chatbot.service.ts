@@ -283,20 +283,72 @@ export class ChatbotService {
     }
     const { intent } = this.intentClassifier.getIntent(text.body);
     
+
+
+
+    // if(userData.previousButtonMessage){
+    //   const feedbackMessage = text.body;
+    //   userData.feedback = feedbackMessage;
+    //   userData.previousButtonMessage='';
+    //   await this.message.thankumessage(from, userData.language)
+    //   await this.userService.saveUser(userData);
+    //   this.mixpanel.track('user feedback',{
+    //     distinctId :from,
+    //     userFeedback : text.body,
+    //     language : userData.language,
+    //   })
+    // }
+
+
+
+
+
+
+
     if(userData.previousButtonMessage){
       const feedbackMessage = text.body;
-      userData.feedback = feedbackMessage;
-      
-      userData.previousButtonMessage='';
-      
-      await this.message.thankumessage(from, userData.language)
+      // 
+
+      const currentDate = new Date();
+      const formattedDate = currentDate.toLocaleDateString(); 
+      if (!Array.isArray(userData.feedback)) {
+        userData.feedback = [];
+    }
+
+    // Push new feedback with date
+        userData.feedback.push({
+          date: formattedDate,  
+          feedback: feedbackMessage
+      });
+    // Filter out feedback older than 2 months
+      userData.feedback = userData.feedback.filter(entry => {
+        const feedbackDate = new Date(entry.date);
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+        return feedbackDate >= twoMonthsAgo;
+    });
+
+      // userData.feedback = feedbackMessage;
       await this.userService.saveUser(userData);
+      console.log('user main feedback', userData.feedback)
+      userData.previousButtonMessage='';
+      await this.userService.saveUser(userData);
+      await this.message.thankumessage(from, userData.language)
       this.mixpanel.track('user feedback',{
         distinctId :from,
         userFeedback : text.body,
         language : userData.language,
       })
     }
+
+
+
+
+
+    
+
+
+
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
