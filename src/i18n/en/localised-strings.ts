@@ -34,49 +34,49 @@ export const localisedStrings = {
  ST21Message:"📅 Great! Which year's question papers are you interested in? Let me know and I'll provide you with the relevant papers for that year!📝  🔍",
  thankyou:"🙏Thank you for taking the time to share your feedback with me😊",
  
-// async States() {
-//   let sheetAPI = process.env.Sheet_API
-//         const response = await axios.get(
-//             sheetAPI,
-//             { params: { action: 'getStates' } }
-//         );
-       
-//         if (response.data) {
-//             return response.data;}
-//           }
-
-// };
-
-async States(redisService) {
-  const cacheKey = 'states_cache'; // Unique key for caching states
-  let sheetAPI = process.env.Sheet_API;
-
-  try {
-    // Check Redis cache for states data
-    const cachedStates = await redisService.get(cacheKey);
-    if (cachedStates) {
-      console.log('Fetching states from cache.');
-      console.log(JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b)))
-      return JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
-    } else {
-      // Fetch states from the API only if not in cache
-      console.log('Fetching states from API.');
-      const response = await axios.get(sheetAPI, {
-        params: { action: 'getStates' },
-      });
-
-      if (response.data) {
-        // Cache the states data in Redis with a TTL (e.g., 1 hour)
-        const sortedStates = response.data.sort((a, b) => a.localeCompare(b));
-        await redisService.set(cacheKey, JSON.stringify(sortedStates)); // TTL = 1 hour
-        return sortedStates;
-      }
+    async States() {
+      let sheetAPI = process.env.Sheet_API
+            const response = await axios.get(
+                sheetAPI,
+                { params: { action: 'getStates' } }
+            );
+          
+            if (response.data) {
+                return response.data;}
     }
-  } catch (error) {
-    console.error('Error fetching states:', error);
-    throw error; // Optionally rethrow to handle upstream
-  }
-}
+
+
+
+// async States(redisService) {
+//   const cacheKey = 'states_cache'; // Unique key for caching states
+//   let sheetAPI = process.env.Sheet_API;
+
+//   try {
+//     // Check Redis cache for states data
+//     const cachedStates = await redisService.get(cacheKey);
+//     if (cachedStates) {
+//       console.log('Fetching states from cache.');
+//       console.log(JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b)))
+//       return JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
+//     } else {
+//       // Fetch states from the API only if not in cache
+//       console.log('Fetching states from API.');
+//       const response = await axios.get(sheetAPI, {
+//         params: { action: 'getStates' },
+//       });
+
+//       if (response.data) {
+//         // Cache the states data in Redis with a TTL (e.g., 1 hour)
+//         const sortedStates = response.data.sort((a, b) => a.localeCompare(b));
+//         await redisService.set(cacheKey, JSON.stringify(sortedStates)); // TTL = 1 hour
+//         return sortedStates;
+//       }
+//     }
+//   } catch (error) {
+//     console.error('Error fetching states:', error);
+//     throw error; // Optionally rethrow to handle upstream
+//   }
+// }
 
 }
 
