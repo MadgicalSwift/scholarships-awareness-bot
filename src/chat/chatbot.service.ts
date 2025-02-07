@@ -129,7 +129,7 @@ export class ChatbotService {
         await this.userService.saveUser(userData);
       } 
       
-      else if ([localisedStrings.seeMore].includes(buttonResponse)) 
+      else if ([localisedStrings.viewWebsite].includes(buttonResponse)) 
       {  
         const previousButton = buttonResponse;
         const selectedState = userData.selectedState;
@@ -430,7 +430,7 @@ export default ChatbotService;
 //       } else if (statesFetch.includes(buttonResponse)) {
 //         userData.selectedState = buttonResponse;
 //         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
-//       } else if ([localisedStrings.seeMore].includes(buttonResponse)) {
+//       } else if ([localisedStrings.viewWebsite].includes(buttonResponse)) {
 //         const previousButton = buttonResponse;
 //         const selectedState = userData.selectedState;
 //         await this.message.nextButton(from, languageMessage, selectedState, previousButton);

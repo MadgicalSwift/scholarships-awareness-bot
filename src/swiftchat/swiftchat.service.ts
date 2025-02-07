@@ -278,7 +278,7 @@ async StateSelectedinfo(from, language, selectedState) {
 
       messageContent += ` *NMMS Details for ${stateDetails["State Name"]}* \n\n  1️⃣ *Eligibility Criteria:\n${eligibilityCriteria}*\n\n2️⃣ *Application Process:\n${applicationProcess}*\n\n3️⃣ *Important Dates:\n${importantDates}* \n\n What would you like to do next?`;
       // Add buttons
-      if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"]!= "NA" ) responseButtons.push("See More");
+      if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"]!= "NA" ) responseButtons.push("View Website");
       if (stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"]!= "NA") responseButtons.push("Apply Now");
       if (questionPapers && !questionPapers?.error) responseButtons.push("See Question Papers");
 
@@ -335,7 +335,7 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
 
   if (previousButton === localisedStrings.applyNow && stateDetails && stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"] !== "NA") {
     link = stateDetails["Apply Now Link"];
-  } else if (previousButton === localisedStrings.seeMore && stateDetails && stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
+  } else if (previousButton === localisedStrings.viewWebsite && stateDetails && stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"] !== "NA") {
     link = stateDetails["Portal/Website Link"];
   }
   return link;
@@ -375,11 +375,11 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const buttons = responseButtons.map((button) => {
       switch (button) {
-          case "See More":
+          case "View Website":
               return {
                   type: "solid",
-                  body: localisedStrings.seeMore,
-                  reply: localisedStrings.seeMore,
+                  body: localisedStrings.viewWebsite,
+                  reply: localisedStrings.viewWebsite,
               };
           case "Apply Now":
               return {
@@ -422,7 +422,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   async nextButton(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const link = await this.getApplyOrSeeMoreLink(from, language, selectedState, previousButton);
-  
+  const button_body = localisedStrings.Next(previousButton)
   
  
   const messageData = {
@@ -437,7 +437,8 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           },
           actions: [
               {
-                  button_text: localisedStrings.Next,
+                  // button_text: localisedStrings.Next,
+                  button_text: button_body,
                   type: "website",
                   website: {
                       title: "Welcome to Swiftchat",
