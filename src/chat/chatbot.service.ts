@@ -71,6 +71,7 @@ export class ChatbotService {
     }
     const localisedStrings = LocalizationService.getLocalisedString(userData.language);
     // for hindi and english language
+    console.log("userData",userData);
     
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
@@ -84,12 +85,15 @@ export class ChatbotService {
             // await this.message.sendLanguageChangedMessage(from, userLanguage);
         await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
-      else if (response === 'Change State') {
+      else if (response === 'Change State' || response === 'Change Topic') {
              await this.message.sendStateSelectionButton(from, userLanguage);
       }
       else if (response === 'Change Language') {
                 await this.message.sendLanguageSelectionMessage(from, userLanguage);
       }
+      // else if( response === 'Change Topic'){
+      //   await this.message.sendWelcomeMessage(from,userLanguage)
+      // }
       this.mixpanel.track('trackPersistenceButton',{
         distinctId :from,
         userYearButtonCount : response,
