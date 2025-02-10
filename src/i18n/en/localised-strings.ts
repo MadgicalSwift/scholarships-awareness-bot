@@ -2,13 +2,13 @@ import axios from 'axios';
 import * as dotenv from 'dotenv';
 dotenv.config();
 export const localisedStrings = {
-  welcomeMessage: '👋 Hi there! Let me tell you about the NMMS Scholarship! \n🌟🎓The National Means-cam-Merit Scholarship (NMMS) is for students in Class 8 who are bright but need some help to continue their education.\n\n 📚 If you qualify, you can get 12,000 a year for studies until Class 12.\n Please choose your language to get started!',
+  welcomeMessage: '👋 Hi there! Let me tell you about the NMMS Scholarship! \n\n🌟🎓The National Means-cam-Merit Scholarship (NMMS) is for students in Class 8 who are bright but need some help to continue their education.\n\n 📚 If you qualify, you can get 12,000 a year for studies until Class 12.\n Please choose your language to get started!',
   seeMoreMessage: 'See More Data',
   languageHindi: 'हिन्दी',
   languageEnglish: 'English',
   userLanguage:'english',
   languageChangedMessage: "*🎉Great! You’ve selected English. Let's get started!* \nHere's everything you need to know about the *National Means-cum-Merit Scholarship (NMMS):🌟What is NMMS?* The NMMS Scholarship is a program for Class 8 students to support their education. \nIf you qualify, you’ll receive *₹ 12,000 per year* ( ₹ 1000 per month ) until Class 12!",
-  languageSelection: '🔍Please select your 🗺️language.',
+  languageSelection: 'Please choose your language to get started!',
   whoCanApplyPrompt:"Please click the button below to learn more:",
   whoCanApply:"🎯Who Can Apply",
   getWhoCanApplyStrings: "1️⃣ You must be in *Class 8* at a government, government-aided or local body school.\n 2️⃣You should have scored at least *55% marks in Class 7* ( 50% for SC/ST students ).\n 3️⃣ Your family’s total income should be *less than ₹3.5 Lakhs per year.*",
