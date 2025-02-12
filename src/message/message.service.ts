@@ -4,14 +4,14 @@ import { CustomException } from 'src/common/exception/custom.exception';
 import { localisedStrings } from 'src/i18n/en/localised-strings';
 import { UserService } from 'src/model/user.service';
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
-// import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export abstract class MessageService {
   constructor(
     public readonly userService: UserService,
     public readonly mixpanel: MixpanelService,
-    // public readonly redisService: RedisService
+    public readonly redisService: RedisService
   ) {}
   async prepareWelcomeMessage() {
     return localisedStrings.welcomeMessage;

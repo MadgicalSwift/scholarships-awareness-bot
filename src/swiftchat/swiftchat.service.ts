@@ -158,15 +158,15 @@ export class SwiftchatMessageService extends MessageService {
   try {
     
       // Check if states are cached in Redis
-    // const cachedStates = await this.redisService.get(cacheKey);
+    const cachedStates = await this.redisService.get(cacheKey);
 
-    // if (cachedStates) {
-    //   // If cached, use the data from Redis
-    //   states = JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
-    //   localisedStrings.states = states;
-    // }
-    // else 
-    //  {
+    if (cachedStates) {
+      // If cached, use the data from Redis
+      states = JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
+      localisedStrings.states = states;
+    }
+    else 
+     {
       // If not cached, fetch from API
       const response = await axios.get(this.sheetAPI, {
         params: { action: 'getStates' },
@@ -177,9 +177,9 @@ export class SwiftchatMessageService extends MessageService {
         localisedStrings.states = states;
 
         // Cache the fetched states in Redis with a TTL (time-to-live)
-        // await this.redisService.set(cacheKey, JSON.stringify(states));
+        await this.redisService.set(cacheKey, JSON.stringify(states));
       }
-    // }
+    }
 
   } catch (error) {
     console.error('Error fetching states:', error);
@@ -251,13 +251,13 @@ async StateSelectedinfo(from, language, selectedState) {
 
   try {
 
-    // const cachedStateDetails = await this.redisService.get(cacheKey);
-    // const cachedQuestionPapers = await this.redisService.get(questionPapersCacheKey);
+    const cachedStateDetails = await this.redisService.get(cacheKey);
+    const cachedQuestionPapers = await this.redisService.get(questionPapersCacheKey);
 
-    // if (cachedStateDetails && cachedQuestionPapers) {
-    //   stateDetails = JSON.parse(cachedStateDetails);
-    //   questionPapers = JSON.parse(cachedQuestionPapers);
-    // } else {
+    if (cachedStateDetails && cachedQuestionPapers) {
+      stateDetails = JSON.parse(cachedStateDetails);
+      questionPapers = JSON.parse(cachedQuestionPapers);
+    } else {
       // Fetch both APIs in parallel
       const [stateResponse, questionPapersResponse] = await Promise.all([
         axios.get(this.sheetAPI, { params: { action: "getStateDetails", state: selectedState } }),
@@ -270,13 +270,14 @@ async StateSelectedinfo(from, language, selectedState) {
   
 
       // Cache the results in Redis
-      // if (stateDetails) {
-      //   await this.redisService.set(cacheKey, JSON.stringify(stateDetails));
-      // }
-      // if (questionPapers) {
-      //   await this.redisService.set(questionPapersCacheKey, JSON.stringify(questionPapers));
-      // }
-    // }
+
+      if (stateDetails) {
+        await this.redisService.set(cacheKey, JSON.stringify(stateDetails));
+      }
+      if (questionPapers) {
+        await this.redisService.set(questionPapersCacheKey, JSON.stringify(questionPapers));
+      }
+    }
 
 
   } catch (error) {
@@ -351,13 +352,13 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
   try {
 
       // Check if state details are cached in Redis
-    // const cachedStateDetails = await this.redisService.get(cacheKey);
+    const cachedStateDetails = await this.redisService.get(cacheKey);
 
-    // if (cachedStateDetails) {
-    //   // If cached, use the data from Redis
-    //   console.log("Fetching state details from cache.");
-    //   stateDetails = JSON.parse(cachedStateDetails);
-    // } else {
+    if (cachedStateDetails) {
+      // If cached, use the data from Redis
+      console.log("Fetching state details from cache.");
+      stateDetails = JSON.parse(cachedStateDetails);
+    } else {
       // If not cached, fetch from the API
       const stateResponse = await axios.get(this.sheetAPI, {
         params: { action: "getStateDetails", state: selectedState },
@@ -366,9 +367,9 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
         stateDetails = stateResponse.data;
 
         // Cache the fetched state details in Redis with a TTL (time-to-live)
-        // await this.redisService.set(cacheKey, JSON.stringify(stateDetails));
+        await this.redisService.set(cacheKey, JSON.stringify(stateDetails));
       }
-    // }
+    }
 
   } catch (error) {
     console.error("Error fetching state details:", error);
@@ -392,13 +393,13 @@ async getQuestionPaperLink(from, language, selectedState) {
   try {
     
       // Check if question papers are cached in Redis
-    // const cachedQuestionPapers = await this.redisService.get(cacheKey);
+    const cachedQuestionPapers = await this.redisService.get(cacheKey);
 
-    // if (cachedQuestionPapers) {
-    //   // If cached, use the data from Redis
-    //   console.log("Fetching question papers from cache.");
-    //   questionPapers = JSON.parse(cachedQuestionPapers);
-    // } else {
+    if (cachedQuestionPapers) {
+      // If cached, use the data from Redis
+      console.log("Fetching question papers from cache.");
+      questionPapers = JSON.parse(cachedQuestionPapers);
+    } else {
       // If not cached, fetch from the API
       const questionPapersResponse = await axios.get(this.sheetAPI, {
         params: { action: "getQuestionPaper", state: selectedState },
@@ -407,9 +408,9 @@ async getQuestionPaperLink(from, language, selectedState) {
         questionPapers = questionPapersResponse.data;
 
         // Cache the fetched question papers in Redis with a TTL (time-to-live)
-        // await this.redisService.set(cacheKey, JSON.stringify(questionPapers));
+        await this.redisService.set(cacheKey, JSON.stringify(questionPapers));
       }
-    // }
+    }
   } catch (error) {
     console.error("Error fetching question papers:", error);
   }
@@ -748,13 +749,13 @@ async feedbackMessage(from: string, language: string) {
   const cacheKey = `availableYears_${selectedState}`;
     try {
        // Check if available years are cached in Redis
-    // const cachedYears = await this.redisService.get(cacheKey);
+    const cachedYears = await this.redisService.get(cacheKey);
 
-    // if (cachedYears) {
-    //   // If cached, use the data from Redis
-    //   console.log("Fetching available years from cache.");
-    //   years = JSON.parse(cachedYears);
-    // } else {
+    if (cachedYears) {
+      // If cached, use the data from Redis
+      console.log("Fetching available years from cache.");
+      years = JSON.parse(cachedYears);
+    } else {
       // If not cached, fetch from the API
       const response = await axios.get(this.sheetAPI, {
         params: { action: "getAvailableYears", state: selectedState }
@@ -764,9 +765,9 @@ async feedbackMessage(from: string, language: string) {
         years = response.data.years;
 
         // Cache the fetched years in Redis with a TTL (time-to-live)
-        // await this.redisService.set(cacheKey, JSON.stringify(years)); 
+        await this.redisService.set(cacheKey, JSON.stringify(years)); 
       }
-      // }   
+      }   
 
         // Map years to button objects
         const localisedStrings = LocalizationService.getLocalisedString(language);
@@ -900,13 +901,13 @@ async fetchAndStoreBots(from: string, language: string) {
 
   try {
     // Check if data is cached
-    // const cachedBots = await this.redisService.get(cacheKey);
+    const cachedBots = await this.redisService.get(cacheKey);
 
-    // if (cachedBots) {
-    //   // If cached, parse and use the data
-    //   console.log("Fetching bots from cache.");
-    //   bots = JSON.parse(cachedBots);
-    // } else {
+    if (cachedBots) {
+      // If cached, parse and use the data
+      console.log("Fetching bots from cache.");
+      bots = JSON.parse(cachedBots);
+    } else {
       // If not cached, fetch data from the API
       const response = await axios.get(this.sheetAPI, {
         params: { action: 'getBots' },
@@ -920,9 +921,9 @@ async fetchAndStoreBots(from: string, language: string) {
       }
 
       // Cache the bots data in Redis with a TTL (e.g., 1 hour)
-      // await this.redisService.set(cacheKey, JSON.stringify(bots)); // 1 hour TTL
+      await this.redisService.set(cacheKey, JSON.stringify(bots)); // 1 hour TTL
     }
-  // }
+  }
    catch (error) {
     console.error('Error fetching bots:', error);
   }
@@ -937,11 +938,11 @@ async asyncFetchAndSendBotButtons(from: string, language: string) {
     let bots: any[] = [];
 
     // Check Redis cache for bots data
-    // const cachedBots = await this.redisService.get(cacheKey);
-    // if (cachedBots) {
-    //   console.log("Fetching bots from cache.");
-    //   bots = JSON.parse(cachedBots);
-    // } else {
+    const cachedBots = await this.redisService.get(cacheKey);
+    if (cachedBots) {
+      console.log("Fetching bots from cache.");
+      bots = JSON.parse(cachedBots);
+    } else {
       // Fetch bots from the API
       const response = await axios.get(this.sheetAPI, {
         params: { action: 'getBots' },
@@ -951,8 +952,8 @@ async asyncFetchAndSendBotButtons(from: string, language: string) {
      
 
       // Cache the bots data in Redis with a TTL (e.g., 1 hour)
-      // await this.redisService.set(cacheKey, JSON.stringify(bots), 'EX', 3600); // TTL = 1 hour
-    // }
+      await this.redisService.set(cacheKey, JSON.stringify(bots), 'EX', 3600); // TTL = 1 hour
+    }
 
     // Map bots to article objects
     const articles = bots.map((bot) => ({
