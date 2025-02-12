@@ -266,8 +266,8 @@ async StateSelectedinfo(from, language, selectedState) {
 
       stateDetails = stateResponse?.data || null;
       questionPapers = questionPapersResponse?.data || null;
-      // console.log('stateDetails=>',stateDetails);
-      console.log('questionPapers=>',questionPapers);
+      console.log('stateDetails=>',stateDetails);
+  
 
       // Cache the results in Redis
       // if (stateDetails) {
@@ -308,7 +308,7 @@ async StateSelectedinfo(from, language, selectedState) {
           stateDetails["Exam Date/Expected Month"] && `• Exam Date/Expected Month: *${stateDetails["Exam Date/Expected Month"]}*`,
       ].filter(Boolean).join("\n");
 
-      messageContent += ` *NMMS Details for ${stateDetails["State Name"]}* \n\n  1️⃣ *Eligibility Criteria:\n${eligibilityCriteria}*\n\n2️⃣ *Application Process:\n${applicationProcess}*\n\n3️⃣ *Important Dates:\n${importantDates}* \n\n What would you like to do next?`;
+      messageContent += ` *NMMS Details for ${stateDetails["State Name"]}* \n\n  1️⃣ *Eligibility Criteria:*\n${eligibilityCriteria}\n\n2️⃣ *Application Process:*\n${applicationProcess}\n\n3️⃣ *Important Dates:* \n${importantDates} \n\n What would you like to do next?`;
       // Add buttons
       if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"]!= "NA" ) responseButtons.push("View Website");
       if (stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"]!= "NA") responseButtons.push("Apply Now");
