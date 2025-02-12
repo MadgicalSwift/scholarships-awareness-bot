@@ -798,76 +798,7 @@ async feedbackMessage(from: string, language: string) {
     }
 }
 
-// async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: string, selectedYear: number) {
-//   let pdfUrl: string | null = null;
-//   let listPdfUrl;
-//   let eachObject;
-//   const cacheKey = `pdfLink_${selectedState}_${selectedYear}`;
-//   try {
-//          // Check if the PDF link is cached in Redis
-//         //  const cachedPdfUrl = await this.redisService.get(cacheKey);
 
-//         //  if (cachedPdfUrl) {
-//         //    // If cached, use the data from Redis
-//         //    console.log("Fetching PDF link from cache.");
-//         //    pdfUrl = cachedPdfUrl;
-//         //  } else {
-//            // If not cached, fetch from the API
-//            const response = await axios.get(this.sheetAPI, {
-//              params: { action: "getPdfLink", state: selectedState, year: selectedYear },
-//            });
-     
-           
-           
-//            if (response.data && response.data.pdfList) {
-//             listPdfUrl = response.data.pdfList;
-//             console.log('length of year ', listPdfUrl.length)
-//             console.log('listPdfUrl',listPdfUrl);
-            
-            
-            
-
-//              // Cache the fetched PDF link in Redis with a TTL (time-to-live)
-//             //  await this.redisService.set(cacheKey, pdfUrl);
-//            }
-//       // }
-      
-//       // const pdfName = `Answer Key - ${selectedState} - ${selectedYear}`;  // Customize the name as needed
-      
-
-     
-
-//       // Send the PDF document to the user
-//       // const messageData = {
-//       //     to: from, // Send to the recipient's mobile number
-//       //     type: "document",
-//       //     document: listPdfUrl.map(pdf => ({
-//       //       url: pdf.pdfLink,
-//       //       name: pdf.title || `Question Paper - ${selectedState} - ${selectedYear}`,
-//       //       body: pdf.subTitle || `PDF Document`,
-//       //       read_only: true
-//       //   }))
-//       // };
-      
-//       let messageData;
-//       for (const pdf of listPdfUrl) {
-//          messageData = {
-//             to: from,
-//             type: "document",
-//             document: {
-//                 url: pdf.pdfLink,
-//                 name: pdf.title,
-//                 body: pdf.subTitle || `PDF Document`,
-//                 read_only: true
-//             }
-//         };
-//       }
-
-//       return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-//     } catch (error) {
-//         console.error("Error fetching or sending year buttons:",error);
-//     }
-// }
 
 async fetchAndSendQuestionPaper(from: string, language: string, selectedState: string, selectedYear: number) {
   let listPdfUrl;
