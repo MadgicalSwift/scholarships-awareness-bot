@@ -6,7 +6,7 @@ import { LocalizationService } from 'src/localization/localization.service';
 // import { localisedStrings } from 'src/i18n/hn/localised-strings';
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
-import { RedisService } from 'src/redis/redis.service';
+// import { RedisService } from 'src/redis/redis.service';
 import { count, log } from 'console';
 import { distinct } from 'rxjs';
 import { response } from 'express';
@@ -18,7 +18,7 @@ export class ChatbotService {
   private readonly userService: UserService;
   private readonly swiftchatService: SwiftchatMessageService;
   private readonly mixpanel: MixpanelService;
-  public readonly redisService: RedisService
+  // public readonly redisService: RedisService
 
   constructor(
     intentClassifier: IntentClassifier,
@@ -26,14 +26,14 @@ export class ChatbotService {
     userService: UserService,
     swiftchatService: SwiftchatMessageService,
     mixpanel: MixpanelService,
-    redisService: RedisService,
+    // redisService: RedisService,
   ) {
     this.intentClassifier = intentClassifier;
     this.message = message;
     this.userService = userService;
     this.swiftchatService = swiftchatService;
     this.mixpanel = mixpanel;
-    this.redisService = redisService;
+    // this.redisService = redisService;
   }
   
   public async processMessage(body: any): Promise<any> {
@@ -52,7 +52,7 @@ export class ChatbotService {
         Botid: botID,
         language: 'English', 
         selectedState: 'default_state',
-        
+        pdfIndex : 0,
         selectedYear: 0,
         YearButtonCount:0,
         seeMoreCount:0,
@@ -81,7 +81,7 @@ export class ChatbotService {
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);
            }
-      else if (response === 'What is NMMS?') {
+      else if (response === 'What is NMMS') {
             // await this.message.sendLanguageChangedMessage(from, userLanguage);
         await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
@@ -104,7 +104,8 @@ export class ChatbotService {
       const buttonResponse = body.button_response?.body;
       const languageMessage = userData.language;
       
-      const statesFetch = await localisedStrings.States(this.redisService);
+      // const statesFetch = await localisedStrings.States(this.redisService);
+      const statesFetch = await localisedStrings.States();
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
 
         await this.message.sendWhoCanApplyButton(from, languageMessage);

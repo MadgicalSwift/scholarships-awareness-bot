@@ -158,13 +158,15 @@ export class SwiftchatMessageService extends MessageService {
   try {
     
       // Check if states are cached in Redis
-    const cachedStates = await this.redisService.get(cacheKey);
+    // const cachedStates = await this.redisService.get(cacheKey);
 
-    if (cachedStates) {
-      // If cached, use the data from Redis
-      states = JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
-      localisedStrings.states = states;
-    } else {
+    // if (cachedStates) {
+    //   // If cached, use the data from Redis
+    //   states = JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
+    //   localisedStrings.states = states;
+    // }
+    // else 
+    //  {
       // If not cached, fetch from API
       const response = await axios.get(this.sheetAPI, {
         params: { action: 'getStates' },
@@ -175,9 +177,9 @@ export class SwiftchatMessageService extends MessageService {
         localisedStrings.states = states;
 
         // Cache the fetched states in Redis with a TTL (time-to-live)
-        await this.redisService.set(cacheKey, JSON.stringify(states));
+        // await this.redisService.set(cacheKey, JSON.stringify(states));
       }
-    }
+    // }
 
   } catch (error) {
     console.error('Error fetching states:', error);
@@ -249,13 +251,13 @@ async StateSelectedinfo(from, language, selectedState) {
 
   try {
 
-    const cachedStateDetails = await this.redisService.get(cacheKey);
-    const cachedQuestionPapers = await this.redisService.get(questionPapersCacheKey);
+    // const cachedStateDetails = await this.redisService.get(cacheKey);
+    // const cachedQuestionPapers = await this.redisService.get(questionPapersCacheKey);
 
-    if (cachedStateDetails && cachedQuestionPapers) {
-      stateDetails = JSON.parse(cachedStateDetails);
-      questionPapers = JSON.parse(cachedQuestionPapers);
-    } else {
+    // if (cachedStateDetails && cachedQuestionPapers) {
+    //   stateDetails = JSON.parse(cachedStateDetails);
+    //   questionPapers = JSON.parse(cachedQuestionPapers);
+    // } else {
       // Fetch both APIs in parallel
       const [stateResponse, questionPapersResponse] = await Promise.all([
         axios.get(this.sheetAPI, { params: { action: "getStateDetails", state: selectedState } }),
@@ -264,15 +266,17 @@ async StateSelectedinfo(from, language, selectedState) {
 
       stateDetails = stateResponse?.data || null;
       questionPapers = questionPapersResponse?.data || null;
+      // console.log('stateDetails=>',stateDetails);
+      console.log('questionPapers=>',questionPapers);
 
       // Cache the results in Redis
-      if (stateDetails) {
-        await this.redisService.set(cacheKey, JSON.stringify(stateDetails));
-      }
-      if (questionPapers) {
-        await this.redisService.set(questionPapersCacheKey, JSON.stringify(questionPapers));
-      }
-    }
+      // if (stateDetails) {
+      //   await this.redisService.set(cacheKey, JSON.stringify(stateDetails));
+      // }
+      // if (questionPapers) {
+      //   await this.redisService.set(questionPapersCacheKey, JSON.stringify(questionPapers));
+      // }
+    // }
 
 
   } catch (error) {
@@ -347,13 +351,13 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
   try {
 
       // Check if state details are cached in Redis
-    const cachedStateDetails = await this.redisService.get(cacheKey);
+    // const cachedStateDetails = await this.redisService.get(cacheKey);
 
-    if (cachedStateDetails) {
-      // If cached, use the data from Redis
-      console.log("Fetching state details from cache.");
-      stateDetails = JSON.parse(cachedStateDetails);
-    } else {
+    // if (cachedStateDetails) {
+    //   // If cached, use the data from Redis
+    //   console.log("Fetching state details from cache.");
+    //   stateDetails = JSON.parse(cachedStateDetails);
+    // } else {
       // If not cached, fetch from the API
       const stateResponse = await axios.get(this.sheetAPI, {
         params: { action: "getStateDetails", state: selectedState },
@@ -362,9 +366,9 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
         stateDetails = stateResponse.data;
 
         // Cache the fetched state details in Redis with a TTL (time-to-live)
-        await this.redisService.set(cacheKey, JSON.stringify(stateDetails));
+        // await this.redisService.set(cacheKey, JSON.stringify(stateDetails));
       }
-    }
+    // }
 
   } catch (error) {
     console.error("Error fetching state details:", error);
@@ -388,13 +392,13 @@ async getQuestionPaperLink(from, language, selectedState) {
   try {
     
       // Check if question papers are cached in Redis
-    const cachedQuestionPapers = await this.redisService.get(cacheKey);
+    // const cachedQuestionPapers = await this.redisService.get(cacheKey);
 
-    if (cachedQuestionPapers) {
-      // If cached, use the data from Redis
-      console.log("Fetching question papers from cache.");
-      questionPapers = JSON.parse(cachedQuestionPapers);
-    } else {
+    // if (cachedQuestionPapers) {
+    //   // If cached, use the data from Redis
+    //   console.log("Fetching question papers from cache.");
+    //   questionPapers = JSON.parse(cachedQuestionPapers);
+    // } else {
       // If not cached, fetch from the API
       const questionPapersResponse = await axios.get(this.sheetAPI, {
         params: { action: "getQuestionPaper", state: selectedState },
@@ -403,9 +407,9 @@ async getQuestionPaperLink(from, language, selectedState) {
         questionPapers = questionPapersResponse.data;
 
         // Cache the fetched question papers in Redis with a TTL (time-to-live)
-        await this.redisService.set(cacheKey, JSON.stringify(questionPapers));
+        // await this.redisService.set(cacheKey, JSON.stringify(questionPapers));
       }
-    }
+    // }
   } catch (error) {
     console.error("Error fetching question papers:", error);
   }
@@ -469,7 +473,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
 
   return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
 }
-  async nextButton(from, language, selectedState, previousButton) {
+async nextButton(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const link = await this.getApplyOrSeeMoreLink(from, language, selectedState, previousButton);
   const button_body = localisedStrings.Next(previousButton)
@@ -507,7 +511,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
 }  
  
 
-  async sendLanguageSelectionMessage(from: string, language: string) {
+async sendLanguageSelectionMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.languageSelection;
   
@@ -541,7 +545,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   }
  
 
-  async feedbackMessage(from: string, language: string) {
+async feedbackMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.feedback;
   
@@ -744,13 +748,13 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
   const cacheKey = `availableYears_${selectedState}`;
     try {
        // Check if available years are cached in Redis
-    const cachedYears = await this.redisService.get(cacheKey);
+    // const cachedYears = await this.redisService.get(cacheKey);
 
-    if (cachedYears) {
-      // If cached, use the data from Redis
-      console.log("Fetching available years from cache.");
-      years = JSON.parse(cachedYears);
-    } else {
+    // if (cachedYears) {
+    //   // If cached, use the data from Redis
+    //   console.log("Fetching available years from cache.");
+    //   years = JSON.parse(cachedYears);
+    // } else {
       // If not cached, fetch from the API
       const response = await axios.get(this.sheetAPI, {
         params: { action: "getAvailableYears", state: selectedState }
@@ -760,9 +764,9 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
         years = response.data.years;
 
         // Cache the fetched years in Redis with a TTL (time-to-live)
-        await this.redisService.set(cacheKey, JSON.stringify(years)); 
+        // await this.redisService.set(cacheKey, JSON.stringify(years)); 
       }
-      }   
+      // }   
 
         // Map years to button objects
         const localisedStrings = LocalizationService.getLocalisedString(language);
@@ -794,53 +798,124 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
     }
 }
 
-async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: string, selectedYear: number) {
-  let pdfUrl: string | null = null;
+// async  fetchAndSendQuestionPaper(from: string, language: string, selectedState: string, selectedYear: number) {
+//   let pdfUrl: string | null = null;
+//   let listPdfUrl;
+//   let eachObject;
+//   const cacheKey = `pdfLink_${selectedState}_${selectedYear}`;
+//   try {
+//          // Check if the PDF link is cached in Redis
+//         //  const cachedPdfUrl = await this.redisService.get(cacheKey);
+
+//         //  if (cachedPdfUrl) {
+//         //    // If cached, use the data from Redis
+//         //    console.log("Fetching PDF link from cache.");
+//         //    pdfUrl = cachedPdfUrl;
+//         //  } else {
+//            // If not cached, fetch from the API
+//            const response = await axios.get(this.sheetAPI, {
+//              params: { action: "getPdfLink", state: selectedState, year: selectedYear },
+//            });
+     
+           
+           
+//            if (response.data && response.data.pdfList) {
+//             listPdfUrl = response.data.pdfList;
+//             console.log('length of year ', listPdfUrl.length)
+//             console.log('listPdfUrl',listPdfUrl);
+            
+            
+            
+
+//              // Cache the fetched PDF link in Redis with a TTL (time-to-live)
+//             //  await this.redisService.set(cacheKey, pdfUrl);
+//            }
+//       // }
+      
+//       // const pdfName = `Answer Key - ${selectedState} - ${selectedYear}`;  // Customize the name as needed
+      
+
+     
+
+//       // Send the PDF document to the user
+//       // const messageData = {
+//       //     to: from, // Send to the recipient's mobile number
+//       //     type: "document",
+//       //     document: listPdfUrl.map(pdf => ({
+//       //       url: pdf.pdfLink,
+//       //       name: pdf.title || `Question Paper - ${selectedState} - ${selectedYear}`,
+//       //       body: pdf.subTitle || `PDF Document`,
+//       //       read_only: true
+//       //   }))
+//       // };
+      
+//       let messageData;
+//       for (const pdf of listPdfUrl) {
+//          messageData = {
+//             to: from,
+//             type: "document",
+//             document: {
+//                 url: pdf.pdfLink,
+//                 name: pdf.title,
+//                 body: pdf.subTitle || `PDF Document`,
+//                 read_only: true
+//             }
+//         };
+//       }
+
+//       return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+//     } catch (error) {
+//         console.error("Error fetching or sending year buttons:",error);
+//     }
+// }
+
+async fetchAndSendQuestionPaper(from: string, language: string, selectedState: string, selectedYear: number) {
+  let listPdfUrl;
   const cacheKey = `pdfLink_${selectedState}_${selectedYear}`;
+
   try {
-         // Check if the PDF link is cached in Redis
-         const cachedPdfUrl = await this.redisService.get(cacheKey);
+      // Fetch PDF links from API
+      const response = await axios.get(this.sheetAPI, {
+          params: { action: "getPdfLink", state: selectedState, year: selectedYear },
+      });
 
-         if (cachedPdfUrl) {
-           // If cached, use the data from Redis
-           console.log("Fetching PDF link from cache.");
-           pdfUrl = cachedPdfUrl;
-         } else {
-           // If not cached, fetch from the API
-           const response = await axios.get(this.sheetAPI, {
-             params: { action: "getPdfLink", state: selectedState, year: selectedYear },
-           });
-     
-           if (response.data && response.data.pdfLink) {
-             pdfUrl = response.data.pdfLink;
-     
-             // Cache the fetched PDF link in Redis with a TTL (time-to-live)
-             await this.redisService.set(cacheKey, pdfUrl);
-           }
+      if (response.data && response.data.pdfList) {
+          listPdfUrl = response.data.pdfList;
       }
-      
-      const pdfName = `Answer Key - ${selectedState} - ${selectedYear}`;  // Customize the name as needed
-      
 
-     
+      if (!listPdfUrl || listPdfUrl.length === 0) {
+          console.error("No PDFs found for the selected state and year.");
+          return;
+      }
 
-      // Send the PDF document to the user
-      const messageData = {
-          to: from, // Send to the recipient's mobile number
-          type: "document",
-          document: {
-              url: pdfUrl,
-              name: pdfName,
-              body: `Question Paper for ${selectedState} - ${selectedYear}`,
-              read_only: true
-          }
-      };
+      // Send multiple PDFs using Promise.all
+      const sendMessages = listPdfUrl.map(pdf => {
+          const messageData = {
+              to: from,
+              type: "document",
+              document: {
+                  url: pdf.pdfLink,
+                  name: pdf.title || `Question Paper - ${selectedState} - ${selectedYear}`,
+                  body: pdf.subTitle || `PDF Document`,
+                  read_only: true
+              }
+          };
+          return this.sendMessage(this.baseUrl, messageData, this.apiKey);
+      });
 
-      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-    } catch (error) {
-        console.error("Error fetching or sending year buttons:",error);
-    }
+      // Execute all send requests
+      await Promise.all(sendMessages);
+      console.log("All PDFs sent successfully!");
+  } catch (error) {
+      console.error("Error fetching or sending PDFs:", error);
+  }
 }
+
+
+
+
+
+
 
 async sendQuestionPaperButton(from: string, language: string) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
@@ -894,13 +969,13 @@ async fetchAndStoreBots(from: string, language: string) {
 
   try {
     // Check if data is cached
-    const cachedBots = await this.redisService.get(cacheKey);
+    // const cachedBots = await this.redisService.get(cacheKey);
 
-    if (cachedBots) {
-      // If cached, parse and use the data
-      console.log("Fetching bots from cache.");
-      bots = JSON.parse(cachedBots);
-    } else {
+    // if (cachedBots) {
+    //   // If cached, parse and use the data
+    //   console.log("Fetching bots from cache.");
+    //   bots = JSON.parse(cachedBots);
+    // } else {
       // If not cached, fetch data from the API
       const response = await axios.get(this.sheetAPI, {
         params: { action: 'getBots' },
@@ -914,9 +989,9 @@ async fetchAndStoreBots(from: string, language: string) {
       }
 
       // Cache the bots data in Redis with a TTL (e.g., 1 hour)
-      await this.redisService.set(cacheKey, JSON.stringify(bots)); // 1 hour TTL
+      // await this.redisService.set(cacheKey, JSON.stringify(bots)); // 1 hour TTL
     }
-  }
+  // }
    catch (error) {
     console.error('Error fetching bots:', error);
   }
@@ -931,11 +1006,11 @@ async asyncFetchAndSendBotButtons(from: string, language: string) {
     let bots: any[] = [];
 
     // Check Redis cache for bots data
-    const cachedBots = await this.redisService.get(cacheKey);
-    if (cachedBots) {
-      console.log("Fetching bots from cache.");
-      bots = JSON.parse(cachedBots);
-    } else {
+    // const cachedBots = await this.redisService.get(cacheKey);
+    // if (cachedBots) {
+    //   console.log("Fetching bots from cache.");
+    //   bots = JSON.parse(cachedBots);
+    // } else {
       // Fetch bots from the API
       const response = await axios.get(this.sheetAPI, {
         params: { action: 'getBots' },
@@ -945,8 +1020,8 @@ async asyncFetchAndSendBotButtons(from: string, language: string) {
      
 
       // Cache the bots data in Redis with a TTL (e.g., 1 hour)
-      await this.redisService.set(cacheKey, JSON.stringify(bots), 'EX', 3600); // TTL = 1 hour
-    }
+      // await this.redisService.set(cacheKey, JSON.stringify(bots), 'EX', 3600); // TTL = 1 hour
+    // }
 
     // Map bots to article objects
     const articles = bots.map((bot) => ({

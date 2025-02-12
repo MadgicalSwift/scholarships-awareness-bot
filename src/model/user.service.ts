@@ -9,7 +9,7 @@ const { USERS_TABLE } = process.env;
 @Injectable()
 export class UserService {
   // In UserService
-  async createUser(mobileNumber: string,YearButtonCount: number, language: string, botID: string, selectedState: string, selectedYear: number=0,seeMoreCount : number=0, applyLinkCount: number = 0, feedback: { date: any; feedback: string }[] = [], previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
+  async createUser(mobileNumber: string,YearButtonCount: number,pdfIndex: number, language: string, botID: string, selectedState: string, selectedYear: number=0,seeMoreCount : number=0, applyLinkCount: number = 0, feedback: { date: any; feedback: string }[] = [], previousButtonMessage: string = '', previousButtonMessage1: string = ''): Promise<User | null> {
     try {
       let user = await this.findUserByMobileNumber(mobileNumber, botID);
 
@@ -19,6 +19,7 @@ export class UserService {
         user.previousButtonMessage1 = previousButtonMessage1;
         user.feedback = feedback;
         user.YearButtonCount = YearButtonCount;
+        user.pdfIndex = pdfIndex;
         user.selectedState = selectedState;
         user.selectedYear = selectedYear; // save the selectedYear
         
@@ -39,6 +40,7 @@ export class UserService {
           seeMoreCount,
           applyLinkCount,
           YearButtonCount,
+          pdfIndex,
           feedback,
           previousButtonMessage,
           previousButtonMessage1,
@@ -89,6 +91,7 @@ export class UserService {
           Botid: user.Botid,
           id: user.id,
           YearButtonCount:user.YearButtonCount || 0,
+          pdfIndex : user.pdfIndex || 0,
           selectedYear: user.selectedYear || 0, // include selectedYear
           selectedState: user.selectedState, // Include selectedState
          
@@ -123,4 +126,7 @@ export class UserService {
       console.error('Error deleting user from DynamoDB:', error);
     }
   }
+
 }
+
+

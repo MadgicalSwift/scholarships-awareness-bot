@@ -21,6 +21,11 @@
     @Column()  // Define the column in the database
     YearButtonCount: number;
 
+
+    @IsNumber() // Validation for Botid (must be a string)
+    @Column()  // Define the column in the database
+    pdfIndex: number;
+
   
     @IsString() // Validation for selectedState (must be a string)
     @Column()  // Define the column in the database

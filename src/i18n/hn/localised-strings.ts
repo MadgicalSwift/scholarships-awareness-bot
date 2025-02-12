@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as dotenv from 'dotenv';
 dotenv.config();
 export const localisedStrings = {
-  welcomeMessage: `👋 नमस्ते! मैं आपको एनएमएमएस छात्रवृत्ति के बारे में बताता हूँ! 🌟 \n\n🎓नेशनल मीन्स-कैम-मेरिट स्कॉलरशिप (एनएमएमएस) कक्षा 8 के उन छात्रों के लिए है जो मेधावी हैं लेकिन उन्हें अपनी शिक्षा जारी रखने के लिए कुछ मदद की ज़रूरत है। \n📚 यदि आप अर्हता प्राप्त करते हैं, तो आपको 12वीं कक्षा तक की पढ़ाई के लिए प्रति वर्ष 12,000 मिल सकते हैं। \nआरंभ करने के लिए कृपया अपनी भाषा चुनें!`,
+  welcomeMessage: `👋 नमस्ते! मैं आपको एनएमएमएस छात्रवृत्ति के बारे में बताता हूँ! 🌟 \n🎓नेशनल मीन्स-कैम-मेरिट स्कॉलरशिप (एनएमएमएस) कक्षा 8 के उन छात्रों के लिए है जो मेधावी हैं लेकिन उन्हें अपनी शिक्षा जारी रखने के लिए कुछ मदद की ज़रूरत है। \n📚 यदि आप अर्हता प्राप्त करते हैं, तो आपको 12वीं कक्षा तक की पढ़ाई के लिए प्रति वर्ष 12,000 मिल सकते हैं। \nआरंभ करने के लिए कृपया अपनी भाषा चुनें!`,
   languageChangedMessage: '🎉 *बढ़िया! आपने हिन्दी चुनी है. आएँ शुरू करें!* \nयहां वह सब कुछ है जो आपको *नेशनल मीन्स-कम-मेरिट स्कॉलरशिप (एनएमएमएस) के बारे में जानने की जरूरत है: 🌟एनएमएमएस क्या है?* एनएमएमएस छात्रवृत्ति कक्षा 8 के छात्रों के लिए उनकी शिक्षा का समर्थन करने के लिए एक कार्यक्रम है।\n यदि आप अर्हता प्राप्त करते हैं, तो आपको कक्षा 12 तक *प्रति वर्ष ₹ 12,000* (₹ 1000 प्रति माह) प्राप्त होंगे!',
   languageSelection:"शुरू करने के लिए कृपया अपनी भाषा चुनें!",
   languageEnglish: 'English',
@@ -34,35 +34,47 @@ export const localisedStrings = {
  userfeedback:"कृपया अपने विचार और राय प्रदान किए गए टेक्स्ट बॉक्स में टाइप करें और 'भेजें' बटन दबाकर उन्हें भेजें।📖",
  thankyou:"🙏आपने अपना सुझाव साझा करने के लिए समय निकाला, इसके लिए धन्यवाद।😊",
 
- async States(redisService) {
-  const cacheKey = 'states_cache'; // Unique key for caching states
-  let sheetAPI = process.env.Sheet_API;
+    // async States(redisService) {
+    //   const cacheKey = 'states_cache'; // Unique key for caching states
+    //   let sheetAPI = process.env.Sheet_API;
 
-  try {
-    // Check Redis cache for states data
-    const cachedStates = await redisService.get(cacheKey);
-    if (cachedStates) {
-      console.log('Fetching states from cache.');
-      return JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
-    } else {
-      // Fetch states from the API only if not in cache
-      console.log('Fetching states from API.');
-      const response = await axios.get(sheetAPI, {
-        params: { action: 'getStates' },
-      });
+    //   try {
+    //     // Check Redis cache for states data
+    //     const cachedStates = await redisService.get(cacheKey);
+    //     if (cachedStates) {
+    //       console.log('Fetching states from cache.');
+    //       return JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
+    //     } else {
+    //       // Fetch states from the API only if not in cache
+    //       console.log('Fetching states from API.');
+    //       const response = await axios.get(sheetAPI, {
+    //         params: { action: 'getStates' },
+    //       });
 
-      if (response.data) {
-        // Cache the states data in Redis with a TTL (e.g., 1 hour)
-        const sortedStates = response.data.sort((a, b) => a.localeCompare(b));
-        await redisService.set(cacheKey, JSON.stringify(sortedStates)); // TTL = 1 hour
-        return sortedStates;
-      }
+    //       if (response.data) {
+    //         // Cache the states data in Redis with a TTL (e.g., 1 hour)
+    //         const sortedStates = response.data.sort((a, b) => a.localeCompare(b));
+    //         await redisService.set(cacheKey, JSON.stringify(sortedStates)); // TTL = 1 hour
+    //         return sortedStates;
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching states:', error);
+    //     throw error; // Optionally rethrow to handle upstream
+    //   }
+    // }
+
+  async States() {
+  
+  const response = await axios.get(
+      'https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec',
+      { params: { action: 'getStates' } }
+  );
+  console.log(response.data); 
+  if (response.data) {
+      return response.data;}
     }
-  } catch (error) {
-    console.error('Error fetching states:', error);
-    throw error; // Optionally rethrow to handle upstream
-  }
-}
+
 
 
 
