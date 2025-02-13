@@ -511,7 +511,7 @@ async nextButton(from, language, selectedState, previousButton) {
                   type: "website",
                   website: {
                       title: "Welcome to Swiftchat",
-                      payload: "qwerty",
+                     
                       url: link
                   }
               },
