@@ -81,7 +81,7 @@ export class ChatbotService {
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);
            }
-      else if (response === 'What is NMMS') {
+      else if (response === 'What is NMMS?') {
             // await this.message.sendLanguageChangedMessage(from, userLanguage);
         await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
