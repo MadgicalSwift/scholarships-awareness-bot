@@ -39,9 +39,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     time: number = this.redisTTL,
   ): Promise<void> {
     if (expiryMode && time) {
-      await this.redisClient.set(key, value, expiryMode, time);
+	    console.log("in expiry",expiryMode,time)
+      await this.redisClient.setEx(key, time, value);
     } else {
-      await this.redisClient.set(key, value);
+	    console.log("without expiry",expiryMode,time)
+      await this.redisClient.setEx(key, value);
     }
   }
 }

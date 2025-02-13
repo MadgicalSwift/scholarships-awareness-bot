@@ -114,8 +114,10 @@ export class ChatbotService {
 
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
 
-        await this.message.sendWhoCanApplyButton(from, languageMessage);
+        await this.message.sendWhoCanApplyButton(from, buttonResponse?.toLowerCase());
         
+        userData.language = buttonResponse?.toLowerCase()
+        await this.userService.saveUser(userData);
       }
       else if ([localisedStrings.whoCanApply].includes(buttonResponse)) {
        

@@ -39,7 +39,7 @@ export const localisedStrings = {
 
 
   async States(redisService) {
-    const cacheKey = 'states_cache'; // Unique key for caching states
+    const cacheKey = 'updated_states_cache'; // Unique key for caching states
     let sheetAPI = process.env.Sheet_API;
 
     try {

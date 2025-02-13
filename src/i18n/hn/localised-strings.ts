@@ -35,7 +35,7 @@ export const localisedStrings = {
  thankyou:"🙏आपने अपना सुझाव साझा करने के लिए समय निकाला, इसके लिए धन्यवाद।😊",
 
     async States(redisService) {
-      const cacheKey = 'states_cache'; // Unique key for caching states
+      const cacheKey = 'updated_states_cache'; // Unique key for caching states
       let sheetAPI = process.env.Sheet_API;
 
       try {

@@ -152,7 +152,7 @@ export class SwiftchatMessageService extends MessageService {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.stateSelectionMessage;
 
-    const cacheKey = 'states'; 
+    const cacheKey = 'updated_states_new'; 
   let states = [];
 
   try {
@@ -177,7 +177,7 @@ export class SwiftchatMessageService extends MessageService {
         localisedStrings.states = states;
 
         // Cache the fetched states in Redis with a TTL (time-to-live)
-        await this.redisService.set(cacheKey, JSON.stringify(states));
+        await this.redisService.set(cacheKey,JSON.stringify(states));
       }
     }
 
@@ -246,8 +246,8 @@ async StateSelectedinfo(from, language, selectedState) {
   let stateDetails = null;
   let questionPapers = null;
 
-  const cacheKey = `stateDetails:${selectedState}`;
-  const questionPapersCacheKey = `questionPapersyear:${selectedState}`;
+  const cacheKey = `updatedstateDetailsnew:${selectedState}`;
+  const questionPapersCacheKey = `updatedquestionPapersyearnew:${selectedState}`;
 
   try {
 
@@ -362,7 +362,7 @@ messageContent += "What would you like to do next?";
 async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   let stateDetails = null;
-  const cacheKey = `stateDetails_${selectedState}`; // Use selectedState as part of the cache key
+  const cacheKey = `updatestateDetails_${selectedState}`; // Use selectedState as part of the cache key
 
   try {
 
@@ -403,7 +403,7 @@ async getApplyOrSeeMoreLink(from, language, selectedState, previousButton) {
 
 async getQuestionPaperLink(from, language, selectedState) {
   let questionPapers = null;
-  const cacheKey = `questionPapers_${selectedState}`; // Use selectedState as part of the cache key
+  const cacheKey = `updatequestionPapers_${selectedState}`; // Use selectedState as part of the cache key
 
   try {
     
@@ -493,8 +493,7 @@ async nextButton(from, language, selectedState, previousButton) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const link = await this.getApplyOrSeeMoreLink(from, language, selectedState, previousButton);
   const button_body = localisedStrings.Next(previousButton)
-  
- 
+  console.log("linkkkkkkkkkkkkkkkkkk",link)
   const messageData = {
       to: from,
       type: 'action',
@@ -761,7 +760,7 @@ async feedbackMessage(from: string, language: string) {
 
   async fetchAndSendYearButtons(from: string, language: string, selectedState: string) {
     let years: number[] = [];
-  const cacheKey = `availableYears_${selectedState}`;
+  const cacheKey = `updateavailableYears_${selectedState}`;
     try {
        // Check if available years are cached in Redis
     const cachedYears = await this.redisService.get(cacheKey);
@@ -818,7 +817,7 @@ async feedbackMessage(from: string, language: string) {
 
 async fetchAndSendQuestionPaper(from: string, language: string, selectedState: string, selectedYear: number) {
   let listPdfUrl;
-  const cacheKey = `pdfLink_${selectedState}_${selectedYear}`;
+  const cacheKey = `updatepdfLink_${selectedState}_${selectedYear}`;
 
   try {
       // Fetch PDF links from API
@@ -911,7 +910,7 @@ async sendQuesPapaerNextMaessage(from: string, language: string) {
 
 // try new 
 async fetchAndStoreBots(from: string, language: string) {
-  const cacheKey = `bots_${from}_${language}`; // Create a unique cache key
+  const cacheKey = `updatedbots_${from}_${language}`; // Create a unique cache key
   let bots: any[] = [];
 
   try {
@@ -949,7 +948,7 @@ async fetchAndStoreBots(from: string, language: string) {
 
 async asyncFetchAndSendBotButtons(from: string, language: string) {
   try {
-    const cacheKey = 'bots_cache'; // Unique key for caching bots
+    const cacheKey = 'updatedbots_cache'; // Unique key for caching bots
     let bots: any[] = [];
 
     // Check Redis cache for bots data
