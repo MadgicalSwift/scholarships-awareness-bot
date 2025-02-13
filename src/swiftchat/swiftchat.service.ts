@@ -247,7 +247,7 @@ async StateSelectedinfo(from, language, selectedState) {
   let questionPapers = null;
 
   const cacheKey = `stateDetails:${selectedState}`;
-  const questionPapersCacheKey = `questionPapers:${selectedState}`;
+  const questionPapersCacheKey = `questionPapersyear:${selectedState}`;
 
   try {
 
@@ -257,13 +257,14 @@ async StateSelectedinfo(from, language, selectedState) {
     if (cachedStateDetails && cachedQuestionPapers) {
       stateDetails = JSON.parse(cachedStateDetails);
       questionPapers = JSON.parse(cachedQuestionPapers);
+      console.log("questio paper",questionPapers)
     } else {
       // Fetch both APIs in parallel
       const [stateResponse, questionPapersResponse] = await Promise.all([
         axios.get(this.sheetAPI, { params: { action: "getStateDetails", state: selectedState } }),
         axios.get(this.sheetAPI, { params: { action: "getAvailableYears", state: selectedState } }),
       ]);
-
+      console.log("questio paper",questionPapersResponse)
       stateDetails = stateResponse?.data || null;
       questionPapers = questionPapersResponse?.data || null;
       console.log('stateDetails=>',stateDetails);
@@ -290,27 +291,41 @@ async StateSelectedinfo(from, language, selectedState) {
 
   if (stateDetails && !stateDetails.error) {
       // Prepare content dynamically
-      const eligibilityCriteria = [
+     
           // stateDetails["State Name"] && `*• State Name: ${stateDetails["State Name"]}*`,
-          stateDetails["Minimum Percentage (Class 7)"] && `• Minimum Percentage (Class 7): *${stateDetails["Minimum Percentage (Class 7)"]}*`,
-          stateDetails["Family Income Limit"] && `• Family Income Limit: *${stateDetails["Family Income Limit"]}*`,
-          stateDetails["Applicable Schools"] && `*• Applicable Schools:* ${stateDetails["Applicable Schools"]}`,
-      ].filter(Boolean).join("\n");
+          const filterNA = (value) => value && value !== "NA";
+const formatDate = (date) => {
+    if (date instanceof Date) {
+        return date.toISOString().split('T')[0];
+    } else if (typeof date === "string" && date.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)) {
+        return date.split('T')[0];
+    }
+    return date;
+};
 
-      const applicationProcess = [
-          stateDetails["Application Mode"] && `*• Application Mode:* ${stateDetails["Application Mode"]}`,
-          stateDetails["Portal/Website Link"] && `*• Portal/Website Link: ${stateDetails["Portal/Website Link"]}*`,
-          stateDetails["Helpdesk Contact Number"] && `*• Helpdesk Contact Number: ${stateDetails["Helpdesk Contact Number"]}*`,
-      ].filter(Boolean).join("\n");
+const eligibilityCriteria = [
+    filterNA(stateDetails["Minimum Percentage (Class 7)"]) && `• Minimum Percentage (Class 7): *${stateDetails["Minimum Percentage (Class 7)"]}*`,
+    filterNA(stateDetails["Family Income Limit"]) && `• Family Income Limit: *${stateDetails["Family Income Limit"]}*`,
+    filterNA(stateDetails["Applicable Schools"]) && `*• Applicable Schools:* ${stateDetails["Applicable Schools"]}`,
+].filter(Boolean).join("\n");
 
-      const importantDates = [
-          stateDetails["Application Start Date"] && `• Application Start Date: *${stateDetails["Application Start Date"]}*`,
-          stateDetails["Application End Date"] && `• Application End Date: *${stateDetails["Application End Date"]}*`,
-          stateDetails["Exam Date/Expected Month"] && `• Exam Date/Expected Month: *${stateDetails["Exam Date/Expected Month"]}*`,
-      ].filter(Boolean).join("\n");
+const applicationProcess = [
+    filterNA(stateDetails["Application Mode"]) && `*• Application Mode:* ${stateDetails["Application Mode"]}`,
+    filterNA(stateDetails["Portal/Website Link"]) && `*• Portal/Website Link: ${stateDetails["Portal/Website Link"]}*`,
+    filterNA(stateDetails["Helpdesk Contact Number"]) && `*• Helpdesk Contact Number: ${stateDetails["Helpdesk Contact Number"]}*`,
+].filter(Boolean).join("\n");
 
-      messageContent += ` *NMMS Details for ${stateDetails["State Name"]}* \n\n  1️⃣ *Eligibility Criteria:*\n${eligibilityCriteria}\n\n2️⃣ *Application Process:*\n${applicationProcess}\n\n3️⃣ *Important Dates:* \n${importantDates} \n\n What would you like to do next?`;
-      // Add buttons
+const importantDates = [
+    filterNA(stateDetails["Application Start Date"]) && `• Application Start Date: *${formatDate(stateDetails["Application Start Date"])}*`,
+    filterNA(stateDetails["Application End Date"]) && `• Application End Date: *${formatDate(stateDetails["Application End Date"])}*`,
+    filterNA(stateDetails["Exam Date/Expected Month"]) && `• Exam Date/Expected Month: *${formatDate(stateDetails["Exam Date/Expected Month"])}*`,
+].filter(Boolean).join("\n");
+
+       messageContent = ` *NMMS Details for ${stateDetails["State Name"]}* \n\n`;
+if (eligibilityCriteria) messageContent += `1️⃣ *Eligibility Criteria:*\n${eligibilityCriteria}\n\n`;
+if (applicationProcess) messageContent += `2️⃣ *Application Process:*\n${applicationProcess}\n\n`;
+if (importantDates) messageContent += `3️⃣ *Important Dates:*\n${importantDates} \n\n`;
+messageContent += "What would you like to do next?";
       if (stateDetails["Portal/Website Link"] && stateDetails["Portal/Website Link"]!= "NA" ) responseButtons.push("View Website");
       if (stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"]!= "NA") responseButtons.push("Apply Now");
       if (questionPapers && !questionPapers?.error) responseButtons.push("See Question Papers");
