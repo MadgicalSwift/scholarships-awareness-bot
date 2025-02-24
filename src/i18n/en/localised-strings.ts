@@ -7,7 +7,7 @@ export const localisedStrings = {
   languageHindi: 'हिन्दी',
   languageEnglish: 'English',
   userLanguage:'english',
-  languageChangedMessage: "🎉 *Great! You have selected English. Let us get started! *🎓\n\n🌟 *What is NMMS?*\nThe NMMS Scholarship is a program for *Class 8 students* to support their education. If you qualify, you’ll receive *₹12,000 per year* (₹1,000 per month) until Class 12!",
+  languageChangedMessage: "🎉 *Great! You have selected English. Let us get started!* 🎓\n\n🌟 *What is NMMS?*\nThe NMMS Scholarship is a program for *Class 8 students* to support their education. If you qualify, you’ll receive *₹12,000 per year* (₹1,000 per month) until Class 12!",
   languageSelection: 'Please choose your language to get started!',
   whoCanApplyPrompt:"Please click the button below to learn more:",
   whoCanApply:"🎯Who Can Apply",

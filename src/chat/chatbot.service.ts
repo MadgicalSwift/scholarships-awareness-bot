@@ -332,19 +332,10 @@ await this.userService.createUser(
         language : userData.language,
       })
     }
-
-
-
-
-
-
-
-
-
+//  send welcome message
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
-      await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
       if (text && text.body) {
         // const feedbackMessage = text.body;
         // userData.feedback = feedbackMessage;
@@ -356,8 +347,6 @@ await this.userService.createUser(
         })
 }
     }
-    
-    
 
     return 'ok';
   }
