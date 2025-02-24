@@ -360,6 +360,7 @@ messageContent += "What would you like to do next?";
       if (responseButtons.length > 0) {
           await this.sendButtonsBasedOnResponse(from, language, responseButtons, messageContent);
       } else {
+        await this.sendMessage(this.baseUrl, messageData, this.apiKey);
           const userData = await this.userService.findUserByMobileNumber(from, this.botId);
           if (userData.seeMoreCount === 3) {
               await this.moreBots(from, language);
