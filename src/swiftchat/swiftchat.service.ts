@@ -798,7 +798,7 @@ async feedbackMessage(from: string, language: string) {
                 body: {
                     type: "text",
                     text: {
-                        body: localisedStrings.yearSelectionPrompt,
+                        body: localisedStrings.ST21Message,
                     },
                 },
                 buttons: buttons,
@@ -883,6 +883,16 @@ async sendQuestionPaperButton(from: string, language: string) {
           body: localisedStrings.seeQuestionPaper,
           reply: localisedStrings.seeQuestionPaper,
         },
+        {
+          type: 'solid',
+          body: localisedStrings.applySchloarship,
+          reply: localisedStrings.applySchloarship,
+        },
+        {
+          type: 'solid',
+          body: localisedStrings.changeState,
+          reply: localisedStrings.changeState,
+        }
         
       ],
       allow_custom_response: false,

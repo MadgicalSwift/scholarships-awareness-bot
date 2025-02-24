@@ -47,21 +47,7 @@ export class ChatbotService {
 
     if (!userData) {
       console.error(`User with mobile number ${from} not found.`);
-      userData = {
-  mobileNumber: from,
-  botID: botID,
-  language: 'English',
-  selectedState: 'default_state',
-  pdfIndex: 0,
-  selectedYear: 0,
-  yearButtonCount: 0,
-  seeMoreCount: 0,
-  applyLinkCount: 0,
-  feedback: null,
-  previousButtonMessage: "",
-  previousButtonMessage1: "",
-};
-     // await this.userService.saveUser(userData);
+
 await this.userService.createUser(
   from, // mobileNumber
   0, // yearButtonCount
@@ -90,7 +76,7 @@ await this.userService.createUser(
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
        let userLanguage= userData.language
-      if (response === 'Try Something New') {
+      if (response === 'See More') {
         await this.message.moreBots(from, userLanguage);
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);
@@ -148,6 +134,9 @@ await this.userService.createUser(
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
         await this.userService.saveUser(userData);
       } 
+      else if([localisedStrings.applySchloarship].includes(buttonResponse)){
+        await this.message.StateSelectedinfo(from, languageMessage, userData.selectedState);
+      }
       
       else if ([localisedStrings.viewWebsite].includes(buttonResponse)) 
       {  
@@ -232,7 +221,7 @@ await this.userService.createUser(
         await this.message.sendLanguageChangedMessage(from, languageMessage);
         await this.message.sendWhoCanApplyButton(from, buttonResponse) 
       }
-      else if ([localisedStrings.checkState].includes(buttonResponse)) {
+      else if ([localisedStrings.checkState, localisedStrings.changeState].includes(buttonResponse)) {
         
               await this.message.sendStateSelectionButton(from, languageMessage);
       }
@@ -246,7 +235,7 @@ await this.userService.createUser(
 
 
       else if ([localisedStrings.seeQuestionPaper].includes(buttonResponse)){
-          await this.message.sendST21Message(from, languageMessage);
+          // await this.message.sendST21Message(from, languageMessage);
           userData.previousButtonMessage1 = buttonResponse;
           await this.message.fetchAndSendYearButtons(from, languageMessage,userData.selectedState)
           await this.userService.saveUser(userData);
@@ -259,24 +248,24 @@ await this.userService.createUser(
           await this.message.fetchAndSendQuestionPaper(from, languageMessage,selectedState,selectedYear);
           userData.previousButtonMessage1='';
 
-          if (userData.YearButtonCount==1 || userData.YearButtonCount==5){
+          if (userData.yearButtonCount==1 || userData.yearButtonCount==5){
             await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
             await this.message.feedbackMessage(from, languageMessage);
           }
-          else if (userData.YearButtonCount === 3) {
+          else if (userData.yearButtonCount === 3) {
             await this.message.sendQuesPapaerNextMaessage(from,languageMessage)
             await this.message.moreBots(from, languageMessage);
             await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
             await this.message.uLikeNextAfterMoreBot(from, languageMessage);
           }
-          else if (userData.YearButtonCount === 2 || userData.YearButtonCount === 4 || userData.YearButtonCount == 0){ 
+          else if (userData.yearButtonCount === 2 || userData.yearButtonCount === 4 || userData.yearButtonCount == 0){ 
             await this.message.sendQuestionPaperButton(from, languageMessage)
           }
-          if (userData.YearButtonCount >= 5) {
-            userData.YearButtonCount =0;
+          if (userData.yearButtonCount >= 5) {
+            userData.yearButtonCount =0;
           }
           else{
-            userData.YearButtonCount = (userData.YearButtonCount) + 1;
+            userData.yearButtonCount = (userData.yearButtonCount) + 1;
           }
           await this.userService.saveUser(userData);
           this.mixpanel.track('userYearButtonCount',{
