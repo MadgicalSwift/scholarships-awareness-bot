@@ -48,20 +48,34 @@ export class ChatbotService {
     if (!userData) {
       console.error(`User with mobile number ${from} not found.`);
       userData = {
-        mobileNumber: from,
-        Botid: botID,
-        language: 'English', 
-        selectedState: 'default_state',
-        pdfIndex : 0,
-        selectedYear: 0,
-        YearButtonCount:0,
-        seeMoreCount:0,
-        applyLinkCount:0,
-        feedback : null,
-        previousButtonMessage:"",
-        previousButtonMessage1:"",
-      };
-      await this.userService.saveUser(userData);
+  mobileNumber: from,
+  botID: botID,
+  language: 'English',
+  selectedState: 'default_state',
+  pdfIndex: 0,
+  selectedYear: 0,
+  yearButtonCount: 0,
+  seeMoreCount: 0,
+  applyLinkCount: 0,
+  feedback: null,
+  previousButtonMessage: "",
+  previousButtonMessage1: "",
+};
+     // await this.userService.saveUser(userData);
+await this.userService.createUser(
+  from, // mobileNumber
+  0, // yearButtonCount
+  0, // pdfIndex
+  'English', // language
+  botID, // botID
+  'default_state', // selectedState
+  0, // selectedYear
+  0, // seeMoreCount
+  0, // applyLinkCount
+  [], // feedback
+  "", // previousButtonMessage
+  "" // previousButtonMessage1
+);
       // this.mixpanel.track('Button_Click')
     }
 

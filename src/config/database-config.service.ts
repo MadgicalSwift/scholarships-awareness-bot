@@ -1,14 +1,11 @@
-import * as AWS from 'aws-sdk';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-
-
+import * as admin from 'firebase-admin';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-export const dynamoDBClient = (): DocumentClient => {
-  return new AWS.DynamoDB.DocumentClient({
-    region: process.env.REGION,
-    accessKeyId: process.env.ACCESS_KEY_ID,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY,
-  });
-};
+admin.initializeApp({
+  credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}')),
+});
+
+const db = admin.firestore();
+
+export default db;

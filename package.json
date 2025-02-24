@@ -35,6 +35,8 @@
     "class-validator": "^0.14.0",
     "dotenv": "^16.3.1",
     "exceljs": "^4.4.0",
+    "firebase": "^11.3.1",
+    "firebase-admin": "^13.1.0",
     "mixpanel": "^0.18.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.12.0",
