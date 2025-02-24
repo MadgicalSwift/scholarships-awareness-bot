@@ -355,10 +355,10 @@ messageContent += "What would you like to do next?";
   };
 
   try {
-      await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+      // await this.sendMessage(this.baseUrl, messageData, this.apiKey);
 
       if (responseButtons.length > 0) {
-          await this.sendButtonsBasedOnResponse(from, language, responseButtons);
+          await this.sendButtonsBasedOnResponse(from, language, responseButtons, messageContent);
       } else {
           const userData = await this.userService.findUserByMobileNumber(from, this.botId);
           if (userData.seeMoreCount === 3) {
@@ -457,7 +457,7 @@ async getQuestionPaperLink(from, language, selectedState) {
 }
 
 
-async sendButtonsBasedOnResponse(from, language, responseButtons) {
+async sendButtonsBasedOnResponse(from, language, responseButtons, messageContent) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const buttons = responseButtons.map((button) => {
       switch (button) {
@@ -495,7 +495,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           body: {
               type: "text",
               text: {
-                  body: localisedStrings.buttonPrompt,
+                  body: messageContent,
               },
           },
           buttons: buttons,
