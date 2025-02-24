@@ -28,17 +28,33 @@ export class SwiftchatMessageService extends MessageService {
   
   async sendWelcomeMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
-    const requestData = this.prepareRequestData(
-      from,
-      localisedStrings.welcomeMessage,
-    );
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: localisedStrings.welcomeMessage,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.languageEnglish,
+            reply: 'English',
+          },
+          {
+            type: 'solid',
+            body: localisedStrings.languageHindi,
+            reply: 'hindi',
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
 
-    const response = await this.sendMessage(
-      this.baseUrl,
-      requestData,
-      this.apiKey,
-    );
-    return response;
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
 
   async sendLanguageChangedMessage(from: string, language: string) {
