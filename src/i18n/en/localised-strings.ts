@@ -7,7 +7,7 @@ export const localisedStrings = {
   languageHindi: 'हिन्दी',
   languageEnglish: 'English',
   userLanguage:'english',
-  languageChangedMessage: "🎉 Great! You have selected English. Let us get started! 🎓\n\n🌟 What is NMMS?\nThe NMMS Scholarship is a program for Class 8 students to support their education. If you qualify, you’ll receive ₹12,000 per year (₹1,000 per month) until Class 12!",
+  languageChangedMessage: "🎉 *Great! You have selected English. Let us get started! *🎓\n\n🌟 *What is NMMS?*\nThe NMMS Scholarship is a program for *Class 8 students* to support their education. If you qualify, you’ll receive *₹12,000 per year* (₹1,000 per month) until Class 12!",
   languageSelection: 'Please choose your language to get started!',
   whoCanApplyPrompt:"Please click the button below to learn more:",
   whoCanApply:"🎯Who Can Apply",
@@ -34,8 +34,9 @@ export const localisedStrings = {
  yearSelectionPrompt:"Please select a year to get the question paper",
  ST21Message:"Great! Which year's question papers are you interested in?📅🔍",
  thankyou:"🙏Thank you for taking the time to share your feedback with me😊",
- 
- 
+ changeState:"Change State",
+ applySchloarship:"Apply For Scholarship",
+
 
 
   async States(redisService) {
@@ -69,9 +70,8 @@ export const localisedStrings = {
     }
   }
 
-
+// old
   // async States() {
-  
   //   const response = await axios.get(
   //       'https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec',
   //       { params: { action: 'getStates' } }
