@@ -835,22 +835,32 @@ async feedbackMessage(from: string, language: string) {
 async fetchAndSendQuestionPaper(from: string, language: string, selectedState: string, selectedYear: number) {
   let listPdfUrl;
   const cacheKey = `updatepdfLink_${selectedState}_${selectedYear}`;
-
+  
   try {
-      // Fetch PDF links from API
-      const response = await axios.get(this.sheetAPI, {
-          params: { action: "getPdfLink", state: selectedState, year: selectedYear },
-      });
-
-      if (response.data && response.data.pdfList) {
-          listPdfUrl = response.data.pdfList;
+      // Check if PDF links are cached in Redis
+      const cachedPdfList = await this.redisService.get(cacheKey);
+      
+      if (cachedPdfList) {
+          console.log("Fetching PDF links from cache.");
+          listPdfUrl = JSON.parse(cachedPdfList);
+      } else {
+          // Fetch PDF links from API
+          const response = await axios.get(this.sheetAPI, {
+              params: { action: "getPdfLink", state: selectedState, year: selectedYear },
+          });
+  
+          if (response.data && response.data.pdfList) {
+              listPdfUrl = response.data.pdfList;
+              // Cache the fetched PDF list in Redis with a TTL (time-to-live)
+              await this.redisService.set(cacheKey, JSON.stringify(listPdfUrl));
+          }
       }
-
+  
       if (!listPdfUrl || listPdfUrl.length === 0) {
           console.error("No PDFs found for the selected state and year.");
           return;
       }
-
+  
       // Send multiple PDFs using Promise.all
       const sendMessages = listPdfUrl.map(pdf => {
           const messageData = {
@@ -865,7 +875,7 @@ async fetchAndSendQuestionPaper(from: string, language: string, selectedState: s
           };
           return this.sendMessage(this.baseUrl, messageData, this.apiKey);
       });
-
+  
       // Execute all send requests
       await Promise.all(sendMessages);
       console.log("All PDFs sent successfully!");
