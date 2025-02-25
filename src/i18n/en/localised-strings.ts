@@ -26,6 +26,7 @@ export const localisedStrings = {
  Next : (previousButton) =>   `${previousButton}`,
  feedback: "We would love to hear any feedback you may have to make this bot better 🔍\n\nDo you have any suggestions or comments for us? 💡🚀👨🏽‍🎓",
  uLikeNext: "What would you like to do next?",
+ afterQuestionPaper:"What else can I help you with?",
  moreBot: "Here are some more fun bots for you to explore! ",
  sure:"Yes, I want to share.",
  NMMS1: "What is NMMS?",

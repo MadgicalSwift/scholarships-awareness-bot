@@ -1009,7 +1009,14 @@ async asyncFetchAndSendBotButtons(from: string, language: string) {
     // Map bots to article objects
     const articles = bots.map((bot) => ({
       title: bot.botName,
-      header: {
+      header: bot.urlType === "video" 
+    ? {
+        type: "text",
+        text: {
+          body: bot.imageUrl, // Assuming bot.imageUrl holds the video URL
+        },
+      }
+    : {
         type: "image",
         image: {
           url: bot.imageUrl,
@@ -1022,7 +1029,7 @@ async asyncFetchAndSendBotButtons(from: string, language: string) {
           button_text: "Go To Website",
           type: "website",
           website: {
-            title: "Welcome to Swiftchat",
+            title: "Welcome to NMMS",
             url: bot.botLink,
           },
         },
