@@ -28,17 +28,33 @@ export class SwiftchatMessageService extends MessageService {
   
   async sendWelcomeMessage(from: string, language: string) {
     const localisedStrings = LocalizationService.getLocalisedString(language);
-    const requestData = this.prepareRequestData(
-      from,
-      localisedStrings.welcomeMessage,
-    );
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: localisedStrings.welcomeMessage,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.languageEnglish,
+            reply: 'English',
+          },
+          {
+            type: 'solid',
+            body: localisedStrings.languageHindi,
+            reply: 'hindi',
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
 
-    const response = await this.sendMessage(
-      this.baseUrl,
-      requestData,
-      this.apiKey,
-    );
-    return response;
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   }
 
   async sendLanguageChangedMessage(from: string, language: string) {
@@ -339,11 +355,12 @@ messageContent += "What would you like to do next?";
   };
 
   try {
-      await this.sendMessage(this.baseUrl, messageData, this.apiKey);
+      // await this.sendMessage(this.baseUrl, messageData, this.apiKey);
 
       if (responseButtons.length > 0) {
-          await this.sendButtonsBasedOnResponse(from, language, responseButtons);
+          await this.sendButtonsBasedOnResponse(from, language, responseButtons, messageContent);
       } else {
+        await this.sendMessage(this.baseUrl, messageData, this.apiKey);
           const userData = await this.userService.findUserByMobileNumber(from, this.botId);
           if (userData.seeMoreCount === 3) {
               await this.moreBots(from, language);
@@ -441,7 +458,7 @@ async getQuestionPaperLink(from, language, selectedState) {
 }
 
 
-async sendButtonsBasedOnResponse(from, language, responseButtons) {
+async sendButtonsBasedOnResponse(from, language, responseButtons,messageContent) {
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const buttons = responseButtons.map((button) => {
       switch (button) {
@@ -479,7 +496,7 @@ async sendButtonsBasedOnResponse(from, language, responseButtons) {
           body: {
               type: "text",
               text: {
-                  body: localisedStrings.buttonPrompt,
+                  body: messageContent,
               },
           },
           buttons: buttons,
@@ -798,7 +815,7 @@ async feedbackMessage(from: string, language: string) {
                 body: {
                     type: "text",
                     text: {
-                        body: localisedStrings.yearSelectionPrompt,
+                        body: localisedStrings.ST21Message,
                     },
                 },
                 buttons: buttons,
@@ -883,6 +900,16 @@ async sendQuestionPaperButton(from: string, language: string) {
           body: localisedStrings.seeQuestionPaper,
           reply: localisedStrings.seeQuestionPaper,
         },
+        {
+          type: 'solid',
+          body: localisedStrings.applySchloarship,
+          reply: localisedStrings.applySchloarship,
+        },
+        {
+          type: 'solid',
+          body: localisedStrings.changeState,
+          reply: localisedStrings.changeState,
+        }
         
       ],
       allow_custom_response: false,

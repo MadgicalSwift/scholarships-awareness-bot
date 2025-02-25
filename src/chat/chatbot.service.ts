@@ -76,7 +76,7 @@ export class ChatbotService {
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
        let userLanguage= userData.language
-      if (response === 'Try Something New') {
+      if (response === 'See More') {
         await this.message.moreBots(from, userLanguage);
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);
@@ -134,6 +134,9 @@ export class ChatbotService {
         await this.message.StateSelectedinfo(from, languageMessage, buttonResponse);
         await this.userService.saveUser(userData);
       } 
+      else if([localisedStrings.applySchloarship].includes(buttonResponse)){
+        await this.message.StateSelectedinfo(from, languageMessage, userData.selectedState);
+      }
       
       else if ([localisedStrings.viewWebsite].includes(buttonResponse)) 
       {  
@@ -218,7 +221,7 @@ export class ChatbotService {
         await this.message.sendLanguageChangedMessage(from, languageMessage);
         await this.message.sendWhoCanApplyButton(from, buttonResponse) 
       }
-      else if ([localisedStrings.checkState].includes(buttonResponse)) {
+      else if ([localisedStrings.checkState,localisedStrings.changeState].includes(buttonResponse)) {
         
               await this.message.sendStateSelectionButton(from, languageMessage);
       }
@@ -232,7 +235,7 @@ export class ChatbotService {
 
 
       else if ([localisedStrings.seeQuestionPaper].includes(buttonResponse)){
-          await this.message.sendST21Message(from, languageMessage);
+          // await this.message.sendST21Message(from, languageMessage);
           userData.previousButtonMessage1 = buttonResponse;
           await this.message.fetchAndSendYearButtons(from, languageMessage,userData.selectedState)
           await this.userService.saveUser(userData);
@@ -331,17 +334,10 @@ export class ChatbotService {
     }
 
 
-
-
-
-
-
-
-
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
-      await this.message.sendLanguageSelectionMessage(from, localizedStrings.languageSelection);
+     
       if (text && text.body) {
         // const feedbackMessage = text.body;
         // userData.feedback = feedbackMessage;
