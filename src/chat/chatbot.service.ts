@@ -76,7 +76,7 @@ export class ChatbotService {
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
        let userLanguage= userData.language
-      if (response === 'See More') {
+      if (response === 'Try New Things') {
         await this.message.moreBots(from, userLanguage);
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);

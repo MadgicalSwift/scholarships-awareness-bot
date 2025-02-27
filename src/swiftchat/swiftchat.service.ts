@@ -1026,7 +1026,7 @@ async asyncFetchAndSendBotButtons(from: string, language: string) {
       description: bot.description,
       actions: [
         {
-          button_text: "Go To Website",
+          button_text: "Try Now",
           type: "website",
           website: {
             title: "Welcome to NMMS",
