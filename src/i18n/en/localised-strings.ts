@@ -49,6 +49,7 @@ export const localisedStrings = {
       const cachedStates = await redisService.get(cacheKey);
       if (cachedStates) {
         console.log('Fetching states from cache.');
+        console.log(redisService.cache.getTtl(cacheKey));
         console.log(JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b)))
         return JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
       } else {

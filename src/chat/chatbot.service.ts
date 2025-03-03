@@ -6,7 +6,7 @@ import { LocalizationService } from 'src/localization/localization.service';
 // import { localisedStrings } from 'src/i18n/hn/localised-strings';
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from 'src/cache/cache.service';
 import { count, log } from 'console';
 import { distinct } from 'rxjs';
 import { response } from 'express';
@@ -218,7 +218,7 @@ export class ChatbotService {
                 
         }
       else if ([localisedStrings.NMMS1].includes(buttonResponse)) {
-        await this.message.sendLanguageChangedMessage(from, languageMessage);
+        // await this.message.sendLanguageChangedMessage(from, languageMessage);
         await this.message.sendWhoCanApplyButton(from, buttonResponse) 
       }
       else if ([localisedStrings.checkState,localisedStrings.changeState].includes(buttonResponse)) {
