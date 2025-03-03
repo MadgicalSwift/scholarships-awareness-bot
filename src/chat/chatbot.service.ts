@@ -219,7 +219,7 @@ export class ChatbotService {
         }
       else if ([localisedStrings.NMMS1].includes(buttonResponse)) {
         // await this.message.sendLanguageChangedMessage(from, languageMessage);
-        await this.message.sendWhoCanApplyButton(from, buttonResponse) 
+        await this.message.sendWhoCanApplyButton(from, userData.language) 
       }
       else if ([localisedStrings.checkState,localisedStrings.changeState].includes(buttonResponse)) {
         
