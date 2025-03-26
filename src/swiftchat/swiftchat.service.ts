@@ -168,63 +168,40 @@ export class SwiftchatMessageService extends MessageService {
     const localisedStrings = LocalizationService.getLocalisedString(language);
     const message = localisedStrings.stateSelectionMessage;
 
-    const cacheKey = 'updated_states_new'; 
-  let states = [];
+    const states = [
+      'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+      'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+      'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+      'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+      'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+  ]; 
+
+  const buttons = states.map((state) => ({
+      type: 'solid',  // Button type
+      body: state,    // Button text (state name)
+      reply: state,   // The reply value for the button (state name)
+  }));
+
+  const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+          body: {
+              type: 'text',
+              text: {
+                  body: message,  // Message to ask the user to select a state
+              },
+          },
+          buttons: buttons,  // Dynamically created buttons for each state
+          allow_custom_response: false,
+      },
+  };
 
   try {
-    
-      // Check if states are cached in Redis
-    const cachedStates = await this.redisService.get(cacheKey);
-
-    if (cachedStates) {
-      // If cached, use the data from Redis
-      states = JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
-      localisedStrings.states = states;
-    }
-    else 
-     {
-      // If not cached, fetch from API
-      const response = await axios.get(this.sheetAPI, {
-        params: { action: 'getStates' },
-      });
-
-      if (response.data) {
-        states = response.data.sort((a, b) => a.localeCompare(b));
-        localisedStrings.states = states;
-
-        // Cache the fetched states in Redis with a TTL (time-to-live)
-        await this.redisService.set(cacheKey,JSON.stringify(states));
-      }
-    }
-
+      return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
   } catch (error) {
-    console.error('Error fetching states:', error);
+      console.error('Error sending message:', error); // Handle any errors during message sending
   }
-   
-    const buttons = states.map((state) => ({
-        type: 'solid',  // Button type
-        body: state,    // Button text (state name)
-        reply: state,   // The reply value for the button (state name)
-    }));
-    const messageData = {
-        to: from,
-        type: 'button',
-        button: {
-            body: {
-                type: 'text',
-                text: {
-                    body: message,  // Message to ask the user to select a state
-                },
-            },
-            buttons: buttons,  // Dynamically created buttons for each state
-            allow_custom_response: false,
-        },
-    };
-    try {
-        return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
-    } catch (error) {
-        console.error('Error sending message:', error); // Handle any errors during message sending
-    }
 }
 
 async handleSelectedState(from, selectedState, language) {
@@ -279,11 +256,12 @@ async StateSelectedinfo(from, language, selectedState) {
       const [stateResponse, questionPapersResponse] = await Promise.all([
         axios.get(this.sheetAPI, { params: { action: "getStateDetails", state: selectedState } }),
         axios.get(this.sheetAPI, { params: { action: "getAvailableYears", state: selectedState } }),
+        console.log("api")
       ]);
-      console.log("questio paper",questionPapersResponse)
+   
       stateDetails = stateResponse?.data || null;
       questionPapers = questionPapersResponse?.data || null;
-      console.log('stateDetails=>',stateDetails);
+  
   
 
       // Cache the results in Redis
@@ -304,8 +282,11 @@ async StateSelectedinfo(from, language, selectedState) {
 
   let messageContent = "";
   let responseButtons = [];
+  if(stateDetails==="State not found"){
+     await this.stateNotFoundInList(from , language)
+  }
 
-  if (stateDetails && !stateDetails.error) {
+  else if (stateDetails && !stateDetails.error) {
       // Prepare content dynamically
      
           // stateDetails["State Name"] && `*• State Name: ${stateDetails["State Name"]}*`,
@@ -346,7 +327,7 @@ messageContent += "What would you like to do next?";
       if (stateDetails["Apply Now Link"] && stateDetails["Apply Now Link"]!= "NA") responseButtons.push("Apply Now");
       if (questionPapers && !questionPapers?.error) responseButtons.push("See Question Papers");
 
-  }
+  
 
   const messageData = {
       to: from,
@@ -371,6 +352,40 @@ messageContent += "What would you like to do next?";
   } catch (error) {
       console.error("Error sending message:", error);
   }
+}
+}
+
+async stateNotFoundInList(from, language){
+  const localisedStrings = LocalizationService.getLocalisedString(language);
+  const message = localisedStrings.stateNotFound;
+  
+    const messageData = {
+      to: from,
+      type: 'button',
+      button: {
+        body: {
+          type: 'text',
+          text: {
+            body: message,
+          },
+        },
+        buttons: [
+          {
+            type: 'solid',
+            body: localisedStrings.whoCanApply,
+            reply: localisedStrings.whoCanApply,
+          },
+          {
+            type: 'solid',
+            body: localisedStrings.chooseAnotherState,
+            reply: localisedStrings.chooseAnotherState,
+          },
+        ],
+        allow_custom_response: false,
+      },
+    };
+
+    return await this.sendMessage(this.baseUrl, messageData, this.apiKey);
 }
 
 

@@ -106,8 +106,13 @@ export class ChatbotService {
       
 
       
-      const statesFetch = await localisedStrings.States(this.redisService);
-      // const statesFetch = await localisedStrings.States();
+      const statesFetch = [
+        'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+        'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+        'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+        'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+        'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+      ];
 
 
 
@@ -221,7 +226,7 @@ export class ChatbotService {
         // await this.message.sendLanguageChangedMessage(from, languageMessage);
         await this.message.sendWhoCanApplyButton(from, userData.language) 
       }
-      else if ([localisedStrings.checkState,localisedStrings.changeState].includes(buttonResponse)) {
+      else if ([localisedStrings.checkState,localisedStrings.changeState, localisedStrings.chooseAnotherState].includes(buttonResponse)) {
         
               await this.message.sendStateSelectionButton(from, languageMessage);
       }

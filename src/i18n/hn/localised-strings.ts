@@ -36,49 +36,7 @@ export const localisedStrings = {
  thankyou:"🙏आपने अपना सुझाव साझा करने के लिए समय निकाला, इसके लिए धन्यवाद।😊",
  changeState:"राज्य बदलें",
  applySchloarship:"छात्रवृत्ति के लिए आवेदन करें",
-
-    async States(redisService) {
-      const cacheKey = 'updated_states_cache'; // Unique key for caching states
-      let sheetAPI = process.env.Sheet_API;
-
-      try {
-        // Check Redis cache for states data
-        const cachedStates = await redisService.get(cacheKey);
-        if (cachedStates) {
-          console.log('Fetching states from cache.');
-          return JSON.parse(cachedStates).sort((a, b) => a.localeCompare(b));
-        } else {
-          // Fetch states from the API only if not in cache
-          console.log('Fetching states from API.');
-          const response = await axios.get(sheetAPI, {
-            params: { action: 'getStates' },
-          });
-
-          if (response.data) {
-            // Cache the states data in Redis with a TTL (e.g., 1 hour)
-            const sortedStates = response.data.sort((a, b) => a.localeCompare(b));
-            await redisService.set(cacheKey, JSON.stringify(sortedStates)); // TTL = 1 hour
-            return sortedStates;
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching states:', error);
-        throw error; // Optionally rethrow to handle upstream
-      }
-    }
-
-  // async States() {
-  
-  // const response = await axios.get(
-  //     'https://script.google.com/macros/s/AKfycbzadxZh0c3UZp83cJZIBv-W9q30x5g6SJE2oOgYjXn1A-Sl1Y1MCejaZ7_hVcmiKf9ytw/exec',
-  //     { params: { action: 'getStates' } }
-  // );
-  // console.log(response.data); 
-  // if (response.data) {
-  //     return response.data;}
-  //   }
-
-
-
+ stateNotFound: "क्षमा करें! चयनित राज्य के लिए छात्रवृत्ति जानकारी फिलहाल उपलब्ध नहीं है।\nकृपया बताएं, आप आगे क्या करना चाहेंगे?",
+ chooseAnotherState:"दूसरा राज्य चुनें",
 
 };

@@ -12,11 +12,15 @@ export class RedisService {
 
   async get(key: string): Promise<string | null> {
     const value = this.cache.get<string>(key);
+    console.log(key)
+    console.log("value",value)
     return value ?? null;
   }
 
   async set(key: string, value: string, expiryMode: 'EX' | 'PX' = 'EX', time?: number): Promise<void> {
     const ttl = time || this.cacheTTL;
+    console.log("update",key)
+    console.log("update",value)
     this.cache.set(key, value, ttl);
   }
 
