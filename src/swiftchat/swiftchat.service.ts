@@ -304,7 +304,7 @@ const formatDate = (date) => {
 
 const eligibilityCriteria = [
     filterNA(stateDetails["Minimum Percentage (Class 7)"]) && `• Minimum Percentage (Class 7): *${typeof stateDetails["Minimum Percentage (Class 7)"] === "string" ? stateDetails["Minimum Percentage (Class 7)"] : (stateDetails["Minimum Percentage (Class 7)"] * 100).toFixed(2) + "%"}*`,
-    filterNA(stateDetails["Family Income Limit"]) && `• Family Income Limit: *${stateDetails["Family Income Limit"]}*`,
+    filterNA(stateDetails["Family Income Limit"]) && `• Family Income Limit: *₹ ${stateDetails["Family Income Limit"]}*`,
     filterNA(stateDetails["Applicable Schools"]) && `*• Applicable Schools:* ${stateDetails["Applicable Schools"]}`,
 ].filter(Boolean).join("\n");
 
