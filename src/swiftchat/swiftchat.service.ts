@@ -169,14 +169,14 @@ export class SwiftchatMessageService extends MessageService {
     const message = localisedStrings.stateSelectionMessage;
 
     const states = [
-      'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-      'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
-      'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
-      'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
-      'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
-      'Jammu & kashmir', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu',
-      'Lakshadweep', 'Delhi', 'Puducherry', 'Ladakh', 'Jammu and Kashmir'
-        ];
+      'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh',
+      'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa',
+      'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu & Kashmir',
+      'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh',
+      'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha',
+      'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana',
+      'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+  ]
 
   const buttons = states.map((state) => ({
       type: 'solid',  // Button type
@@ -304,7 +304,7 @@ const formatDate = (date) => {
 
 const eligibilityCriteria = [
     filterNA(stateDetails["Minimum Percentage (Class 7)"]) && `• Minimum Percentage (Class 7): *${typeof stateDetails["Minimum Percentage (Class 7)"] === "string" ? stateDetails["Minimum Percentage (Class 7)"] : (stateDetails["Minimum Percentage (Class 7)"] * 100).toFixed(2) + "%"}*`,
-    filterNA(stateDetails["Family Income Limit"]) && `• Family Income Limit: *₹ ${stateDetails["Family Income Limit"]}*`,
+    filterNA(stateDetails["Family Income Limit"]) && `• Family Income Limit: *${stateDetails["Family Income Limit"]}*`,
     filterNA(stateDetails["Applicable Schools"]) && `*• Applicable Schools:* ${stateDetails["Applicable Schools"]}`,
 ].filter(Boolean).join("\n");
 
