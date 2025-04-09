@@ -37,6 +37,7 @@ export const localisedStrings = {
  changeState:"राज्य बदलें",
  applySchloarship:"छात्रवृत्ति के लिए आवेदन करें",
  stateNotFound: "क्षमा करें! चयनित राज्य के लिए छात्रवृत्ति जानकारी फिलहाल उपलब्ध नहीं है।\nकृपया बताएं, आप आगे क्या करना चाहेंगे?",
+ 
  chooseAnotherState:"दूसरा राज्य चुनें",
 
 };
