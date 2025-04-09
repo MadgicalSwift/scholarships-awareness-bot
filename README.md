@@ -1,6 +1,6 @@
-#  Chatbot NestJS Boilerplate
+#  Scholarship Bot 🎓
 
-In this comprehensive guide, we introduce you to our Chatbot Starter Kit, a resource designed to empower developers in building robust chatbot applications. Whether you are just starting your journey in chatbot development or are an experienced developer seeking an efficient solution, this document is your go-to resource for mastering the use of our starter kit.
+Scholarship Bot is an intelligent assistant that helps students discover and apply for scholarships effortlessly. It provides personalized recommendations based on eligibility criteria, deadlines, and academic background.
 
 
 # Prerequisites
@@ -18,11 +18,11 @@ Click the "Fork" button in the upper right corner of the repository page. This w
 
 * Clone this repository:
 ```
-https://github.com/madgicaltechdom/chatbot-nestjs-boilerplate.git
+https://github.com/MadgicalSwift/scholarships-awareness-bot.git
 ```
 * Navigate to the Project Directory:
 ```
-cd chatbot-nestjs-boilerplate
+cd scholarships-awareness-bot
 ```
 * Install Project Dependencies:
 ```bash
@@ -58,26 +58,27 @@ $ npm run test:cov
 # Add the following environment variables:
 
 ```bash
-API_URL = API_URL
-BOT_ID = BOT_ID
-API_KEY = API_KEY
-DATA_BASE=DATA_BASE
-DB_HOST=DB_HOST
-DB_USER=DB_USER
-DB_PASSWORD=DB_PASSWORD
+USERS_TABLE=
+REGION=
+ACCESS_KEY_ID=
+SECRET_ACCESS_KEY=
+API_URL=
+BOT_ID=
+API_KEY=
+Sheet_API=
+REDIS_TTL=
 ```
 # API Endpoints
 ```
 POST api/message: Endpoint for handling user requests. 
-Get/api/status: Endpoint for checking the status of  api
+GET /api/status: Endpoint for checking the status of  api
 ```
 # folder structure
 
 ```bash
 src/
-├── app.controller.ts
-├── app.module.ts
-├── main.ts
+├── cache/
+│   └── cache.service.ts
 ├── chat/
 │   ├── chat.service.ts
 │   └── chatbot.model.ts
@@ -91,26 +92,34 @@ src/
 │   └── utils/
 │       └── date.service.ts
 ├── config/
-│   └── database.config.ts
+│   └── database-config.service.ts
 ├── i18n/
 │   ├── en/
 │   │   └── localised-strings.ts
 │   └── hi/
 │       └── localised-strings.ts
+├── intent/
+│   └── intent.classifier.ts
 ├── localization/
 │   ├── localization.service.ts
 │   └── localization.module.ts
-│
 ├── message/
 │   ├── message.service.ts
 │   └── message.service.ts
+├── mixpanel/
+│   ├── mixpanel.service.spec.ts
+│   └── mixpanel.service.ts
 └── model/
 │   ├── user.entity.ts
 │   ├──user.module.ts
-│   └──query.ts
+│   └──user.service.ts
 └── swiftchat/
-    ├── swiftchat.module.ts
-    └── swiftchat.service.ts
+│   ├── swiftchat.module.ts
+│   └── swiftchat.service.ts
+├── app.controller.ts
+├── app.module.ts
+├── lambda.ts
+├── main.ts
 
 ```
 
