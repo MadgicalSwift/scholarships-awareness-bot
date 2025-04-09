@@ -30,7 +30,7 @@ export const localisedStrings = {
  moreBot: "Here are some more fun bots for you to explore! ",
  sure:"Yes, I want to share.",
  NMMS1: "What is NMMS?",
- checkState: "Check for another State/UT ",
+ checkState: "Check for another State/UT",
  userfeedback:"Kindly express your thoughts and opinions by typing them in the provided text box and pressing the 'send' button.📖",
  yearSelectionPrompt:"Please select a year to get the question paper",
  ST21Message:"Great! Which year's question papers are you interested in?📅🔍",
@@ -38,7 +38,7 @@ export const localisedStrings = {
  changeState:"Change State/UT",
  applySchloarship:"Apply For Scholarship",
  stateNotFound: "uh oh! Scholarship information is not yet available for the selected state.\nWhat would you like to do next?",
- chooseAnotherState:"Select Another State",
+ chooseAnotherState:"Select Another State/UT",
 
 }
 

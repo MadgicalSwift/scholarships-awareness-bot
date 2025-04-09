@@ -85,7 +85,7 @@ export class ChatbotService {
             // await this.message.sendLanguageChangedMessage(from, userLanguage);
         await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
-      else if (response === 'Change State') {
+      else if (response === 'Change State/UT') {
              await this.message.sendStateSelectionButton(from, userLanguage);
       }
       else if (response === 'Change Language') {
