@@ -37,7 +37,7 @@ export const localisedStrings = {
  thankyou:"🙏Thank you for taking the time to share your feedback with me😊",
  changeState:"Change State/UT",
  applySchloarship:"Apply For Scholarship",
- stateNotFound: "uh oh! Scholarship information is not yet available for the selected state.\nWhat would you like to do next?",
+ stateNotFound: "Uh oh! Scholarship information is not yet available for the selected state.\nWhat would you like to do next?",
  chooseAnotherState:"Select Another State/UT",
 
 }
