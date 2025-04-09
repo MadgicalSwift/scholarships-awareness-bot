@@ -6,7 +6,7 @@ import { LocalizationService } from 'src/localization/localization.service';
 // import { localisedStrings } from 'src/i18n/hn/localised-strings';
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
 import { SwiftchatMessageService } from 'src/swiftchat/swiftchat.service';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from 'src/cache/cache.service';
 import { count, log } from 'console';
 import { distinct } from 'rxjs';
 import { response } from 'express';
@@ -76,7 +76,11 @@ await this.userService.createUser(
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
        let userLanguage= userData.language
+<<<<<<< HEAD
       if (response === 'See More') {
+=======
+      if (response === 'Try New Things') {
+>>>>>>> newCaching
         await this.message.moreBots(from, userLanguage);
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);
@@ -106,8 +110,15 @@ await this.userService.createUser(
       
 
       
-      const statesFetch = await localisedStrings.States(this.redisService);
-      // const statesFetch = await localisedStrings.States();
+      const statesFetch =  [
+        'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh',
+        'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa',
+        'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu & Kashmir',
+        'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh',
+        'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha',
+        'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana',
+        'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+    ]
 
 
 
@@ -218,10 +229,14 @@ await this.userService.createUser(
                 
         }
       else if ([localisedStrings.NMMS1].includes(buttonResponse)) {
-        await this.message.sendLanguageChangedMessage(from, languageMessage);
-        await this.message.sendWhoCanApplyButton(from, buttonResponse) 
+        // await this.message.sendLanguageChangedMessage(from, languageMessage);
+        await this.message.sendWhoCanApplyButton(from, userData.language) 
       }
+<<<<<<< HEAD
       else if ([localisedStrings.checkState, localisedStrings.changeState].includes(buttonResponse)) {
+=======
+      else if ([localisedStrings.checkState,localisedStrings.changeState, localisedStrings.chooseAnotherState].includes(buttonResponse)) {
+>>>>>>> newCaching
         
               await this.message.sendStateSelectionButton(from, languageMessage);
       }
@@ -332,10 +347,19 @@ await this.userService.createUser(
         language : userData.language,
       })
     }
+<<<<<<< HEAD
 //  send welcome message
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
+=======
+
+
+    else if (intent === 'greeting') {
+      const localizedStrings = LocalizationService.getLocalisedString(userData.language);
+      await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
+     
+>>>>>>> newCaching
       if (text && text.body) {
         // const feedbackMessage = text.body;
         // userData.feedback = feedbackMessage;

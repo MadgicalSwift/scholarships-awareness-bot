@@ -4,7 +4,7 @@ import { CustomException } from 'src/common/exception/custom.exception';
 import { localisedStrings } from 'src/i18n/en/localised-strings';
 import { UserService } from 'src/model/user.service';
 import { MixpanelService } from 'src/mixpanel/mixpanel.service';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from 'src/cache/cache.service';
 
 @Injectable()
 export abstract class MessageService {
@@ -43,7 +43,11 @@ export abstract class MessageService {
   abstract sendHowCanSelectedMessage(from: string, language: string);
   abstract sendStateSelectionButton(from: string, language: string);
   abstract StateSelectedinfo(from: string, language: string, selectedState: string);
+<<<<<<< HEAD
   abstract sendButtonsBasedOnResponse(from: string, language: string, responseMessage: string, messageContent:string); 
+=======
+  abstract sendButtonsBasedOnResponse(from: string, language: string, responseMessage: string,messageContent:string); 
+>>>>>>> newCaching
   abstract nextButton(from: string, language: string, selectedState,previousButton);
   abstract getApplyOrSeeMoreLink(from, language, selectedState, previousButton)
   abstract getQuestionPaperLink(from, language, selectedState)
