@@ -117,8 +117,6 @@ export class ChatbotService {
     ]
 
 
-
-
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
 
         await this.message.sendWhoCanApplyButton(from, buttonResponse?.toLowerCase());
@@ -165,7 +163,6 @@ export class ChatbotService {
           await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
           await this.message.uLikeNextAfterMoreBot(from, languageMessage);
           
-          // 
         }
         else if (userData.seeMoreCount === 2 || userData.seeMoreCount === 4 ||userData.seeMoreCount === 0) {
           await this.message.uLikeNext(from, languageMessage);

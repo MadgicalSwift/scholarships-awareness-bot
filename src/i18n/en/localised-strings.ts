@@ -39,6 +39,5 @@ export const localisedStrings = {
  applySchloarship:"Apply For Scholarship",
  stateNotFound: "Uh oh! Scholarship information is not yet available for the selected state.\nWhat would you like to do next?",
  chooseAnotherState:"Select Another State/UT",
-
 }
 
