@@ -89,7 +89,7 @@ await this.userService.createUser(
             // await this.message.sendLanguageChangedMessage(from, userLanguage);
         await this.message.sendWhoCanApplyButton(from, userLanguage) 
       }
-      else if (response === 'Change State') {
+      else if (response === 'Change State/UT') {
              await this.message.sendStateSelectionButton(from, userLanguage);
       }
       else if (response === 'Change Language') {
@@ -119,8 +119,6 @@ await this.userService.createUser(
         'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana',
         'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
     ]
-
-
 
 
       if (['english', 'hindi'].includes(buttonResponse?.toLowerCase())) {
@@ -169,7 +167,6 @@ await this.userService.createUser(
           await this.message.asyncFetchAndSendBotButtons(from, languageMessage);
           await this.message.uLikeNextAfterMoreBot(from, languageMessage);
           
-          // 
         }
         else if (userData.seeMoreCount === 2 || userData.seeMoreCount === 4 ||userData.seeMoreCount === 0) {
           await this.message.uLikeNext(from, languageMessage);
