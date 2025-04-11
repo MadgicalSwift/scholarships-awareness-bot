@@ -43,11 +43,7 @@ export abstract class MessageService {
   abstract sendHowCanSelectedMessage(from: string, language: string);
   abstract sendStateSelectionButton(from: string, language: string);
   abstract StateSelectedinfo(from: string, language: string, selectedState: string);
-<<<<<<< HEAD
-  abstract sendButtonsBasedOnResponse(from: string, language: string, responseMessage: string, messageContent:string); 
-=======
   abstract sendButtonsBasedOnResponse(from: string, language: string, responseMessage: string,messageContent:string); 
->>>>>>> newCaching
   abstract nextButton(from: string, language: string, selectedState,previousButton);
   abstract getApplyOrSeeMoreLink(from, language, selectedState, previousButton)
   abstract getQuestionPaperLink(from, language, selectedState)

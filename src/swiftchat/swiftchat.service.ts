@@ -475,11 +475,7 @@ async getQuestionPaperLink(from, language, selectedState) {
 }
 
 
-<<<<<<< HEAD
-async sendButtonsBasedOnResponse(from, language, responseButtons, messageContent) {
-=======
 async sendButtonsBasedOnResponse(from, language, responseButtons,messageContent) {
->>>>>>> newCaching
   const localisedStrings = LocalizationService.getLocalisedString(language);
   const buttons = responseButtons.map((button) => {
       switch (button) {

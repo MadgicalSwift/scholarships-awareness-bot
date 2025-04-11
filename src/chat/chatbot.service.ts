@@ -76,11 +76,7 @@ await this.userService.createUser(
      if (persistent_menu_response) {
        const response = persistent_menu_response.body;
        let userLanguage= userData.language
-<<<<<<< HEAD
-      if (response === 'See More') {
-=======
       if (response === 'Try New Things') {
->>>>>>> newCaching
         await this.message.moreBots(from, userLanguage);
         await this.message.asyncFetchAndSendBotButtons(from, userLanguage);
         await this.message.uLikeNextAfterMoreBot(from, userLanguage);
@@ -229,11 +225,7 @@ await this.userService.createUser(
         // await this.message.sendLanguageChangedMessage(from, languageMessage);
         await this.message.sendWhoCanApplyButton(from, userData.language) 
       }
-<<<<<<< HEAD
-      else if ([localisedStrings.checkState, localisedStrings.changeState].includes(buttonResponse)) {
-=======
       else if ([localisedStrings.checkState,localisedStrings.changeState, localisedStrings.chooseAnotherState].includes(buttonResponse)) {
->>>>>>> newCaching
         
               await this.message.sendStateSelectionButton(from, languageMessage);
       }
@@ -344,19 +336,12 @@ await this.userService.createUser(
         language : userData.language,
       })
     }
-<<<<<<< HEAD
-//  send welcome message
-    else if (intent === 'greeting') {
-      const localizedStrings = LocalizationService.getLocalisedString(userData.language);
-      await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
-=======
 
 
     else if (intent === 'greeting') {
       const localizedStrings = LocalizationService.getLocalisedString(userData.language);
       await this.message.sendWelcomeMessage(from, localizedStrings.welcomeMessage);
      
->>>>>>> newCaching
       if (text && text.body) {
         // const feedbackMessage = text.body;
         // userData.feedback = feedbackMessage;
